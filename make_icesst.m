@@ -1,24 +1,29 @@
 %----------------------------------------------------------------------------
 % make_icesst.m
 %
-% this script opens a file with historical sst data starting at 1860 and 
-% uses simple linear regression to compute the change of temperature between 
+% this script opens a files with historical sst data starting at 1860 and 
+% a control run with forcing from 1860
+% a simple linear regression to compute the change of temperature between 
 % 1860 and 2010.  
 % this pattern of a potential sst pattern due to warming can then be added
 % to a baseline sst from some control experiment
 % The same is done for the ice. 
 %
+% a few modifactions are needed for basic quality control due to the use of
+% t_surf to derive the sst.  t_surf = sst over ocean, but over land and ice
+% it is equal to the surface temperature of land or ice.  this is a problem 
+% for the sst directly under sea ice.  
+%
 % the simple linear regression can be computed as 
 % reg=corrcoef*(standard dev of y/standard dev of x)
+% or the function polyfit can be used from matlab.  They give the same 
+% result
 %
-% input: fin
+% input: fin, fin_ice, fin_sst_ctl, fin_ice_ctl
 %
-% final product: glb_linregs
+% final product: fnout_sst and fnout_ice
 %
-% output files:  mean sst anomaly as a function of grid point and month
-%                mean ice anomaly as a function of grid point and month
-%
-% levi silvers                                        Jan 2016
+% levi silvers                                        Feb 2016
 %----------------------------------------------------------------------------
 % the two files below are from the historical run...
 fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_surf.nc'
@@ -32,12 +37,24 @@ fin_ice_ctl='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo
 % default: control + reg
 
 % output files
-fnout_sst='newsst_preg.nc'
-fnout_ice='newice_preg.nc'
-controlpreg=1; % 0: default (ctl + reg), 1: ctl
+controlpreg=0; % 0: default (ctl + reg), 1: ctl or ctl + 4k
+controlp4k=0; % 0: default ctl, 1: ctl + 4k
 if (controlpreg > 0 ) 
-  fnout_sst='sst_1860_ctl.nc'
-  fnout_ice='ice_1860_ctl.nc'
+  if (controlp4k > 0 ) 
+    'controlp4k gt 0 so that clt+4k are output to sst '
+    'why are you broken?'
+    fnout_sst='sst_1860_ctl_p4k.nc'
+    fnout_ice='ice_1860_ctl_p4k.nc'
+  else
+    'default: controlp4k set to 0 so that ctl case is computed'
+    'controlpreg gt 0 so that clt sst are output'
+    fnout_sst='sst_1860_ctl.nc'
+    fnout_ice='ice_1860_ctl.nc'
+  end
+else
+  'default: controlpreg set to 0 so that clt+reg sst are output'
+  fnout_sst='newsst_preg.nc'
+  fnout_ice='newice_preg.nc'
 end
 
 % read input file
@@ -101,19 +118,6 @@ for ti=1:12;
   v.ice_mnthlymn(ti,:,:)=mean(monarray_ice,1);
 end
 %-------------------------------------------------
-%for ti=1:12;
-%  monarray=v.sst(ti:12:120,:,:);
-%  v.sst_10yrmn(ti,:,:)=mean(monarray,1);
-%end
-%'10yrmn_sea_surf_temp';
-%size(v.sst_10yrmn);
-
-%tempind=0;
-%for i=1:nvar    
-%    tempind;
-%    netcdf.inqVar(ncid,tempind)
-%    tempind=tempind+1;
-%end
 
 %tsurf=netcdf.getVar(ncid,7);
 %'second_sea_surf_temp'
@@ -136,9 +140,6 @@ nlat=180;
 nyr=150;
 nmon=12;
 
-%timeslice=v.sst_full(:,lat,lon); % time series at point
-%timeslicesqueeze=squeeze(timeslice);
-
 % tm1 values are spaced by 12 to mimic 
 % the goal is to grab each instance of each month
 % tm1 -> jan
@@ -156,77 +157,48 @@ corrcoeff2=zeros(nmon,nlat,nlon);
 % compute the std of 'time'
 sigxarr=std(tm1);
 
-%% linregs is computed at a single geographic point
-%%-------------------------------------------------
-%for i=1:1:12
-%    months(i,:)=timeslicesqueeze(i:12:1800);
-%    corcof1=corrcoef(tm1,months(i,:));
-%    tempcorrs(i)=corcof1(2,1);
-%    sigyarr(i)=std(months(i,:));
-%    linregs(i)=tempcorrs(i)*sigyarr(i)/sigxarr;
-%end
-%for i=1:1:12
-%    months(i,:)=timeslicesqueeze(i:12:1800);
-%    corcof=corrcoef(tm1,months(i,:));
-%    tempcorrs(i)=corcof(2,1);
-%    sigyarr(i)=std(months(i,:));
-%    linregs(i)=tempcorrs(i)*sigyarr(i)/sigxarr;
-%end
-%month1=timeslicesqueeze(1:12:1800);
-%tempcorr=corrcoef(tm1,month1);
-%sigy=std(month1);
-%sigx=std(tm1);
-%corrc=tempcorr(2,1);
-%linreg=corrc*sigy/sigx;
-%testreg=251.5+linreg.*tm1;
-%
-%plot(tm1,testreg,tm1,months(1,:),tm1,months(2,:),tm1,months(3,:),tm1,months(4,:),tm1,months(5,:),tm1,months(6,:),tm1,months(7,:),tm1,months(8,:),tm1,months(9,:),tm1,months(10,:),tm1,months(11,:),tm1,months(12,:))
-%
-%%-------------------------------------------------
-%% compute the standard deviation of temp globally, for each month
-%% this is needed for the final reg
-%% uses reg=corcoef*(std y/std x)
-%%-------------------------------------------------
-%for ilon=1:1:nlon
-%  for ilat=1:1:nlat
-%    for imonth=1:1:nmon
-%      corcof2=corrcoef(tm1,v.sst_full(imonth:12:1800,ilat,ilon));
-%      corrcoeff2(imonth,ilat,ilon)=corcof2(2,1);
-%      sigmay2(imonth,ilat,ilon)=std(v.sst_full(imonth:12:1800,ilat,ilon));
-%    end
-%  end
-%end
-%% compute the linear regression at each point, for each month.  
-%% dims: glb_linregs(nlon,nlat,nmon)
-%v.glb_linregs=corrcoeff2.*(sigmay2./sigxarr);
-%%v.sst_1860plusreg=4*150*v.glb_linregs+v.sst_10yrmn;
-%%-------------------------------------------------
-% look at global mean
-%v.sst_linreg0=squeeze(mean(v.glb_linregs,1));
-%v.glb_linregs0=squeeze(mean(v.glb_linregs,1));
-%v.glb_linregs0scale=150*squeeze(mean(v.glb_linregs,1));
-%%-------------------------------------------------
-%% we also need to rearrange the dimensions to be what the model expects
-%%new_glb_linregs=permute(glb_linregs,[3,2,1]);
-%%
 %%-------------------------------------------------
 regarray=zeros(nmon,nlat,nlon);
 regarray_ice=zeros(nmon,nlat,nlon);
-for ilon=1:1:nlon
-  for ilat=1:1:nlat
-    for imonth=1:1:nmon
-      p=polyfit(tm1',squeeze(v.sst_full(imonth:12:1800,ilat,ilon)),1);
-      p2=polyfit(tm1',squeeze(v.ice_full(imonth:12:1800,ilat,ilon)),1);
-      regarray(imonth,ilat,ilon)=p(1);
-      regarray_ice(imonth,ilat,ilon)=p2(1);
+if (controlp4k > 0 )
+'controlp4k gt zero'
+else
+  for ilon=1:1:nlon
+    for ilat=1:1:nlat
+      for imonth=1:1:nmon
+        p=polyfit(tm1',squeeze(v.sst_full(imonth:12:1800,ilat,ilon)),1);
+        p2=polyfit(tm1',squeeze(v.ice_full(imonth:12:1800,ilat,ilon)),1);
+        regarray(imonth,ilat,ilon)=p(1);
+        regarray_ice(imonth,ilat,ilon)=p2(1);
+      end 
     end 
   end 
 end 
-%part_tsurfyr(:,:)=v.sst_full(144,135,:,:);
-%v.sst_1860plusreg=2*150*regarray+v.sst_mnthlymn;
-%v.ice_1860plusreg=2*150*regarray_ice+v.ice_mnthlymn;
 v.sst_1860plusreg=2*150*regarray+v.sst_mnthlymn;
 v.ice_1860plusreg=2*150*regarray_ice+v.ice_mnthlymn;
+if (controlpreg > 0 ) 
+%  if (controlp4k > 0 ) 
+    % 4k should only be added after the sst is qc'ed
+%    'controlp4k gt 0 so that clt+4k are output to sst '
+%  else
+%    'default: controlp4k set to 0 so that ctl case is computed'
+%    'controlpreg gt 0 so that clt sst are output'
+    sst_general=v.sst_mnthlymn;
+    ice_general=v.ice_mnthlymn;
+%  end
+else
+  'default: controlpreg set to 0 so that clt+reg sst are output'
+  regscale=2*150.
+  'regscaled by: '
+  regscale=2*150.
+  sst_general=regscale*regarray+v.sst_mnthlymn;
+  ice_general=regscale*regarray+v.ice_mnthlymn;
+end
+% sanity check, output controlpreg adn controlp4k to check with above mess
+'controlpreg: '
+controlpreg
+'controlp4k: '
+controlp4k
 %-------------------------------------------------
 % check what the global mean value of the regressed pattern is
 % compute the global mean with lat weights
@@ -262,7 +234,8 @@ globmean_ctlpreg=glbsum/glbsumweight
 % -never allow sst to drop below lowbndsst
 % -adjust for cells with partial ice cover
 %-------------------------------------------------
-lowbndsst=271.25 % Kelvin low bound for sst
+%lowbndsst=271.25 % Kelvin low bound for sst
+lowbndsst=273.15 % 0 deg C
 %zeroc=273.15 % Kelvin
 delT=1.9 % app diff btwn 0C & freezing point of sea water
 lowbndice=0.0 % low bound for ice (fraction)
@@ -270,58 +243,51 @@ lowbndice=0.0 % low bound for ice (fraction)
 for ilon=1:1:nlon
   for ilat=1:1:nlat
     for imonth=1:1:nmon
-      if (controlpreg > 0 ) 
-        if (v.ice_mnthlymn(imonth,ilat,ilon) < lowbndice)
-          v.ice_mnthlymn(imonth,ilat,ilon) = lowbndice;
-        end
-      else % default case, ctl + reg
-        if (v.ice_1860plusreg(imonth,ilat,ilon) < lowbndice)
-          v.ice_1860plusreg(imonth,ilat,ilon) = lowbndice;
-        end
+      if (ice_general(imonth,ilat,ilon) < lowbndice)
+        ice_general(imonth,ilat,ilon) = lowbndice;
       end
     end
   end	       
-end
-% account for fractionally ice-covered cells 
-if (controlpreg > 0 ) 
-  v.sst_mnthlymn=v.sst_mnthlymn-delT*v.ice_mnthlymn;
-else
-  v.sst_1860plusreg=v.sst_1860plusreg-delT*v.ice_1860plusreg;
 end
 % deal with sst problems
 for ilon=1:1:nlon
   for ilat=1:1:nlat
     for imonth=1:1:nmon
-      if (controlpreg > 0 ) 
-        if (v.sst_mnthlymn(imonth,ilat,ilon) < lowbndsst)
-          v.sst_mnthlymn(imonth,ilat,ilon) = lowbndsst;
-        end
-      else % default case
-        if (v.sst_1860plusreg(imonth,ilat,ilon) < lowbndsst)
-          v.sst_1860plusreg(imonth,ilat,ilon) = lowbndsst;
-        end
+      if (sst_general(imonth,ilat,ilon) < lowbndsst)
+        sst_general(imonth,ilat,ilon) = lowbndsst;
       end
     end
   end	       
 end
-% should the ice be 1860plusreg or ice_mnthlymn?
-% below should be a possibility but it seems a bit more artificial
-% due to the zeroc term... this seems to matter in regions with 
-% regularly fluctuating ice content...
-%for ilon=1:1:nlon
-%  for ilat=1:1:nlat
-%    for imonth=1:1:nmon
-%      if (v.ice_1860plusreg(imonth,ilat,ilon) > lowbndice)
-%        v.sst_1860plusreg(imonth,ilat,ilon) = zeroc-delT*v.ice_1860plusreg(imonth,ilat,ilon);
-%      end
-%    end
-%  end	       
-%end
-% compute the diff from the masaging
-%sst_diff=v.sst_1860plusregsimple-v.sst_1860plusreg;
-%sst_diff0=squeeze(mean(sst_diff,1));
-%figure; contourf(v.lon,v.lat,sst_diff0);colorbar
-%-------------------------------------------------
+% account for fractionally ice-covered cells 
+% should this go after or before the sst block? i think after
+sst_general=sst_general-delT*ice_general;
+
+% if sst+4k is desired, compute it here
+if (controlpreg > 0 ) 
+  if (controlp4k > 0 ) 
+    'controlp4k gt 0 so that clt+4k are output to sst '
+    sst_general=sst_general+4.;
+    %ice_general=v.ice_mnthlymn;
+  else
+    'default: controlp4k set to 0 so that ctl case is computed'
+    'controlpreg gt 0 so that clt sst are output'
+    %sst_general=v.sst_mnthlymn;
+    %ice_general=v.ice_mnthlymn;
+  end
+else
+  'default: controlpreg set to 0 so that clt+reg sst are output'
+end
+% sanity check, output controlpreg adn controlp4k to check with above mess
+'controlpreg: '
+controlpreg
+'controlp4k: '
+
+%% compute the diff from the masaging
+%%sst_diff=v.sst_1860plusregsimple-v.sst_1860plusreg;
+%%sst_diff0=squeeze(mean(sst_diff,1));
+%%figure; contourf(v.lon,v.lat,sst_diff0);colorbar
+%%-------------------------------------------------
 'global mean of 1860 plus 150x regression after masaging'
 v.sst_1860plusreg0=squeeze(mean(v.sst_1860plusreg,1));
 glbdatareg=v.sst_1860plusreg0.*glblatweight;
@@ -333,21 +299,21 @@ v.sst_1860plusregs0=squeeze(mean(v.sst_1860plusreg,1));
 glbdataregs=v.sst_1860plusregs0.*glblatweight;
 glbsums=sum(glbdataregs(:));
 globmean_ctlpregs=glbsums/glbsumweight
-%-------------------------------------------------
-% create a few figures to see what we are doing
-%v.sst_10yrmn0=squeeze(mean(v.sst_10yrmn,1));
-%figure; contourf(v.lon,v.lat,v.sst_10yrmn0);colorbar;
-figure; contourf(v.lon,v.lat,v.sst_1860ctl0);colorbar
-%v.sst_1860plusreg0=squeeze(mean(v.sst_1860plusreg,1));
-figure; contourf(v.lon,v.lat,v.sst_1860plusreg0);colorbar;
-figure; contourf(v.lon,v.lat,v.sst_1860plusregs0);colorbar;
-% look at the spacial pattern of the regression values....
-regarray_ice_janj=regarray_ice(1,:,:);
-regarray_ice_jan=squeeze(regarray_ice_janj);
-figure; contourf(v.lon,v.lat,regarray_ice_jan);colorbar;
-regarray_sst_janj=regarray(1,:,:);
-regarray_sst_jan=squeeze(regarray_sst_janj);
-figure; contourf(v.lon,v.lat,regarray_sst_jan);colorbar;
+%%%-------------------------------------------------
+%% create a few figures to see what we are doing
+%%v.sst_10yrmn0=squeeze(mean(v.sst_10yrmn,1));
+%%figure; contourf(v.lon,v.lat,v.sst_10yrmn0);colorbar;
+%figure; contourf(v.lon,v.lat,v.sst_1860ctl0);colorbar
+%%v.sst_1860plusreg0=squeeze(mean(v.sst_1860plusreg,1));
+%figure; contourf(v.lon,v.lat,v.sst_1860plusreg0);colorbar;
+%figure; contourf(v.lon,v.lat,v.sst_1860plusregs0);colorbar;
+%% look at the spacial pattern of the regression values....
+%regarray_ice_janj=regarray_ice(1,:,:);
+%regarray_ice_jan=squeeze(regarray_ice_janj);
+%figure; contourf(v.lon,v.lat,regarray_ice_jan);colorbar;
+%regarray_sst_janj=regarray(1,:,:);
+%regarray_sst_jan=squeeze(regarray_sst_janj);
+%figure; contourf(v.lon,v.lat,regarray_sst_jan);colorbar;
 %-------------------------------------------------
 % create a new netcdf file
 nc = netcdf(fnout_sst,'clobber'); 
@@ -364,12 +330,7 @@ nc('lat') = v.nlat;          nc('lon')     = v.nlon;
 nc{'lat'} = ncfloat('lat');  nc{'lat'} (:) = v.lat; 
 nc{'lon'} = ncfloat('lon');  nc{'lon'} (:) = v.lon; 
 
-if (controlpreg > 0 ) 
-  nc{'sst'}=ncfloat('time','lat','lon'); nc{'sst'}(:,:,:)=v.sst_mnthlymn(:,:,:);
-else
-  nc{'sst'}=ncfloat('time','lat','lon'); nc{'sst'}(:,:,:)=v.sst_1860plusreg(:,:,:);
-end
-%nc{'sst'}=ncfloat('time','lat','lon'); nc{'sst'}(:,:,:)=tsurf(:,:,1:12);
+nc{'sst'}=ncfloat('time','lat','lon'); nc{'sst'}(:,:,:)=sst_general(:,:,:);
 %nc{'climatology_bounds'} = ncdouble('time','nv'); 
 %nc{'climatology_bounds'}(:,:)=v.climatology_bounds(:,:);
 nc{'yr'} = ncint('idim'); nc{'yr'}(:)=v.yr;
@@ -433,12 +394,7 @@ nc('lat') = v.nlat;          nc('lon')     = v.nlon;
 nc{'lat'} = ncfloat('lat');  nc{'lat'} (:) = v.lat; 
 nc{'lon'} = ncfloat('lon');  nc{'lon'} (:) = v.lon; 
 
-if (controlpreg > 0 ) 
-  nc{'ice'}=ncfloat('time','lat','lon'); nc{'ice'}(:,:,:)=v.ice_mnthlymn(:,:,:);
-else
-  nc{'ice'}=ncfloat('time','lat','lon'); nc{'ice'}(:,:,:)=v.ice_1860plusreg(:,:,:);
-end
-%nc{'t_surf'}=ncfloat('time','lat','lon'); nc{'t_surf'}(:,:,:)=tsurf(:,:,1:12);
+nc{'ice'}=ncfloat('time','lat','lon'); nc{'ice'}(:,:,:)=ice_general(:,:,:);
 %nc{'climatology_bounds'} = ncdouble('time','nv'); 
 %nc{'climatology_bounds'}(:,:)=v.climatology_bounds(:,:);
 nc{'yr'} = ncint('idim'); nc{'yr'}(:)=v.yr;
