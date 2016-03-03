@@ -26,40 +26,73 @@
 % levi silvers                                        Feb 2016
 %----------------------------------------------------------------------------
 % the two files below are from the historical run...
-fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_surf.nc'
-fin_ice='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.ice_mask.nc'
+%fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_surf.nc'
+%fin_ice='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.ice_mask.nc'
+%lengthmon=1800;
+%tm1=1:150;
+fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g5r11_1860climo_4xCO2/ts_all/atmos.006101-015012_t_surf.nc'
+fin_ice='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g5r11_1860climo_4xCO2/ts_all/atmos.006101-015012_ice_mask.nc'
+lengthmon=1080;
+tm1=1:90;
 % the two files below are from the 1860 control run....
 fin_sst_ctl='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.t_surf.nc'
 fin_ice_ctl='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.ice_mask.nc'
+
+% we also may need the land sea mask...
+fstatic='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/atmos.static.nc'
 
 % the    switch determines if the output sst and ice files will be
 % for the control case, or for the control + reg case.
 % default: control + reg
 
 % output files
-controlpreg=0; % 0: default (ctl + reg), 1: ctl or ctl + 4k
-controlp4k=0; % 0: default ctl, 1: ctl + 4k
-if (controlpreg > 0 ) 
-  if (controlp4k > 0 ) 
-    'controlp4k gt 0 so that clt+4k are output to sst '
-    'why are you broken?'
-    fnout_sst='sst_1860_ctl_p4k.nc'
-    fnout_ice='ice_1860_ctl_p4k.nc'
-  else
-    'default: controlp4k set to 0 so that ctl case is computed'
-    'controlpreg gt 0 so that clt sst are output'
-    fnout_sst='sst_1860_ctl.nc'
-    fnout_ice='ice_1860_ctl.nc'
+%controlpreg=0; % cpreg=0: default (ctl + reg)
+               % cpreg=1: ctl or ctl + 4k
+%controlp4k=0;     % cp4=0: default ctl  
+                  % cp4=1: ctl + 4k
+		  % only compute regression when cpreg=0, cp4k=0
+sst_type=1;    % 0 ctl
+               % 1 ctl+reg only compute regression for this case
+	       % 2 ctl+4k
+%if (controlpreg > 0 ) 
+  %if (controlp4k > 0 ) % cpreg=1,cp4k=1 
+  if (sst_type > 0 & sst_type < 2 ) % 1
+     'sst_type is(1):'
+     sst_type
+     fnout_sst='sst_1860_ctlpreg_4co2.nc'
+     fnout_ice='ice_1860_ctlpreg_4co2.nc'
+  elseif (sst_type > 1) % 2
+     'sst_type is(2):'
+     sst_type
+     fnout_sst='sst_1860_ctl_p4k_land.nc'
+     fnout_ice='ice_1860_ctl_p4k_land.nc'
+  else % default case is the ctl sst from 1860
+     'sst_type is(0):'
+     sst_type
+     fnout_sst='sst_1860_ctl_land.nc'
+     fnout_ice='ice_1860_ctl_land.nc'
   end
-else
-  'default: controlpreg set to 0 so that clt+reg sst are output'
-  fnout_sst='newsst_preg.nc'
-  fnout_ice='newice_preg.nc'
-end
+
+%    'controlp4k gt 0 so that clt+4k are output to sst '
+%    fnout_sst='sst_1860_ctl_p4k_land.nc'
+%    fnout_ice='ice_1860_ctl_p4k_land.nc'
+%  else % cpreg=1,cp4k=0
+%    'default: controlp4k set to 0 so that ctl case is computed'
+%    'controlpreg gt 0 so that clt sst are output'
+%    fnout_sst='sst_1860_ctl_land.nc'
+%    fnout_ice='ice_1860_ctl_land.nc'
+%  end
+%else % cpreg=0,cp4k=0,1
+%  controlp4k=0; %eliminate case of cpreg=0,cp4k=1 as unnecessary
+%  'default: controlpreg set to 0 so that clt+reg sst are output'
+%  fnout_sst='newsst_preg_land.nc'
+%  fnout_ice='newice_preg_land.nc'
+%end
 
 % read input file
 f =netcdf(fin,'nowrite');
 f_ice =netcdf(fin_ice,'nowrite');
+f_static =netcdf(fstatic,'nowrite');
 ncid=netcdf.open(fin,'NC_NOWRITE');
 [ndim,nvar,natt,unlim]=netcdf.inq(ncid);
 %-------------------------------------------------
@@ -74,6 +107,7 @@ v.time=f{'time'}(:); v.nt=length(v.time);
 v.sst =f{'t_surf'} (1:120,:,:); 
 v.sst_full =f{'t_surf'} (:,:,:); 
 v.ice_full =f_ice{'ice_mask'} (:,:,:); 
+v.landmask =f_static{'land_mask'} (:,:);
 v.yr  =f{'yr'} (:);
 v.mo  =f{'mo'} (:);
 v.dy  =f{'dy'} (:);
@@ -145,7 +179,7 @@ nmon=12;
 % tm1 -> jan
 % tm1+1 -> feb etc. 
 %tm1=1:12:length(timeslicesqueeze);
-tm1=1:150;
+%tm1=1:150;
 
 % pre allocate needed arrays
 months=zeros(12,150);
@@ -158,47 +192,50 @@ corrcoeff2=zeros(nmon,nlat,nlon);
 sigxarr=std(tm1);
 
 %%-------------------------------------------------
+lowbndlandmask=.25 % 0 deg C
 regarray=zeros(nmon,nlat,nlon);
 regarray_ice=zeros(nmon,nlat,nlon);
-if (controlp4k > 0 )
-'controlp4k gt zero'
-else
+%if (controlp4k > 0 ) % cpreg=0,1, cp4k = 1
+if (sst_type > 0 & sst_type < 2 )
+%'controlp4k gt zero'
+%else % cpreg=0,1, cp4k = 0
+'computing regression array'
   for ilon=1:1:nlon
     for ilat=1:1:nlat
       for imonth=1:1:nmon
-        p=polyfit(tm1',squeeze(v.sst_full(imonth:12:1800,ilat,ilon)),1);
-        p2=polyfit(tm1',squeeze(v.ice_full(imonth:12:1800,ilat,ilon)),1);
-        regarray(imonth,ilat,ilon)=p(1);
-        regarray_ice(imonth,ilat,ilon)=p2(1);
+        if (v.landmask(ilat,ilon) < lowbndlandmask) % only take points over water
+          p=polyfit(tm1',squeeze(v.sst_full(imonth:12:lengthmon,ilat,ilon)),1);
+          p2=polyfit(tm1',squeeze(v.ice_full(imonth:12:lengthmon,ilat,ilon)),1);
+          regarray(imonth,ilat,ilon)=p(1);
+          regarray_ice(imonth,ilat,ilon)=p2(1);
+        end
       end 
     end 
   end 
 end 
-v.sst_1860plusreg=2*150*regarray+v.sst_mnthlymn;
-v.ice_1860plusreg=2*150*regarray_ice+v.ice_mnthlymn;
-if (controlpreg > 0 ) 
+%v.sst_1860plusreg=2*150*regarray+v.sst_mnthlymn;
+%v.ice_1860plusreg=2*150*regarray_ice+v.ice_mnthlymn;
 %  if (controlp4k > 0 ) 
     % 4k should only be added after the sst is qc'ed
 %    'controlp4k gt 0 so that clt+4k are output to sst '
 %  else
 %    'default: controlp4k set to 0 so that ctl case is computed'
 %    'controlpreg gt 0 so that clt sst are output'
-    sst_general=v.sst_mnthlymn;
-    ice_general=v.ice_mnthlymn;
+sst_general=v.sst_mnthlymn;
+ice_general=v.ice_mnthlymn;
 %  end
-else
-  'default: controlpreg set to 0 so that clt+reg sst are output'
-  regscale=2*150.
+if (sst_type > 0 & sst_type < 2 ) % not necessary, but safer
+%  'default: controlpreg set to 0 so that clt+reg sst are output'
   'regscaled by: '
-  regscale=2*150.
-  sst_general=regscale*regarray+v.sst_mnthlymn;
-  ice_general=regscale*regarray+v.ice_mnthlymn;
+  regscale=150.
+  sst_general=regscale*regarray+sst_general;
+  ice_general=regscale*regarray_ice+ice_general;
 end
 % sanity check, output controlpreg adn controlp4k to check with above mess
-'controlpreg: '
-controlpreg
-'controlp4k: '
-controlp4k
+%'controlpreg: '
+%controlpreg
+%'controlp4k: '
+%controlp4k
 %-------------------------------------------------
 % check what the global mean value of the regressed pattern is
 % compute the global mean with lat weights
@@ -210,23 +247,23 @@ end
 %v.sst_10yrmn0=squeeze(mean(v.sst_10yrmn,1));
 glbsumweight=sum(glblatweight(:));
 
-%glbbasedata=v.sst_10yrmn0.*glblatweight;
-%glbregdata=v.sst_linreg0.*glblatweight;
-%glbregsum=sum(glbregdata(:));
-%globmean1=sum(v.sst_mn0.*A)/glbsumweight
-%v.sst_1860ctl=squeeze(mean(v.sst_1860plusreg,1));
-'global mean of 1860'
-v.sst_1860ctl0=squeeze(mean(v.sst_mnthlymn,1));
-glbdatactl=v.sst_1860ctl0.*glblatweight;
-glbsumctl=sum(glbdatactl(:));
-globmean_ctl=glbsumctl/glbsumweight
-'global mean of 1860 plus 150x regression before masaging'
-v.sst_1860plusreg0=squeeze(mean(v.sst_1860plusreg,1));
-glbdatareg=v.sst_1860plusreg0.*glblatweight;
-glbsum=sum(glbdatareg(:));
-globmean_ctlpreg=glbsum/glbsumweight
-%
-%globregmean1=glbregsum/glbsumweight
+%%glbbasedata=v.sst_10yrmn0.*glblatweight;
+%%glbregdata=v.sst_linreg0.*glblatweight;
+%%glbregsum=sum(glbregdata(:));
+%%globmean1=sum(v.sst_mn0.*A)/glbsumweight
+%%v.sst_1860ctl=squeeze(mean(v.sst_1860plusreg,1));
+%'global mean of 1860'
+%v.sst_1860ctl0=squeeze(mean(v.sst_mnthlymn,1));
+%glbdatactl=v.sst_1860ctl0.*glblatweight;
+%glbsumctl=sum(glbdatactl(:));
+%globmean_ctl=glbsumctl/glbsumweight
+%'global mean of 1860 plus 150x regression before masaging'
+%v.sst_1860plusreg0=squeeze(mean(v.sst_1860plusreg,1));
+%glbdatareg=v.sst_1860plusreg0.*glblatweight;
+%glbsum=sum(glbdatareg(:));
+%globmean_ctlpreg=glbsum/glbsumweight
+%%
+%%globregmean1=glbregsum/glbsumweight
 %-------------------------------------------------
 % because t_surf is not sst over land or ice a bit 
 % of data masaging is necessary....
@@ -239,66 +276,89 @@ lowbndsst=273.15 % 0 deg C
 %zeroc=273.15 % Kelvin
 delT=1.9 % app diff btwn 0C & freezing point of sea water
 lowbndice=0.0 % low bound for ice (fraction)
+upbndice=1.0 % low bound for ice (fraction)
 % deal with ice problems
-for ilon=1:1:nlon
-  for ilat=1:1:nlat
-    for imonth=1:1:nmon
-      if (ice_general(imonth,ilat,ilon) < lowbndice)
-        ice_general(imonth,ilat,ilon) = lowbndice;
+% only necessary for ctl+reg
+if (sst_type > 0 & sst_type < 2 )
+  'sst_type is(1):'
+  for ilon=1:1:nlon
+    for ilat=1:1:nlat
+      for imonth=1:1:nmon
+        if (ice_general(imonth,ilat,ilon) < lowbndice)
+          ice_general(imonth,ilat,ilon) = lowbndice;
+        end
+        if (ice_general(imonth,ilat,ilon) > upbndice)
+          ice_general(imonth,ilat,ilon) = upbndice;
+        end
       end
-    end
-  end	       
+    end	       
+  end
 end
 % deal with sst problems
+'why are you such an ignoramous?'
 for ilon=1:1:nlon
   for ilat=1:1:nlat
-    for imonth=1:1:nmon
-      if (sst_general(imonth,ilat,ilon) < lowbndsst)
-        sst_general(imonth,ilat,ilon) = lowbndsst;
+    if (v.landmask(ilat,ilon) < lowbndlandmask)
+      for imonth=1:1:nmon
+        if (sst_general(imonth,ilat,ilon) < lowbndsst)
+          sst_general(imonth,ilat,ilon) = lowbndsst;
+        end
       end
-    end
-  end	       
+    end	       
+  end
 end
 % account for fractionally ice-covered cells 
 % should this go after or before the sst block? i think after
 sst_general=sst_general-delT*ice_general;
 
 % if sst+4k is desired, compute it here
-if (controlpreg > 0 ) 
-  if (controlp4k > 0 ) 
-    'controlp4k gt 0 so that clt+4k are output to sst '
-    sst_general=sst_general+4.;
-    %ice_general=v.ice_mnthlymn;
-  else
-    'default: controlp4k set to 0 so that ctl case is computed'
-    'controlpreg gt 0 so that clt sst are output'
-    %sst_general=v.sst_mnthlymn;
-    %ice_general=v.ice_mnthlymn;
+if (sst_type > 1)
+  'sst_type is(2):'
+  sst_type
+%if (controlpreg > 0 ) 
+%  if (controlp4k > 0 ) % cpreg =1, cp4k=1 : sst+4k
+%    'controlp4k gt 0 so that clt+4k are output to sst '
+  for ilon=1:1:nlon
+    for ilat=1:1:nlat
+      for imonth=1:1:nmon
+        if (v.landmask(ilat,ilon) < lowbndlandmask) % only take points over water
+          if (ice_general(imonth,ilat,ilon) < 0.25) % ignore regions with sea ice
+            sst_general(imonth,ilat,ilon)=sst_general(imonth,ilat,ilon)+4.;
+          end
+        end
+      end
+    end
   end
-else
-  'default: controlpreg set to 0 so that clt+reg sst are output'
 end
+    %  else % cpreg=1, cp4k=0 : ?
+%    'default: controlp4k set to 0'
+%    'controlpreg gt 0'
+%  end
+%else % cpreg=0, cp4k=?
+  %'default: controlp4k set to 0 so that ctl case is computed'
+%  'default: controlpreg set to 0 so that clt+reg sst are output'
+%end
 % sanity check, output controlpreg adn controlp4k to check with above mess
-'controlpreg: '
-controlpreg
-'controlp4k: '
+%'controlpreg: '
+%controlpreg
+%'controlp4k: '
 
 %% compute the diff from the masaging
 %%sst_diff=v.sst_1860plusregsimple-v.sst_1860plusreg;
 %%sst_diff0=squeeze(mean(sst_diff,1));
 %%figure; contourf(v.lon,v.lat,sst_diff0);colorbar
 %%-------------------------------------------------
-'global mean of 1860 plus 150x regression after masaging'
-v.sst_1860plusreg0=squeeze(mean(v.sst_1860plusreg,1));
-glbdatareg=v.sst_1860plusreg0.*glblatweight;
-glbsum=sum(glbdatareg(:));
-globmean_ctlpreg=glbsum/glbsumweight
-%-------------------------------------------------
-'global mean of simple 1860 plus 150x regression after masaging'
-v.sst_1860plusregs0=squeeze(mean(v.sst_1860plusreg,1));
-glbdataregs=v.sst_1860plusregs0.*glblatweight;
-glbsums=sum(glbdataregs(:));
-globmean_ctlpregs=glbsums/glbsumweight
+%'global mean of 1860 plus 150x regression after masaging'
+%v.sst_1860plusreg0=squeeze(mean(v.sst_1860plusreg,1));
+%glbdatareg=v.sst_1860plusreg0.*glblatweight;
+%glbsum=sum(glbdatareg(:));
+%globmean_ctlpreg=glbsum/glbsumweight
+%%-------------------------------------------------
+%'global mean of simple 1860 plus 150x regression after masaging'
+%v.sst_1860plusregs0=squeeze(mean(v.sst_1860plusreg,1));
+%glbdataregs=v.sst_1860plusregs0.*glblatweight;
+%glbsums=sum(glbdataregs(:));
+%globmean_ctlpregs=glbsums/glbsumweight
 %%%-------------------------------------------------
 %% create a few figures to see what we are doing
 %%v.sst_10yrmn0=squeeze(mean(v.sst_10yrmn,1));
