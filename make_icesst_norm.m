@@ -50,28 +50,37 @@ fstatic='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/atm
 % for the control case and ctl + reg, or for the control case and ctl +4k.
 % default: control + reg
 
+% switch to allow for output files from specific historical period
+hist=0;    % 0 default, no 'special' output
+           % 1 instead of ctl file output data from specific historical period
+
 % output files
-sst_type=1;    % 0  output ctl and ctl + reg files
+sst_type=0;    % 0  output ctl and ctl + reg files
                % 1  output ctl and ctl + 4k files
   if (sst_type > 0 ) % 1
      'sst_type is(1):'
      sst_type
-     %fnout_sst='sst_1860_ctl.nc'
-     %fnout_ice='ice_1860_ctl.nc'
-     fnout_sst='sst_last30.nc'
-     fnout_ice='ice_1860_ctlnot.nc'
-     fnout_sst_pert='sst_1860_ctl_p4knot.nc'
-     fnout_ice_pert='ice_1860_ctl_p4knot.nc'
+     fnout_sst='sst_1860_ctl.nc'
+     fnout_ice='ice_1860_ctl.nc'
+     fnout_sst_pert='sst_1860_ctl_p4k.nc'
+     fnout_ice_pert='ice_1860_ctl_p4k.nc'
   else % default case is the ctl sst from 1860
      'sst_type is(0):'
      sst_type
      fnout_sst='sst_1860_ctl.nc'
      fnout_ice='ice_1860_ctl.nc'
-     fnout_sst_pert='sst_1860_ctl_preg2.nc'
-     fnout_ice_pert='ice_1860_ctl_preg2.nc'
+     fnout_sst_pert='sst_1860_ctl_preg.nc'
+     fnout_ice_pert='ice_1860_ctl_preg.nc'
   end
 
-% read input file
+  if (hist > 0 ) % 1
+     'hist is(1):'
+     hist
+     fnout_sst='sst_last30.nc'
+     fnout_ice='ice_1860_ctlnot.nc'
+  end
+	  
+  % read input file
 f =netcdf(fin,'nowrite');
 f_ice =netcdf(fin_ice,'nowrite');
 f_static =netcdf(fstatic,'nowrite');
@@ -109,8 +118,7 @@ v.average_T2=[49354 49385 49413 49444 49474 49505 ...
 v.average_DT=[9125 9125 9125 9125 9125 9125 9125 9125 9125 9125 9125 9125];
 %-------------------------------------------------
 %-------------------------------------------------
-%close(f);
-%close(f_ice);
+
 %%-------------------------------------------------
 %% read input file for control data
 %%-------------------------------------------------
@@ -121,19 +129,26 @@ f_ice_ctl =netcdf(fin_ice_ctl,'nowrite');
 
 v.lon=f_sst_ctl{'lon'}(:); v.lat =f_sst_ctl{'lat'}(:);
 v.nlon=length(v.lon); v.nlat=length(v.lat); v.ngrid=v.nlat*v.nlon;
-%tstart=720; % exclude the first 60 years (720)
-%lengthmon_ctl=1679; % 1679-720=960 about 80 years
-tstart=1440; % exclude the first 60 years (720)
-lengthmon_ctl=1800; % 1679-720=960 about 80 years
-tint=lengthmon_ctl-tstart+1;
-%v.sst_full_ctl =f_sst_ctl{'t_surf'} (tstart:lengthmon_ctl,:,:); 
-%v.ice_full_ctl =f_ice_ctl{'ice_mask'} (tstart:lengthmon_ctl,:,:); 
-% temp hack for writing out periods of historical run
-v.sst_full_ctl =f{'t_surf'} (tstart:lengthmon_ctl,:,:); 
-v.ice_full_ctl =f_ice{'ice_mask'} (tstart:lengthmon_ctl,:,:); 
 
-close(f);
-close(f_ice);
+if (hist < 1 ) % 0 default
+  close(f);
+  close(f_ice);
+  tstart=720; % exclude the first 60 years (720)
+  lengthmon_ctl=1679; % 1679-720=960 about 80 years
+  tint=lengthmon_ctl-tstart+1;
+  v.sst_full_ctl =f_sst_ctl{'t_surf'} (tstart:lengthmon_ctl,:,:); 
+  v.ice_full_ctl =f_ice_ctl{'ice_mask'} (tstart:lengthmon_ctl,:,:); 
+else
+  tstart=1440;  
+  lengthmon_ctl=1800;  
+  tint=lengthmon_ctl-tstart+1;
+  % write out specific periods of historical run
+  v.sst_full_ctl =f{'t_surf'} (tstart:lengthmon_ctl,:,:); 
+  v.ice_full_ctl =f_ice{'ice_mask'} (tstart:lengthmon_ctl,:,:); 
+  close(f);
+  close(f_ice);
+end
+
 close(f_sst_ctl);
 close(f_ice_ctl);
 
@@ -211,9 +226,6 @@ end
 %-------------------------------------------------
 %-------------------------------------------------
 
-% plot some figures
-%figure; contourf(v.lon,v.lat,squeeze(reg_v_mnsst(1,:,:)));colorbar;
-%
 sst_general=v.sst_mnthlymn;
 ice_general=v.ice_mnthlymn;
 %-------------------------------------------------
@@ -302,57 +314,6 @@ end
 %-------------------------------------------------
 %-------------------------------------------------
 
-%%-------------------------------------------------
-%% Quality Control
-%%-------------------------------------------------
-%% because t_surf is not sst over land or ice a bit 
-%% of data masaging is necessary....
-%% -never allow negative sea ice fractions
-%% -never allow sst to drop below lowbndsst
-%% -adjust for cells with partial ice cover
-%%-------------------------------------------------
-%%lowbndsst=271.25 % Kelvin low bound for sst
-%lowbndsst=273.15; % 0 deg C
-%%zeroc=273.15 % Kelvin
-%delT=1.9; % app diff btwn 0C & freezing point of sea water
-%lowbndice=0.0; % low bound for ice (fraction)
-%upbndice=1.0; % upper bound for ice (fraction)
-%% deal with ice problems
-%% only necessary for ctl+reg
-%if (sst_type < 1)
-%  'sst_type is(0):'
-%  for ilon=1:1:nlon
-%    for ilat=1:1:nlat
-%      for imonth=1:1:nmon
-%        if (ice_general_pert(imonth,ilat,ilon) < lowbndice)
-%          ice_general_pert(imonth,ilat,ilon) = lowbndice;
-%        end
-%        if (ice_general_pert(imonth,ilat,ilon) > upbndice)
-%          ice_general_pert(imonth,ilat,ilon) = upbndice;
-%        end
-%      end
-%    end	       
-%  end
-%  % deal with sst problems
-%  'why are you always such an ignoramous?'
-%  for ilon=1:1:nlon
-%    for ilat=1:1:nlat
-%      if (v.landmask(ilat,ilon) < lowbndlandmask)
-%        for imonth=1:1:nmon
-%          if (sst_general_pert(imonth,ilat,ilon) < lowbndsst)
-%            sst_general_pert(imonth,ilat,ilon) = lowbndsst;
-%          end
-%        end
-%      end	       
-%    end
-%  end
-%  % account for fractionally ice-covered cells 
-%  % should this go after or before the sst block? i think after
-%  sst_general_pert=sst_general_pert-delT*ice_general_pert;
-%end
-%%-------------------------------------------------
-%%-------------------------------------------------
-
 %-------------------------------------------------
 % if sst+4k is desired, compute it here
 % we want to use plus 4k as the sst pattern which 
@@ -439,37 +400,34 @@ end
 %-------------------------------------------------
 % Do Quality Control 1x more time 
 %-------------------------------------------------
-  %if (sst_type < 1)
-    'sst_type is(0):'
-    for ilon=1:1:nlon
-      for ilat=1:1:nlat
-        for imonth=1:1:nmon
-          if (ice_general_pert(imonth,ilat,ilon) < lowbndice)
-            ice_general_pert(imonth,ilat,ilon) = lowbndice;
-          end
-          if (ice_general_pert(imonth,ilat,ilon) > upbndice)
-            ice_general_pert(imonth,ilat,ilon) = upbndice;
-          end
-        end
-      end	       
-    end
-    % deal with sst problems
-    'why are you always such an ignoramous?'
-    for ilon=1:1:nlon
-      for ilat=1:1:nlat
-        if (v.landmask(ilat,ilon) < lowbndlandmask)
-          for imonth=1:1:nmon
-            if (sst_general_pert(imonth,ilat,ilon) < lowbndsst)
-              sst_general_pert(imonth,ilat,ilon) = lowbndsst;
-            end
-          end
-        end	       
+for ilon=1:1:nlon
+  for ilat=1:1:nlat
+    for imonth=1:1:nmon
+      if (ice_general_pert(imonth,ilat,ilon) < lowbndice)
+        ice_general_pert(imonth,ilat,ilon) = lowbndice;
+      end
+      if (ice_general_pert(imonth,ilat,ilon) > upbndice)
+        ice_general_pert(imonth,ilat,ilon) = upbndice;
       end
     end
-    % account for fractionally ice-covered cells 
-    % should this go after or before the sst block? i think after
-    sst_general_pert=sst_general_pert-delT*ice_general_pert;
-  %end
+  end	       
+end
+% deal with sst problems
+'why are you always such an ignoramous?'
+for ilon=1:1:nlon
+  for ilat=1:1:nlat
+    if (v.landmask(ilat,ilon) < lowbndlandmask)
+      for imonth=1:1:nmon
+        if (sst_general_pert(imonth,ilat,ilon) < lowbndsst)
+          sst_general_pert(imonth,ilat,ilon) = lowbndsst;
+        end
+      end
+    end	       
+  end
+end
+% account for fractionally ice-covered cells 
+% should this go after or before the sst block? i think after
+sst_general_pert=sst_general_pert-delT*ice_general_pert;
 %%-------------------------------------------------
 %%-------------------------------------------------
 
@@ -505,17 +463,15 @@ end
 %regarray_sst_jan=squeeze(regarray_sst_janj);
 %figure; contourf(v.lon,v.lat,regarray_sst_jan);colorbar;
 %-------------------------------------------------
-%temporary!!!!
-%'why are you always such an ignoramous?'
-for ilon=1:1:nlon
-  for ilat=1:1:nlat
-    if (v.landmask(ilat,ilon) > lowbndlandmask)
-      for imonth=1:1:nmon
-        %if (sst_general(imonth,ilat,ilon) < lowbndsst)
+if (hist > 0 ) % 1: we only care about sst not land
+  for ilon=1:1:nlon
+    for ilat=1:1:nlat
+      if (v.landmask(ilat,ilon) > lowbndlandmask)
+        for imonth=1:1:nmon
           sst_general(imonth,ilat,ilon) = 290.;
-        %end
-      end
-    end	       
+        end
+      end	       
+    end
   end
 end
 
@@ -651,127 +607,129 @@ close(nc);
 
 'finished second nc file'
 
-% create a new netcdf file
-% this is just for the reg array
-nc = netcdf(fnout_sst_pert,'clobber'); 
-if isempty(nc) error('NetCDF File Not Opened.'); end
-nc.Conventions = 'CF-1.0';
-nc.title = 'regression pattern of warming';
-nc.institution = 'GFDL' ;
-nc.source      = 'HadISST';
-nc.history     = 'created on 01/03/2016' ;
+if (hist < 1 ) % 0
 
-nc('time')  = 0; nc('nv')  = 2; nc('idim') = 12; 
-nc{'time'}  = ncdouble('time'); nc{'time'}(1:v.nt) = v.time(:); 
-nc('lat') = v.nlat;          nc('lon')     = v.nlon;
-nc{'lat'} = ncfloat('lat');  nc{'lat'} (:) = v.lat; 
-nc{'lon'} = ncfloat('lon');  nc{'lon'} (:) = v.lon; 
-
-nc{'sst'}=ncfloat('time','lat','lon'); nc{'sst'}(:,:,:)=sst_general_pert(:,:,:);
-nc{'yr'} = ncint('idim'); nc{'yr'}(:)=v.yr;
-nc{'mo'} = ncint('idim'); nc{'mo'}(:)=v.mo;
-nc{'dy'} = ncint('idim'); nc{'dy'}(:)=v.dy;
-nc{'average_T1'} = ncdouble('time'); nc{'average_T1'}(:)=v.average_T1;
-nc{'average_T2'} = ncdouble('time'); nc{'average_T2'}(:)=v.average_T2;
-nc{'average_DT'} = ncdouble('time'); nc{'average_DT'}(:)=v.average_DT;
-nc{'nrecords'} = ncint();  nc{'nrecords'}(:)=12;
-
-nc{'time'}.long_name     ='Time';      
-nc{'time'}.standard_name ='time';
-nc{'time'}.calendar      ='gregorian';
-nc{'time'}.units         ='days since 1869-12-1 00:00:00';      
-nc{'time'}.delta_t       ='0000-00-01 00:00:00';      
-nc{'time'}.modulo        =' ';      
-
-nc{'lat'}.standard_name  = 'latitude' ;    nc{'lat'}.units  = 'degrees_north' ;
-nc{'lon'}.standard_name  = 'longitude';    nc{'lon'}.units  = 'degrees_east' ;
-
-nc{'yr'}.long_name    ='year';      
-nc{'mo'}.long_name    ='month';      
-nc{'dy'}.long_name    ='day';      
-
-nc{'sst'}.long_name     ='linear reg values';
-nc{'sst'}.standard_name ='reg';
-nc{'sst'}.units         ='degK per yr';      
-nc{'sst'}.add_offset    = 0.e0;
-nc{'sst'}.scale_factor  = 1.e0;
-nc{'sst'}.FillValue_    =-1.e+30;
-nc{'sst'}.missing_value =-1.e+30;
-nc{'sst'}.description   ='reg pattern from 150 yr historical run';
-nc{'sst'}.cell_methods  ='time: lat: lon: mean within months time: mean over years';
-nc{'sst'}.time_avg_info ='average_T1,average_T2,average_DT';
-
-nc{'average_T1'}.long_name ='Start time for average period';
-nc{'average_T1'}.units     ='days since 1869-12-1 00:00:00';      
-
-nc{'average_T2'}.long_name ='End time for average period';
-nc{'average_T2'}.units     ='days since 1869-12-1 00:00:00';      
-
-nc{'average_DT'}.long_name ='Length of average period';
-nc{'average_DT'}.units     ='days';      
-
-close(nc); 
-
-'finished third nc file'
-
-% create a new netcdf file
-% this is just for the reg array
-nc = netcdf(fnout_ice_pert,'clobber'); 
-if isempty(nc) error('NetCDF File Not Opened.'); end
-nc.Conventions = 'CF-1.0';
-nc.title = 'regression pattern of warming';
-nc.institution = 'GFDL' ;
-nc.source      = 'HadISST';
-nc.history     = 'created on 01/03/2016' ;
-
-nc('time')  = 0; nc('nv')  = 2; nc('idim') = 12; 
-nc{'time'}  = ncdouble('time'); nc{'time'}(1:v.nt) = v.time(:); 
-nc('lat') = v.nlat;          nc('lon')     = v.nlon;
-nc{'lat'} = ncfloat('lat');  nc{'lat'} (:) = v.lat; 
-nc{'lon'} = ncfloat('lon');  nc{'lon'} (:) = v.lon; 
-
-nc{'ice'}=ncfloat('time','lat','lon'); nc{'ice'}(:,:,:)=ice_general_pert(:,:,:);
-nc{'yr'} = ncint('idim'); nc{'yr'}(:)=v.yr;
-nc{'mo'} = ncint('idim'); nc{'mo'}(:)=v.mo;
-nc{'dy'} = ncint('idim'); nc{'dy'}(:)=v.dy;
-nc{'average_T1'} = ncdouble('time'); nc{'average_T1'}(:)=v.average_T1;
-nc{'average_T2'} = ncdouble('time'); nc{'average_T2'}(:)=v.average_T2;
-nc{'average_DT'} = ncdouble('time'); nc{'average_DT'}(:)=v.average_DT;
-nc{'nrecords'} = ncint();  nc{'nrecords'}(:)=12;
-
-nc{'time'}.long_name     ='Time';      
-nc{'time'}.standard_name ='time';
-nc{'time'}.calendar      ='gregorian';
-nc{'time'}.units         ='days since 1869-12-1 00:00:00';      
-nc{'time'}.delta_t       ='0000-00-01 00:00:00';      
-nc{'time'}.modulo        =' ';      
-
-nc{'lat'}.standard_name  = 'latitude' ;    nc{'lat'}.units  = 'degrees_north' ;
-nc{'lon'}.standard_name  = 'longitude';    nc{'lon'}.units  = 'degrees_east' ;
-
-nc{'yr'}.long_name    ='year';      
-nc{'mo'}.long_name    ='month';      
-nc{'dy'}.long_name    ='day';      
-
-nc{'ice'}.long_name     ='linear reg values for sea ice';
-nc{'ice'}.standard_name ='reg';
-nc{'ice'}.units         ='percent change per yr';      
-nc{'ice'}.add_offset    = 0.e0;
-nc{'ice'}.scale_factor  = 1.e0;
-nc{'ice'}.FillValue_    =-1.e+30;
-nc{'ice'}.missing_value =-1.e+30;
-nc{'ice'}.description   ='reg pattern of sea ice from 150 yr historical run';
-nc{'ice'}.cell_methods  ='time: lat: lon: mean within months time: mean over years';
-nc{'ice'}.time_avg_info ='average_T1,average_T2,average_DT';
-
-nc{'average_T1'}.long_name ='Start time for average period';
-nc{'average_T1'}.units     ='days since 1869-12-1 00:00:00';      
-
-nc{'average_T2'}.long_name ='End time for average period';
-nc{'average_T2'}.units     ='days since 1869-12-1 00:00:00';      
-
-nc{'average_DT'}.long_name ='Length of average period';
-nc{'average_DT'}.units     ='days';      
-
-close(nc); 
+  % create a new netcdf file
+  nc = netcdf(fnout_sst_pert,'clobber'); 
+  if isempty(nc) error('NetCDF File Not Opened.'); end
+  nc.Conventions = 'CF-1.0';
+  nc.title = 'regression pattern of warming';
+  nc.institution = 'GFDL' ;
+  nc.source      = 'HadISST';
+  nc.history     = 'created on 01/03/2016' ;
+  
+  nc('time')  = 0; nc('nv')  = 2; nc('idim') = 12; 
+  nc{'time'}  = ncdouble('time'); nc{'time'}(1:v.nt) = v.time(:); 
+  nc('lat') = v.nlat;          nc('lon')     = v.nlon;
+  nc{'lat'} = ncfloat('lat');  nc{'lat'} (:) = v.lat; 
+  nc{'lon'} = ncfloat('lon');  nc{'lon'} (:) = v.lon; 
+  
+  nc{'sst'}=ncfloat('time','lat','lon'); nc{'sst'}(:,:,:)=sst_general_pert(:,:,:);
+  nc{'yr'} = ncint('idim'); nc{'yr'}(:)=v.yr;
+  nc{'mo'} = ncint('idim'); nc{'mo'}(:)=v.mo;
+  nc{'dy'} = ncint('idim'); nc{'dy'}(:)=v.dy;
+  nc{'average_T1'} = ncdouble('time'); nc{'average_T1'}(:)=v.average_T1;
+  nc{'average_T2'} = ncdouble('time'); nc{'average_T2'}(:)=v.average_T2;
+  nc{'average_DT'} = ncdouble('time'); nc{'average_DT'}(:)=v.average_DT;
+  nc{'nrecords'} = ncint();  nc{'nrecords'}(:)=12;
+  
+  nc{'time'}.long_name     ='Time';      
+  nc{'time'}.standard_name ='time';
+  nc{'time'}.calendar      ='gregorian';
+  nc{'time'}.units         ='days since 1869-12-1 00:00:00';      
+  nc{'time'}.delta_t       ='0000-00-01 00:00:00';      
+  nc{'time'}.modulo        =' ';      
+  
+  nc{'lat'}.standard_name  = 'latitude' ;    nc{'lat'}.units  = 'degrees_north' ;
+  nc{'lon'}.standard_name  = 'longitude';    nc{'lon'}.units  = 'degrees_east' ;
+  
+  nc{'yr'}.long_name    ='year';      
+  nc{'mo'}.long_name    ='month';      
+  nc{'dy'}.long_name    ='day';      
+  
+  nc{'sst'}.long_name     ='linear reg values';
+  nc{'sst'}.standard_name ='reg';
+  nc{'sst'}.units         ='degK per yr';      
+  nc{'sst'}.add_offset    = 0.e0;
+  nc{'sst'}.scale_factor  = 1.e0;
+  nc{'sst'}.FillValue_    =-1.e+30;
+  nc{'sst'}.missing_value =-1.e+30;
+  nc{'sst'}.description   ='reg pattern from 150 yr historical run';
+  nc{'sst'}.cell_methods  ='time: lat: lon: mean within months time: mean over years';
+  nc{'sst'}.time_avg_info ='average_T1,average_T2,average_DT';
+  
+  nc{'average_T1'}.long_name ='Start time for average period';
+  nc{'average_T1'}.units     ='days since 1869-12-1 00:00:00';      
+  
+  nc{'average_T2'}.long_name ='End time for average period';
+  nc{'average_T2'}.units     ='days since 1869-12-1 00:00:00';      
+  
+  nc{'average_DT'}.long_name ='Length of average period';
+  nc{'average_DT'}.units     ='days';      
+  
+  close(nc); 
+  
+  'finished third nc file'
+  
+  % create a new netcdf file
+  % this is just for the reg array
+  nc = netcdf(fnout_ice_pert,'clobber'); 
+  if isempty(nc) error('NetCDF File Not Opened.'); end
+  nc.Conventions = 'CF-1.0';
+  nc.title = 'regression pattern of warming';
+  nc.institution = 'GFDL' ;
+  nc.source      = 'HadISST';
+  nc.history     = 'created on 01/03/2016' ;
+  
+  nc('time')  = 0; nc('nv')  = 2; nc('idim') = 12; 
+  nc{'time'}  = ncdouble('time'); nc{'time'}(1:v.nt) = v.time(:); 
+  nc('lat') = v.nlat;          nc('lon')     = v.nlon;
+  nc{'lat'} = ncfloat('lat');  nc{'lat'} (:) = v.lat; 
+  nc{'lon'} = ncfloat('lon');  nc{'lon'} (:) = v.lon; 
+  
+  nc{'ice'}=ncfloat('time','lat','lon'); nc{'ice'}(:,:,:)=ice_general_pert(:,:,:);
+  nc{'yr'} = ncint('idim'); nc{'yr'}(:)=v.yr;
+  nc{'mo'} = ncint('idim'); nc{'mo'}(:)=v.mo;
+  nc{'dy'} = ncint('idim'); nc{'dy'}(:)=v.dy;
+  nc{'average_T1'} = ncdouble('time'); nc{'average_T1'}(:)=v.average_T1;
+  nc{'average_T2'} = ncdouble('time'); nc{'average_T2'}(:)=v.average_T2;
+  nc{'average_DT'} = ncdouble('time'); nc{'average_DT'}(:)=v.average_DT;
+  nc{'nrecords'} = ncint();  nc{'nrecords'}(:)=12;
+  
+  nc{'time'}.long_name     ='Time';      
+  nc{'time'}.standard_name ='time';
+  nc{'time'}.calendar      ='gregorian';
+  nc{'time'}.units         ='days since 1869-12-1 00:00:00';      
+  nc{'time'}.delta_t       ='0000-00-01 00:00:00';      
+  nc{'time'}.modulo        =' ';      
+  
+  nc{'lat'}.standard_name  = 'latitude' ;    nc{'lat'}.units  = 'degrees_north' ;
+  nc{'lon'}.standard_name  = 'longitude';    nc{'lon'}.units  = 'degrees_east' ;
+  
+  nc{'yr'}.long_name    ='year';      
+  nc{'mo'}.long_name    ='month';      
+  nc{'dy'}.long_name    ='day';      
+  
+  nc{'ice'}.long_name     ='linear reg values for sea ice';
+  nc{'ice'}.standard_name ='reg';
+  nc{'ice'}.units         ='percent change per yr';      
+  nc{'ice'}.add_offset    = 0.e0;
+  nc{'ice'}.scale_factor  = 1.e0;
+  nc{'ice'}.FillValue_    =-1.e+30;
+  nc{'ice'}.missing_value =-1.e+30;
+  nc{'ice'}.description   ='reg pattern of sea ice from 150 yr historical run';
+  nc{'ice'}.cell_methods  ='time: lat: lon: mean within months time: mean over years';
+  nc{'ice'}.time_avg_info ='average_T1,average_T2,average_DT';
+  
+  nc{'average_T1'}.long_name ='Start time for average period';
+  nc{'average_T1'}.units     ='days since 1869-12-1 00:00:00';      
+  
+  nc{'average_T2'}.long_name ='End time for average period';
+  nc{'average_T2'}.units     ='days since 1869-12-1 00:00:00';      
+  
+  nc{'average_DT'}.long_name ='Length of average period';
+  nc{'average_DT'}.units     ='days';      
+  
+  close(nc); 
+end
 
