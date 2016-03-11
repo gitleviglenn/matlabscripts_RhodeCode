@@ -3,6 +3,16 @@
 %
 % read in data from a historical and control run.  plot several manifistations
 % of the data.  
+% 
+% compute a simple linear regression of the data
+%
+% compute a running mean
+%
+% there are two ways of computing the temperature trend via regression.
+% one way results in a reg coeff in [K/yr]
+% another way results in a reg coeff in [K/K]
+%
+% it is not clear to me which should be used
 %
 % we want to generate T_i, del(T_i), bar(T), and del(bar(T))
 % where i is the geographic location, bar is a global mean, and del is the 
@@ -11,12 +21,14 @@
 % levi silvers                                        Feb 2016
 %----------------------------------------------------------------------------
 % the two files below are from the historical run...
-fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_surf.nc'
+%fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_surf.nc'
 fin_tref='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_ref.nc'
-fin_ice='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.ice_mask.nc'
+%fin_ice='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.ice_mask.nc'
 %% the two files below are from the 1860 control run....
 %fin_sst_ctl='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.t_surf.nc'
 %fin_ice_ctl='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.ice_mask.nc'
+fin='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.t_surf.nc'
+fin_ice='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.ice_mask.nc'
 
 % read input file
 % note the historical file has 1800 time steps, the ctl has 1680
@@ -130,8 +142,9 @@ onelat=144;
 tref_location_ts=v.tref_full(:,onelat,onelat);
 v.tref_location=tref_location_ts;
 %%-------------------------------------------------
-% compute del(T)
 % compute T'
+% compute temperature perturbations at each point
+% from global mean temper
 for ilon=1:1:v.nlon
   for ilat=1:1:v.nlat
     for ti=1:tend
@@ -141,6 +154,7 @@ for ilon=1:1:v.nlon
 end
 %%-------------------------------------------------
 % compute del(bar(T))
+% I am not sure what this is good for... 
 for ti=2:tend
   v.del_sst_mn_ts(ti)=v.sst_mn_ts(ti)-v.sst_mn_ts(ti-1);
 end
@@ -152,7 +166,7 @@ for ilon=1:1:v.nlon
   for ilat=1:1:v.nlat
     %p3=polyfit(v.del_sst_mn_ts',squeeze(v.del_sst_full(:,ilat,ilon)),1);
     p3=polyfit(v.sst_mn_ts',squeeze(v.sst_prime(:,ilat,ilon)),1);
-    regarray(ilat,ilon)=p3(1);
+    regarray(ilat,ilon)=p3(1); %[K/K]
   end
 end
 %%-------------------------------------------------
@@ -161,8 +175,8 @@ for ilon=1:1:v.nlon
   for ilat=1:1:v.nlat
     for imonth=1:1:nmon
       %p4=polyfit(v.del_sst_mn_ts(imonth:12:1800)',squeeze(v.sst_full(imonth:12:1800,ilat,ilon)),1);
-      p4=polyfit(v.sst_mn_ts(imonth:12:1800)',squeeze(v.sst_prime(imonth:12:1800,ilat,ilon)),1);
-      regarray_mn(imonth,ilat,ilon)=p4(1);
+      p4=polyfit(v.sst_mn_ts(imonth:12:tend)',squeeze(v.sst_prime(imonth:12:tend,ilat,ilon)),1);
+      regarray_mn(imonth,ilat,ilon)=p4(1); %[K/K]
     end 
   end 
 end 
@@ -233,3 +247,6 @@ hold all
 p2=plot(sm_sst_ts)
 ylabel('glb mn sst')
 set(p2,'Color','red','Linewidth',1)
+%%----------------------------------
+% plot a contour figur of the regression pattern
+figure; contourf(v.lon,v.lat,squeeze(regarray_mn(10,:,:)));colorbar;
