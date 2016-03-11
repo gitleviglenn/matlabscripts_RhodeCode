@@ -69,7 +69,7 @@ sst_type=0;    % 0  output ctl and ctl + reg files
      sst_type
      fnout_sst='sst_1860_ctl.nc'
      fnout_ice='ice_1860_ctl.nc'
-     fnout_sst_pert='sst_1860_ctl_preg.nc'
+     fnout_sst_pert='sst_1860_ctl_preg_noicech.nc'
      fnout_ice_pert='ice_1860_ctl_preg.nc'
   end
 
@@ -226,6 +226,7 @@ end
 %-------------------------------------------------
 %-------------------------------------------------
 
+% these are the control data
 sst_general=v.sst_mnthlymn;
 ice_general=v.ice_mnthlymn;
 %-------------------------------------------------
@@ -256,13 +257,13 @@ if (sst_type < 1)
           if (sst_general(imonth,ilat,ilon) < lowbndsst)
             sst_general(imonth,ilat,ilon) = lowbndsst;
           end
+          if (v.sst_full(imonth:12:lengthmon,ilat,ilon) < lowbndsst)
+            v.sst_full(imonth:12:lengthmon,ilat,ilon) = lowbndsst;
+          end
         end
       end	       
     end
   end
-  % account for fractionally ice-covered cells 
-  % should this go after or before the sst block? i think after
-  %sst_general=sst_general-delT*ice_general_pert;
 end
 %-------------------------------------------------
 %-------------------------------------------------
@@ -307,7 +308,7 @@ if (sst_type < 1)
 %  ice_general_pert=regscaletemp*regarray_ice+ice_general;
   %sst_reg_vmnsst=regscaletemp*reg_v_mnsst+sst_general;
 %
-  %regarray=regscale*regarray;
+  regarray=regscale*regarray;
   %regarray_ice=regscale*regarray_ice; 
   %sst_reg_vs_mnsst=regscaletemp*reg_v_mnsst;
 end
@@ -380,13 +381,13 @@ end
 %     end
 %     arrayx(ti,:,:)=scalerarray;
 %   end
-  % now apply the scaling to one data set and check 
-  % if the mean of both is now the same
-  %
-  % scaled_sst is the final, normalized sst pattern
-  % that has the same global mean as the reference 
-  % sst data set.
-  %scaled_sst=arrayx.*sst_general_pert;
+% now apply the scaling to one data set and check 
+% if the mean of both is now the same
+%
+% scaled_sst is the final, normalized sst pattern
+% that has the same global mean as the reference 
+% sst data set.
+%scaled_sst=arrayx.*sst_general_pert;
 %   sst_general_pert=arrayx.*sst_general_pert;
 %   for ti=1:nmon; 
 %     sst_temp=sst_general_pert(ti,:,:);
@@ -425,9 +426,10 @@ for ilon=1:1:nlon
     end	       
   end
 end
+% the sst under sea ice is below 273.15
 % account for fractionally ice-covered cells 
-% should this go after or before the sst block? i think after
-sst_general_pert=sst_general_pert-delT*ice_general_pert;
+% TEMPORARY
+%sst_general_pert=sst_general_pert-delT*ice_general_pert;
 %%-------------------------------------------------
 %%-------------------------------------------------
 
