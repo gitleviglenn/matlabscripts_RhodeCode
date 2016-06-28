@@ -11,9 +11,14 @@
 % levi silvers                                        Feb 2016
 %----------------------------------------------------------------------------
 % the two files below are from the historical run...
-fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_surf.nc'
-fin_tref='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_ref.nc'
-fin_ice='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.ice_mask.nc'
+%fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_surf.nc'
+%fin_tref='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.t_ref.nc'
+%fin_ice='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g6_1860climo_hist0/ts_all/atmos.186101-201012.ice_mask.nc'
+
+% the two files below are from the 1860 control run....
+fin='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.t_surf.nc'
+fin_tref='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.t_ref.nc'
+fin_ice='/archive/Ming.Zhao/awgom2/ulm_201505/AM4OM2F_c96l32_am4g6_1860climo/ts_all/atmos.000101-014012.ice_mask.nc'
 
 % read input file
 % note the historical file has 1800 time steps, the ctl has 1680
@@ -24,7 +29,8 @@ ncid=netcdf.open(fin,'NC_NOWRITE');
 [ndim,nvar,natt,unlim]=netcdf.inq(ncid);
 %-------------------------------------------------
 % set up a structure(v) to hold info related to variables
-tend=1800;
+%tend=1800;
+tend=1680;
 nmon=12;
 v.lon=f{'lon'}(:); v.lat =f{'lat'}(:);
 v.nlon=length(v.lon); v.nlat=length(v.lat); v.ngrid=v.nlat*v.nlon;

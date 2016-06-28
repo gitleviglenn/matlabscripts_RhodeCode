@@ -17,9 +17,9 @@
 % levi silvers                                        Apr 2016
 %------------------------------------------------------------------------------------------
 
-dirMing='/archive/Ming.Zhao/awglg/ulm/';
-%dirMing='/archive/Ming.Zhao/awg/ulm/';
-dirLevi='/archive/Levi.Silvers/';
+%dirMing='/archive/Ming.Zhao/awglg/ulm/'; % directory for AM4OM2
+dirMing='/archive/Ming.Zhao/awg/ulm/'; % directory for CM2.1
+dirLevi='/archive/Levi.Silvers/awg/ulm_201505/';
 basedir=dirMing;
 
 %% Cess type experiments
@@ -28,56 +28,143 @@ basedir=dirMing;
 %expyrs1='ts_all/atmos.000201-001112.';
 %expyrs2='ts_all/atmos.000201-001112.';
 
-%% 1pct increase in CO2 experiment and control
-%% for AM4 model: 
-exp1name='AM4OM2F_c96l32_am4g5r11_2000climo_1pct/ts_all/';
-exp2name='AM4OM2F_c96l32_am4g5r11_2000climo/ts_all/';
-expyrs1='atmos.006101-014012.';
-expyrs2='atmos.000101-014012.';
-modelname='Model: AM4OM2'
-lengthyr=80; % length of time series in years
-%latinc=30;
-%sonic=1:latinc:180;
-% it is possible to have time series of two different lengths
-% depending on how the output from the forced vs control run was saved...
-iend=960;
-iend2=1680;
-% endt is the end index for the time series that have been computed
-% with a running mean of +/- 6 months so it is 13 months shorter
-endt=947; % needs to be iend -1 year and one month
-
-%% for CM2 model: 
-%exp1name='CM2.1U-D4_1PctTo2X_I1/ts_all/';
-%exp2name='CM2.1U_Control-1990_E1/ts_all/';
-%expyrs1='atmos.000101-010012.';
-%expyrs2='atmos.000101-010012.';
-%modelname='Model: CM2'
-%% for time series 100 years in length:
-%lengthyr=100;
-%iend=1200;
-%iend2=1200; % istart2=iend2-iend+1; 
+%%% 1pct increase in CO2 experiment and control
+%%% for AM4 model: 
+%exp1name='AM4OM2F_c96l32_am4g5r11_2000climo_1pct/ts_all/';
+%exp2name='AM4OM2F_c96l32_am4g5r11_2000climo/ts_all/';
+%expyrs1='atmos.006101-014012.';
+%expyrs2='atmos.000101-014012.';
+%modelname='Model: AM4OM2'
+%lengthyr=80; % length of time series in years
+%%latinc=30;
+%%sonic=1:latinc:180;
+%% it is possible to have time series of two different lengths
+%% depending on how the output from the forced vs control run was saved...
+%iend=960;
+%iend2=1680;
 %% endt is the end index for the time series that have been computed
 %% with a running mean of +/- 6 months so it is 13 months shorter
-%endt=1187;
-%%istart2=iend2-iend+1;
-%%latinc=15;
-%%sonic=1:latinc:90;
+%endt=947; % needs to be iend -1 year and one month
 
-% abrupt 4XCO2 forcing
+%% for CM2 model: 
+exp1name='CM2.1U-D4_1PctTo2X_I1/ts_all/';
+%exp2name='CM2.1U_Control-1990_E1/ts_all/';
+exp2name='CM2.1U_Control-1860_D4/ts_all/';
+expyrs1='atmos.000101-010012.';
+expyrs2='atmos.000101-010012.';
+modelname='Model: CM2'
+% for time series 100 years in length:
+lengthyr=100;
+iend=1200;
+iend2=1200; % istart2=iend2-iend+1; 
+% endt is the end index for the time series that have been computed
+% with a running mean of +/- 6 months so it is 13 months shorter
+endt=1187;
+%istart2=iend2-iend+1;
+%latinc=15;
+%sonic=1:latinc:90;
+%
+exp1=strcat(basedir,exp1name);
+exp2=strcat(basedir,exp2name);
+%
+%%% ------------------
+%% use below for coupled experiments
+%% pstart and pend define the period over which the feedbacks are computed
+pstart=720;
+%pend=1200;
+pend=960;
+iarr=[1 120 240 480 720 960];
+%% end coupled block
+%%
+
+%% abrupt 4XCO2 forcing
 %exp1name='AM4OM2F_c96l32_am4g5r11_1860climo_4xCO2/ts_all/';
 %expyrs1='atmos.006101-015012.';
 
-exp1=strcat(basedir,exp1name);
-exp2=strcat(basedir,exp2name);
+%%%% from ctl+sst pattern experiments
+%%%----- Beginning of block for reg+pattern experiments
+%%
+%%x1name='c96L32_am4g6_1860climo_ctlpreg_1per_co2_weaker/';
+%%modelname='Model: AM4 1860 sst patt 1Pcnt 80yrscale'
+%modelname='Model: AM4 2000 sst patt 1Pcnt'
+%x1name='c96L32_am4g6_2000climo_ctlpreg_1per_co2/';
+%%modelname='Model: AM4 2000 sst patt 1Pcnt'
+%%x1name='c96L32_am4g6_1860climo_ctlpreg_4co2/';
+%%modelname='Model: AM4 sst patt 4XCO2'
+%%x1name='c96L32_am4g6_1860climo_ctl_cess/';
+%%modelname='Model: AM4 sst patt p2K'
+%x2name='c96L32_am4g6_2000climo_ctl/';
+%%x2name='c96L32_am4g6_1860climo_ctl/';
+%addpath='gfdl.ncrc3-intel-prod-openmp/pp/atmos/ts/monthly/5yr/';
+%years='000201-002112.';
+%lengthyr=20; % length of time series in years
+%%% it is possible to have time series of two different lengths
+%%% depending on how the output from the forced vs control run was saved...
+%iend=240;
+%iend2=240;
+%%% endt is the end index for the time series that have been computed
+%%% with a running mean of +/- 6 months so it is 13 months shorter
+%endt=227; % needs to be iend -1 year and one month
+%
+%% use below for reg + pattern experiments
+%% pstart and pend define the period over which the feedbacks are computed
+%pstart=1;
+%pend=239;
+%iarr=[1 10 60 120 180 240];
+%%%%----- End of block for reg+pattern experiments
 
-%fin_sst='/archive/cjg/mdt/cm3/ipcc_ar5/input/common/sst.climo.1981-2000.data.nc'
-%fin='/archive/Ming.Zhao/awglg/ulm/c96L32_am4g5r11_2000climo_p2K/ts_all/atmos.000201-001112.t_surf.nc'
+%%%% use below for Ming's cess experiment
+%%% Beginning of block for Ming's cess experiment
+%basedir='/archive/Ming.Zhao/awglg/ulm/'
+%modelname='Model: c96L32_am4g5r11_2000climo_p2K'
+%x1name='c96L32_am4g5r11_2000climo_p2K/';
+%x2name='c96L32_am4g5r11_2000climo/';
+%addpath='/ts_all/';
+%years='000201-001112.';
+%%
+%lengthyr=10; % length of time series in years
+%%% it is possible to have time series of two different lengths
+%%% depending on how the output from the forced vs control run was saved...
+%iend=120;
+%iend2=120;
+%%% endt is the end index for the time series that have been computed
+%%% with a running mean of +/- 6 months so it is 13 months shorter
+%endt=107; % needs to be iend -1 year and one month
+%%
+%% use below for reg + pattern experiments
+%%% pstart and pend define the period over which the feedbacks are computed
+%pstart=1;
+%pend=119;
+%iarr=[1 10 60 80 100 120];
+%%%% end of block for Ming's cess experiment
+%
+%% below is needed both for my experiments and for Ming's cess experiment
+%atm='atmos.';
+%expyrs1=strcat(atm,years); 
+%expyrs2=strcat(atm,years); 
+%
+%exp1name=strcat(x1name,addpath,expyrs1);
+%exp2name=strcat(x2name,addpath,expyrs2);
+%exp1=strcat(basedir,x1name,addpath);
+%exp2=strcat(basedir,x2name,addpath);
+%
+%%% end sst pattern block
+%%
+
+%------------------------------------------------------------------------------------------
+%%fin_sst='/archive/cjg/mdt/cm3/ipcc_ar5/input/common/sst.climo.1981-2000.data.nc'
+%%fin='/archive/Ming.Zhao/awglg/ulm/c96L32_am4g5r11_2000climo_p2K/ts_all/atmos.000201-001112.t_surf.nc'
 base1=strcat(exp1,expyrs1);
 base2=strcat(exp2,expyrs2);
-
+%
 %compute a time in months: 
 timeindex=0:0.0833:lengthyr-1;
+istart=1;
 istart2=iend2-iend+1;
+%
+%%
+landm='/archive/Ming.Zhao/awg/ulm/CM2.1U-D4_1PctTo2X_I1/gfdl.ncrc2-intel-prod-openmp/pp/atmos_scalar/atmos_scalar.static.nc'
+fland=netcdf(landm,'nowrite');
 %------------------------------------------------------------------------------------------
 
 var1='t_surf.nc';
@@ -96,19 +183,10 @@ v.latweight=cos(pi/180*v.lat);
 v.xs0=1; v.xe0=v.nlon;
 v.ys0=1; v.ye0=v.nlat;
 v.time=f{'time'}(:); v.nt=length(v.time);
-istart=1;
-%iend=960;
-%iend2=1680;
-%iend=1200;
-%iend2=1200;
-%istart2=iend2-iend+1;
 v.sst =f{'t_surf'}(istart:iend,:,:); 
 v.sst2 =f2{'t_surf'}(istart2:iend2,:,:); 
+v.landm = fland{'land_mask'}(:,:);
 tend=iend-istart;
-%tstart=600;
-%tend=1299;
-%tint=tend-tstart+1;
-%v.sst_full =f{'SST'} (tstart:tend,:,:); 
 v.yr  =f{'yr'} (:);
 v.mo  =f{'mo'} (:);
 v.dy  =f{'dy'} (:);
@@ -146,10 +224,10 @@ for index=1:v.nlon-1;
 end
 glbsumweight=sum(glblatweight(:));
 %------------------------------------------------------------------------------------------
-startan=1;
-endan=60;
+%startan=1;
+%endan=59;
 in_var=v.sst;
-wgt_var=zeros(tend,v.nlat,v.nlon);
+%wgt_var=zeros(tend,v.nlat,v.nlon);
 for ti=1:tend;
   temp_var      = in_var(ti,:,:);
   wgt_var       = squeeze(temp_var).*glblatweight;
@@ -157,19 +235,20 @@ for ti=1:tend;
 end
 v.sst_mn_ts=out_var;
 in_var=v.sst2;
-wgt_var=zeros(tend,v.nlat,v.nlon);
+%wgt_var=zeros(tend,v.nlat,v.nlon);
 for ti=1:tend;
   temp_var      = in_var(ti,:,:);
   wgt_var       = squeeze(temp_var).*glblatweight;
   out_var(ti) = sum(wgt_var(:))/glbsumweight;
 end
 v.sst_mn_ts2=out_var;
-% compute the anomaly
-v.sst2=v.sst2-mean(v.sst_mn_ts2,2);
-v.sst=v.sst-mean(v.sst_mn_ts(startan:endan),2);
+%% compute the anomaly
+%v.sst2=v.sst2-mean(v.sst_mn_ts2,2);
+%v.sst=v.sst-mean(v.sst_mn_ts(startan:endan),2);
 %------------------------------------------------------------------------------------------
 
 var2='swdn_toa.nc';
+%var2='olr.nc';
 fin=strcat(base1,var2);
 fin2=strcat(base2,var2);
 
@@ -179,6 +258,8 @@ f2 =netcdf(fin2,'nowrite');
 ncid=netcdf.open(fin,'NC_NOWRITE');
 v.swdn_toa =f{'swdn_toa'}(istart:iend,:,:); 
 v.swdn_toa2 =f2{'swdn_toa'}(istart2:iend2,:,:); 
+%v.swdn_toa =f{'olr'}(istart:iend,:,:); 
+%v.swdn_toa2 =f2{'olr'}(istart2:iend2,:,:); 
 close(f);
 close(f2);
 %
@@ -198,9 +279,9 @@ for ti=1:tend;
   out_var(ti) = sum(wgt_var(:))/glbsumweight;
 end
 v.swdn_toa2_mn_ts=out_var;
-% compute the anomaly
-v.swdn_toa2=v.swdn_toa2-mean(v.swdn_toa2_mn_ts,2);
-v.swdn_toa=v.swdn_toa-mean(v.swdn_toa_mn_ts(startan:endan),2);
+%% compute the anomaly
+%v.swdn_toa2=v.swdn_toa2-mean(v.swdn_toa2_mn_ts,2);
+%v.swdn_toa=v.swdn_toa-mean(v.swdn_toa_mn_ts,2);
 %------------------------------------------------------------------------------------------
 var3='swup_toa.nc';
 fin=strcat(base1,var3);
@@ -231,9 +312,9 @@ for ti=1:tend;
   out_var(ti) = sum(wgt_var(:))/glbsumweight;
 end
 v.swup_toa2_mn_ts=out_var;
-% compute the anomaly
-v.swup_toa2=v.swup_toa2-mean(v.swup_toa2_mn_ts,2);
-v.swup_toa=v.swup_toa-mean(v.swup_toa_mn_ts,2);
+%% compute the anomaly
+%v.swup_toa2=v.swup_toa2-mean(v.swup_toa2_mn_ts,2);
+%v.swup_toa=v.swup_toa-mean(v.swup_toa_mn_ts,2);
 %------------------------------------------------------------------------------------------
 var4='swup_toa_clr.nc';
 fin=strcat(base1,var4);
@@ -264,9 +345,9 @@ for ti=1:tend;
   out_var(ti) = sum(wgt_var(:))/glbsumweight;
 end
 v.swup_clr2_mn_ts=out_var;
-% compute the anomaly
-v.swup2_clr=v.swup2_clr-mean(v.swup_clr2_mn_ts,2);
-v.swup_clr=v.swup_clr-mean(v.swup_clr_mn_ts,2);
+%% compute the anomaly
+%v.swup2_clr=v.swup2_clr-mean(v.swup_clr2_mn_ts,2);
+%v.swup_clr=v.swup_clr-mean(v.swup_clr_mn_ts,2);
 %------------------------------------------------------------------------------------------
 var5='swdn_toa_clr.nc';
 fin=strcat(base1,var5);
@@ -297,9 +378,9 @@ for ti=1:tend;
   out_var(ti) = sum(wgt_var(:))/glbsumweight;
 end
 v.swdn_clr2_mn_ts=out_var;
-% compute the anomaly
-v.swdn2_clr=v.swdn2_clr-mean(v.swdn_clr2_mn_ts,2);
-v.swdn_clr=v.swdn_clr-mean(v.swdn_clr_mn_ts,2);
+%% compute the anomaly
+%v.swdn2_clr=v.swdn2_clr-mean(v.swdn_clr2_mn_ts,2);
+%v.swdn_clr=v.swdn_clr-mean(v.swdn_clr_mn_ts,2);
 %------------------------------------------------------------------------------------------
 var6='olr.nc';
 fin=strcat(base1,var6);
@@ -330,9 +411,9 @@ for ti=1:tend;
   out_var(ti) = sum(wgt_var(:))/glbsumweight;
 end
 v.olr2_mn_ts=out_var;
-% compute the anomaly
-v.olr2=v.olr2-mean(v.olr2_mn_ts,2);
-v.olr=v.olr-mean(v.olr_mn_ts,2);
+%% compute the anomaly
+%v.olr2=v.olr2-mean(v.olr2_mn_ts,2);
+%v.olr=v.olr-mean(v.olr_mn_ts,2);
 %------------------------------------------------------------------------------------------
 var7='olr_clr.nc';
 fin=strcat(base1,var7);
@@ -363,10 +444,39 @@ for ti=1:tend;
   out_var(ti) = sum(wgt_var(:))/glbsumweight;
 end
 v.olr_clr2_mn_ts=out_var;
-% compute the anomaly
-v.olr2_clr=v.olr2_clr-mean(v.olr_clr2_mn_ts,2);
-v.olr_clr=v.olr_clr-mean(v.olr_clr_mn_ts,2);
+%% compute the anomaly
+%v.olr2_clr=v.olr2_clr-mean(v.olr_clr2_mn_ts,2);
+%v.olr_clr=v.olr_clr-mean(v.olr_clr_mn_ts,2);
 
+%------------------------------------------------------------------------------------------
+var8='precip.nc';
+fin=strcat(base1,var8);
+fin2=strcat(base2,var8);
+
+% read input file
+f =netcdf(fin,'nowrite');
+f2 =netcdf(fin2,'nowrite');
+ncid=netcdf.open(fin,'NC_NOWRITE');
+v.precip =f{'precip'}(istart:iend,:,:); 
+v.precip2=f2{'precip'}(istart2:iend2,:,:); 
+close(f);
+close(f2);
+
+%% compute the anomalies
+%v.sst2=v.sst2-mean(v.sst_mn_ts2,2);
+%v.sst=v.sst-mean(v.sst_mn_ts(startan:endan),2);
+%v.swup_toa2=v.swup_toa2-mean(v.swup_toa2_mn_ts,2);
+%v.swup_toa=v.swup_toa-mean(v.swup_toa_mn_ts,2);
+%v.swup2_clr=v.swup2_clr-mean(v.swup_clr2_mn_ts,2);
+%v.swup_clr=v.swup_clr-mean(v.swup_clr_mn_ts,2);
+%v.swdn_toa2=v.swdn_toa2-mean(v.swdn_toa2_mn_ts,2);
+%v.swdn_toa=v.swdn_toa-mean(v.swdn_toa_mn_ts,2);
+%v.swdn2_clr=v.swdn2_clr-mean(v.swdn_clr2_mn_ts,2);
+%v.swdn_clr=v.swdn_clr-mean(v.swdn_clr_mn_ts,2);
+%v.olr2=v.olr2-mean(v.olr2_mn_ts,2);
+%v.olr=v.olr-mean(v.olr_mn_ts,2);
+%v.olr2_clr=v.olr2_clr-mean(v.olr_clr2_mn_ts,2);
+%v.olr_clr=v.olr_clr-mean(v.olr_clr_mn_ts,2);
 %-----------------------------------------------------------------------------------------
 % compute radiative budget
 % feedbacks should be computed with exp1-exp2, and positive values should lead to warming
@@ -377,6 +487,26 @@ v.radflux2=v.swdn_toa2-v.olr2-v.swup_toa2;
 toa_net_fdbck=v.radflux-v.radflux2;
 olr_fdbck=v.olr-v.olr2;
 sw_fdbck=v.swdn_toa-v.swup_toa-v.swdn_toa2+v.swup_toa2;
+
+% compute global mean radiative imbalance
+in_var=v.radflux;
+in_var2=v.radflux2;
+%wgt_var=zeros(tend,v.nlat,v.nlon);
+for ti=1:tend;
+  temp_var      = in_var(ti,:,:);
+  temp_var2      = in_var2(ti,:,:);
+  wgt_var       = squeeze(temp_var).*glblatweight;
+  wgt_var2       = squeeze(temp_var2).*glblatweight;
+  out_var(ti) = sum(wgt_var(:))/glbsumweight;
+  out_var2(ti) = sum(wgt_var2(:))/glbsumweight;
+end
+v.radflux_mn_ts=out_var;
+v.radflux2_mn_ts=out_var2;
+toa_net_fdbck_mn_ts=v.radflux_mn_ts-v.radflux2_mn_ts;
+%
+mean_radflux=mean(v.radflux_mn_ts);
+mean_radflux2=mean(v.radflux2_mn_ts);
+radimb=mean_radflux-mean_radflux2
 
 v.radflux_tmn=mean(v.radflux,1);
 v.radflux2_tmn=mean(v.radflux2,1);
@@ -411,35 +541,17 @@ tempdiff_full=v.sst-v.sst2;  % forced minus control
 tempdiff=mean(tempdiff_full,1); % take the time mean
 tempdiff_zmn=mean(tempdiff,3); % take the zonal mean
 
-tempdiff_fulla = mean(tempdiff_full(1:240,:,:),1);
+tempdiff_fulla = mean(tempdiff_full(iarr(1):iarr(3),:,:),1);
 tempdiffa_zmn=mean(tempdiff_fulla,3); % take the zonal mean
-tempdiff_fullb = mean(tempdiff_full(240:480,:,:),1);
+tempdiff_fullb = mean(tempdiff_full(iarr(3):iarr(4),:,:),1);
 tempdiffb_zmn=mean(tempdiff_fullb,3); % take the zonal mean
-tempdiff_fullc = mean(tempdiff_full(480:720,:,:),1);
+tempdiff_fullc = mean(tempdiff_full(iarr(4):iarr(5),:,:),1);
 tempdiffc_zmn=mean(tempdiff_fullc,3); % take the zonal mean
-tempdiff_fulld = mean(tempdiff_full(720:960,:,:),1);
+tempdiff_fulld = mean(tempdiff_full(iarr(5):iarr(6),:,:),1);
 tempdiffd_zmn=mean(tempdiff_fulld,3); % take the zonal mean
 
-tempdiff_first10 = mean(tempdiff_full(1:120,:,:),1);
-tempdiff_60t70 = mean(tempdiff_full(720:840,:,:),1);
 %-----------------------------------------------------%
-% compute global mean temp diff
-%-----------------------------------------------------%
-in_var=tempdiff_full; % in  : v.sst 
-% out : out_var
-wgt_var=zeros(tend,v.nlat,v.nlon);
-for ti=1:tend;
-  temp_var      = in_var(ti,:,:);
-  wgt_var       = squeeze(temp_var).*glblatweight;
-  out_var(ti) = sum(wgt_var(:))/glbsumweight;
-end
-% save global mean time series in v
-%-----------------------------------------------------%
-glb_mn_delt=out_var;
-
-pstart=899;
-pend=960;
-%
+% select the time section to be analyzized
 toa_f_part=toa_net_fdbck(pstart:pend,:,:);
 toa_fdbck_part_mn=mean(toa_f_part,1);
 toa_fdbck_part_zmn=mean(toa_fdbck_part_mn,3);
@@ -472,26 +584,47 @@ sw_cre_f_part=sw_cre_fdbck(pstart:pend,:,:);
 sw_cre_fdbck_part_mn=mean(sw_cre_f_part,1);
 sw_cre_fdbck_part_zmn=mean(sw_cre_fdbck_part_mn,3);
 
+%-----------------------------------------------------%
+% compute global mean temp diff
+%-----------------------------------------------------%
+in_var=tempdiff_full; % in  : v.sst 
+wgt_var=zeros(tend,v.nlat,v.nlon);
+for ti=1:tend;
+  temp_var      = in_var(ti,:,:);
+  wgt_var       = squeeze(temp_var).*glblatweight;
+  out_var(ti) = sum(wgt_var(:))/glbsumweight;
+end
+glb_mn_delt=out_var;
 %%------------------------------------------------------------------------------------------
 %
 %Normalize the feedbacks...
-% glb_mn_delt is global mean temp diff time series
-%normfac=mean(glb_mn_delt(pstart-1:pend-1));
-%global_tempdiff=tempdiff_fulld-tempdiff_fulla;
-global_tempdiff=tempdiff_60t70-tempdiff_first10;
-% compute the lat weighted global mean temp change
-wgt_var       = squeeze(global_tempdiff).*glblatweight;
-mn_sfc_temp_ch   = sum(wgt_var(:))/glbsumweight;
 % plot one map of normalized by mn_sfc_temp_ch and one normalized
 % with the sfc_temp change at every grid point
+% glb_mn_delt is global mean temp diff time series
+%normfac=mean(glb_mn_delt(pstart-1:pend-1));
+% 
+%% COUPLED MODEL EXPERIMENTS 
+global_tempdiff_end=v.sst_mn_ts(pstart:pend-1)-v.sst_mn_ts2(pstart:pend-1);
+mn_sfc_temp_ch=mean(global_tempdiff_end)
+normfac=mn_sfc_temp_ch; % this is the global mean temp difference 
+%% old way of normalizing
+%tempdiff_first10 = mean(tempdiff_full(1:120,:,:),1);
+%tempdiff_60t70 = mean(tempdiff_full(720:840,:,:),1);
+%global_tempdiff=tempdiff_60t70-tempdiff_first10;
+% compute the lat weighted global mean temp change
+%wgt_var       = squeeze(global_tempdiff).*glblatweight;
+%mn_sfc_temp_ch   = sum(wgt_var(:))/glbsumweight;
 %
-% for the zonal mean plots
-%norm_tempdiff=mean(tempdiff_full(pstart:pend,:,:),1);
-norm_tempdiff_zmn=mean(global_tempdiff,3);
+%normfac=mn_sfc_temp_ch; % this is the global mean temp difference 
+%%normfaclocal=global_tempdiff; % this is the global mean change
+%norm_tempdiff_zmn=mean(global_tempdiff,3);
 %
-%normfac=mean(tempdiff_full(pstart:pend,:,:),1);
-normfac=mn_sfc_temp_ch;
-normfaclocal=global_tempdiff;
+%%%% CLIMATOLOGY PLUS SST PATTERN 
+%%%% this is simpler than the coupled runs because we shouldn't have to deal with drift
+%normfac=mean(v.sst_mn_ts)-mean(v.sst_mn_ts2);
+%normfaclocal=tempdiff;
+%norm_tempdiff_zmn=mean(tempdiff,3);
+%
 % normalized by global mean tsfc diff
 toa_fdbck_gnorm=toa_fdbck_part_mn./normfac;
 olr_fdbck_gnorm=olr_fdbck_part_mn./normfac;
@@ -501,78 +634,108 @@ sw_clr_fdbck_gnorm=sw_clr_fdbck_part_mn./normfac;
 toa_cre_fdbck_gnorm=toa_cre_fdbck_part_mn./normfac;
 olr_cre_fdbck_gnorm=olr_cre_fdbck_part_mn./normfac;
 sw_cre_fdbck_gnorm=sw_cre_fdbck_part_mn./normfac;
-% normalized by local mean tsfc diff
-toa_fdbck_lnorm=toa_fdbck_part_mn./normfaclocal;
-olr_fdbck_lnorm=olr_fdbck_part_mn./normfaclocal;
-sw_fdbck_lnorm=sw_fdbck_part_mn./normfaclocal;
-lw_clr_fdbck_lnorm=lw_clr_fdbck_part_mn./normfaclocal;
-sw_clr_fdbck_lnorm=sw_clr_fdbck_part_mn./normfaclocal;
-toa_cre_fdbck_lnorm=toa_cre_fdbck_part_mn./normfaclocal;
-olr_cre_fdbck_lnorm=olr_cre_fdbck_part_mn./normfaclocal;
-sw_cre_fdbck_lnorm=sw_cre_fdbck_part_mn./normfaclocal;
-% normalize the zonal means....
-toa_fdbck_part_zmn_norm=toa_fdbck_part_zmn./norm_tempdiff_zmn;
-olr_fdbck_part_zmn_norm=olr_fdbck_part_zmn./norm_tempdiff_zmn;
-sw_fdbck_part_zmn_norm=sw_fdbck_part_zmn./norm_tempdiff_zmn;
-lw_clr_fdbck_part_zmn_norm=lw_clr_fdbck_part_zmn./norm_tempdiff_zmn;
-sw_clr_fdbck_part_zmn_norm=sw_clr_fdbck_part_zmn./norm_tempdiff_zmn;
-toa_cre_fdbck_part_zmn_norm=toa_cre_fdbck_part_zmn./norm_tempdiff_zmn;
-olr_cre_fdbck_part_zmn_norm=olr_cre_fdbck_part_zmn./norm_tempdiff_zmn;
-sw_cre_fdbck_part_zmn_norm=sw_cre_fdbck_part_zmn./norm_tempdiff_zmn;
+%% normalized by local mean tsfc diff
+%toa_fdbck_lnorm=toa_fdbck_part_mn./normfaclocal;
+%olr_fdbck_lnorm=olr_fdbck_part_mn./normfaclocal;
+%sw_fdbck_lnorm=sw_fdbck_part_mn./normfaclocal;
+%lw_clr_fdbck_lnorm=lw_clr_fdbck_part_mn./normfaclocal;
+%sw_clr_fdbck_lnorm=sw_clr_fdbck_part_mn./normfaclocal;
+%toa_cre_fdbck_lnorm=toa_cre_fdbck_part_mn./normfaclocal;
+%olr_cre_fdbck_lnorm=olr_cre_fdbck_part_mn./normfaclocal;
+%sw_cre_fdbck_lnorm=sw_cre_fdbck_part_mn./normfaclocal;
+%% normalize the zonal means....
+%toa_fdbck_part_zmn_norm=toa_fdbck_part_zmn./norm_tempdiff_zmn;
+%olr_fdbck_part_zmn_norm=olr_fdbck_part_zmn./norm_tempdiff_zmn;
+%sw_fdbck_part_zmn_norm=sw_fdbck_part_zmn./norm_tempdiff_zmn;
+%lw_clr_fdbck_part_zmn_norm=lw_clr_fdbck_part_zmn./norm_tempdiff_zmn;
+%sw_clr_fdbck_part_zmn_norm=sw_clr_fdbck_part_zmn./norm_tempdiff_zmn;
+%toa_cre_fdbck_part_zmn_norm=toa_cre_fdbck_part_zmn./norm_tempdiff_zmn;
+%olr_cre_fdbck_part_zmn_norm=olr_cre_fdbck_part_zmn./norm_tempdiff_zmn;
+%sw_cre_fdbck_part_zmn_norm=sw_cre_fdbck_part_zmn./norm_tempdiff_zmn;
+
+%%------------------------------------------------------------------------------------------
+% compute the global mean values of the fields to be plotted
+in_var=tempdiff_full; % in  : v.sst 
+%toa_fdbck_gnorm=
+wgt_var=zeros(tend,v.nlat,v.nlon);
+%for ti=1:tend;
+  wgt_var1       = squeeze(toa_fdbck_gnorm(1,:,:)).*glblatweight;
+  wgt_var2       = squeeze(olr_fdbck_gnorm(1,:,:)).*glblatweight;
+  wgt_var3       = squeeze(sw_fdbck_gnorm(1,:,:)).*glblatweight;
+  wgt_var4       = squeeze(lw_clr_fdbck_gnorm(1,:,:)).*glblatweight;
+  wgt_var5       = squeeze(sw_clr_fdbck_gnorm(1,:,:)).*glblatweight;
+  wgt_var6       = squeeze(toa_cre_fdbck_gnorm(1,:,:)).*glblatweight;
+  wgt_var7       = squeeze(olr_cre_fdbck_gnorm(1,:,:)).*glblatweight;
+  wgt_var8       = squeeze(sw_cre_fdbck_gnorm(1,:,:)).*glblatweight;
+  gmn_toa_fdbck_gnorm = sum(wgt_var1(:))/glbsumweight
+  gmn_olr_fdbck_gnorm = sum(wgt_var2(:))/glbsumweight
+  gmn_sw_fdbck_gnorm = sum(wgt_var3(:))/glbsumweight
+  gmn_lw_clr_fdbck_gnorm = sum(wgt_var4(:))/glbsumweight
+  gmn_sw_clr_fdbck_gnorm = sum(wgt_var5(:))/glbsumweight
+  gmn_toa_cre_fdbck_gnorm = sum(wgt_var6(:))/glbsumweight
+  gmn_olr_cre_fdbck_gnorm = sum(wgt_var7(:))/glbsumweight
+  gmn_sw_cre_fdbck_gnorm = sum(wgt_var8(:))/glbsumweight
+%end
+%glb_mn_delt=out_var;
+%%------------------------------------------------------------------------------------------
 %%------------------------------------------------------------------------------------------
 % Figures
 %------------------------------------------------------------------------------------------
-%figure; plot(sin(pi*v.lat'/180.),fdbck_lat);
-%figure; plot(v.lat',toa_feedback_zmn);
-%title('zmn toa feedbck')
-figure; plot(v.lat',tempdiff_zmn,v.lat',tempdiffa_zmn,v.lat',tempdiffb_zmn,v.lat',tempdiffc_zmn,v.lat',tempdiffd_zmn);
-title('tempdiff zonal mean')
-legend('time mean','years 0-20','years 20-40','years 40-60','years 60-80','boxoff','Location','northwest')
-annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
-%figure; contourf(yrmn,[-1,0,1,2,3,4]); colorbar;
-figure; contourf(squeeze(v.radflux_tmn(1,:,:))); colorbar;
-annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
-% define the periods of interest
-figure;
-periods=[1 20 30 40];
-% create a panneled plot of for different stages of the tmp evolution
-%tempdiff_fulla = mean(tempdiff_full(1:240,:,:),1); first 20 yrs
-%tempdiff_fullb = mean(tempdiff_full(240:480,:,:),1); year 20-40
-%tempdiff_fullc = mean(tempdiff_full(480:720,:,:),1); years 40-60
-%tempdiff_fulld = mean(tempdiff_full(720:960,:,:),1); years 60-80
-
-pplot(1)=subplot(2,2,1);
-contourf(squeeze(tempdiff_fulla),[-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4]);
-title('years 0-20')
-pplot(2)=subplot(2,2,2);
-contourf(squeeze(tempdiff_fullb),[-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4]);
-title('years 20-40')
-pplot(3)=subplot(2,2,3);
-contourf(squeeze(tempdiff_fullc),[-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4]);
-title('years 40-60')
-pplot(4)=subplot(2,2,4);
-contourf(squeeze(tempdiff_fulld),[-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4]);
-title('years 60-80')
-%cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
-cmap2=[.6 .6 1;.9 .9 1;1 .9 .9;1 .7 .7;1 .6 .6;1 .5 .5;1 .4 .4 ;1 .3 .3;1 .1 .1 ;1 0 0 ];
-%cmap2=[.6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 .2 .2 ;1 0 0 ];
-colormap(cmap2(1:10,:))
-
-h=colorbar('SouthOutside');
-set(h, 'Position', [.1 .05 .8150 .05]);
-for i=1:4
-  pos=get(pplot(i), 'Position');
-  set(pplot(i), 'Position', [pos(1) 0.1+pos(2) pos(3) 0.8*pos(4)]);
-end;
-% try to change colorbar size...
-h_bar = findobj(gcf,'Tag','Colorbar');
-initpos = get(h_bar,'Position');
-initfontsize = get(h_bar,'FontSize');
-set(h_bar, ...
-   'Position',[initpos(1)+initpos(3)*0.25 initpos(2)+initpos(4)*0.25 ...
-         initpos(3)*0.5 initpos(4)*0.5], ...
-	    'FontSize',initfontsize*1)
-annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
+%%figure; plot(sin(pi*v.lat'/180.),fdbck_lat);
+%%figure; plot(v.lat',toa_feedback_zmn);
+%%title('zmn toa feedbck')
+%figure; plot(v.lat',tempdiff_zmn,v.lat',tempdiffa_zmn,v.lat',tempdiffb_zmn,v.lat',tempdiffc_zmn,v.lat',tempdiffd_zmn);
+%title('tempdiff zonal mean')
+%legend('time mean','years 0-20','years 20-40','years 40-60','years 60-80','boxoff','Location','northwest')
+%annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
+%%figure; contourf(yrmn,[-1,0,1,2,3,4]); colorbar;
+%figure; contourf(squeeze(v.radflux_tmn(1,:,:))); colorbar;
+%annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
+%% define the periods of interest
+%figure;
+%periods=[1 20 30 40];
+%% create a panneled plot of for different stages of the tmp evolution
+%%tempdiff_fulla = mean(tempdiff_full(1:240,:,:),1); first 20 yrs
+%%tempdiff_fullb = mean(tempdiff_full(240:480,:,:),1); year 20-40
+%%tempdiff_fullc = mean(tempdiff_full(480:720,:,:),1); years 40-60
+%%tempdiff_fulld = mean(tempdiff_full(720:960,:,:),1); years 60-80
+%
+%pplot(1)=subplot(2,2,1);
+%contourf(squeeze(tempdiff_fulla),[-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4]);
+%caxis([-4 4]);
+%title('years 0-20')
+%pplot(2)=subplot(2,2,2);
+%contourf(squeeze(tempdiff_fullb),[-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4]);
+%caxis([-4 4]);
+%title('years 20-40')
+%pplot(3)=subplot(2,2,3);
+%contourf(squeeze(tempdiff_fullc),[-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4]);
+%caxis([-4 4]);
+%title('years 40-60')
+%pplot(4)=subplot(2,2,4);
+%contourf(squeeze(tempdiff_fulld),[-1,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4]);
+%caxis([-4 4]);
+%title('years 60-80')
+%%cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
+%cmap2=[.6 .6 1;.9 .9 1;1 .9 .9;1 .7 .7;1 .6 .6;1 .5 .5;1 .4 .4 ;1 .3 .3;1 .1 .1 ;1 0 0 ];
+%%cmap2=[.6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 .2 .2 ;1 0 0 ];
+%colormap(cmap2(1:10,:))
+%
+%h=colorbar('SouthOutside');
+%set(h, 'Position', [.1 .05 .8150 .05]);
+%for i=1:4
+%  pos=get(pplot(i), 'Position');
+%  set(pplot(i), 'Position', [pos(1) 0.1+pos(2) pos(3) 0.8*pos(4)]);
+%end;
+%% try to change colorbar size...
+%h_bar = findobj(gcf,'Tag','Colorbar');
+%initpos = get(h_bar,'Position');
+%initfontsize = get(h_bar,'FontSize');
+%set(h_bar, ...
+%   'Position',[initpos(1)+initpos(3)*0.25 initpos(2)+initpos(4)*0.25 ...
+%         initpos(3)*0.5 initpos(4)*0.5], ...
+%	    'FontSize',initfontsize*1)
+%annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
 
 % feedback panels
 %first
@@ -581,9 +744,11 @@ annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
 figure;
 ppplot(1)=subplot(2,1,1);
 contourf(squeeze(toa_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+caxis([-4 4]);
 title('TOA fdbck')
 ppplot(2)=subplot(2,1,2);
 contourf(squeeze(toa_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+caxis([-4 4]);
 title('TOA CRE fdbck')
 cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
 colormap(cmap2(1:8,:))
@@ -611,9 +776,11 @@ annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
 figure;
 pp3lot(1)=subplot(2,1,1);
 contourf(squeeze(lw_clr_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+caxis([-4 4]);
 title('LW clr fdbck')
 pp3lot(2)=subplot(2,1,2);
 contourf(squeeze(sw_clr_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+caxis([-4 4]);
 title('SW clr fdbck')
 cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
 colormap(cmap2(1:8,:))
@@ -641,9 +808,11 @@ annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
 figure;
 pp4lot(1)=subplot(2,1,1);
 contourf(squeeze(olr_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+caxis([-4 4]);
 title('LW CRE fdbck')
 pp4lot(2)=subplot(2,1,2);
 contourf(squeeze(sw_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+caxis([-4 4]);
 title('SW CRE fdbck')
 cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
 %cmap2=[.6 .6 1;.9 .9 1;1 .9 .9;1 .7 .7;1 .6 .6;1 .5 .5;1 .4 .4 ;1 .3 .3;1 .1 .1 ;1 0 0 ];
@@ -666,145 +835,111 @@ set(h_bar3, ...
 annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
 
 % plot the zonal mean feedback and individual compoenents of feedback
-figure; plot(v.lat',toa_fdbck_part_zmn,v.lat',olr_fdbck_part_zmn,'*', ...
-v.lat',sw_fdbck_part_zmn,'--',v.lat',lw_clr_fdbck_part_zmn,'*',v.lat',sw_clr_fdbck_part_zmn,'--',...
-v.lat',toa_cre_fdbck_part_zmn,v.lat',olr_cre_fdbck_part_zmn,'*',v.lat',sw_cre_fdbck_part_zmn,'--');
+figure; plot(v.lat',toa_fdbck_part_zmn,'k',v.lat',olr_fdbck_part_zmn,'b', ...
+v.lat',sw_fdbck_part_zmn,'r',v.lat',lw_clr_fdbck_part_zmn,'b--',v.lat',sw_clr_fdbck_part_zmn,'r--',...
+v.lat',toa_cre_fdbck_part_zmn,'k*',v.lat',olr_cre_fdbck_part_zmn,'b*',v.lat',sw_cre_fdbck_part_zmn,'r*');
 title('zmn feedbck')
 legend('net','olr','sw','lw_{clr}','sw_{clr}','toa_{cre}','olr_{cre}','sw_{cre}','boxoff','Location','southwest')
 annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
-% plot normalized zonal mean feedback and individual compoenents of feedback
-figure; plot(v.lat',toa_fdbck_part_zmn_norm,v.lat',olr_fdbck_part_zmn_norm,'*', ...
-v.lat',sw_fdbck_part_zmn_norm,'--',v.lat',lw_clr_fdbck_part_zmn_norm,'*',v.lat',sw_clr_fdbck_part_zmn_norm,'--',...
-v.lat',toa_cre_fdbck_part_zmn_norm,v.lat',olr_cre_fdbck_part_zmn_norm,'*',v.lat',sw_cre_fdbck_part_zmn_norm,'--');
-title('locally normalized zmn feedbck')
+%% plot normalized zonal mean feedback and individual compoenents of feedback
+figure; plot(v.lat',toa_fdbck_part_zmn/normfac,'k',v.lat',olr_fdbck_part_zmn/normfac,'b', ...
+v.lat',sw_fdbck_part_zmn/normfac,'r',v.lat',lw_clr_fdbck_part_zmn/normfac,'b--',v.lat',sw_clr_fdbck_part_zmn/normfac,'r--',...
+v.lat',toa_cre_fdbck_part_zmn/normfac,'k*',v.lat',olr_cre_fdbck_part_zmn/normfac,'b*',v.lat',sw_cre_fdbck_part_zmn/normfac,'r*');
+title('norm zmn feedbck')
 legend('net','olr','sw','lw_{clr}','sw_{clr}','toa_{cre}','olr_{cre}','sw_{cre}','boxoff','Location','southwest')
 annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
-%-----------------------------------------------------%
-% subtract off the mean of the global mean ts
-v.sst_mn_ts2_anom=v.sst_mn_ts2-mean(v.sst_mn_ts2,2);
-v.sst_mn_ts_anom=v.sst_mn_ts-mean(v.sst_mn_ts(1:60),2);
-%-----------------------------------------------------%
-incoming_ts=v.sst_mn_ts_anom;
 %-----------------------------------------------------------------------------------------
-% compute a running mean
-rough_ts=incoming_ts;
-tendindex=tend;
-for ti=7:tendindex-6
-  ts_smooth(ti-6)=(rough_ts(ti-6)+rough_ts(ti-5)+rough_ts(ti-4)+rough_ts(ti-3)+rough_ts(ti-2)+rough_ts(ti-1)+rough_ts(ti)+rough_ts(ti+1)+rough_ts(ti+2)+rough_ts(ti+3)+rough_ts(ti+4)+rough_ts(ti+5)+rough_ts(ti+6))/13.;
-end
-output_ts=ts_smooth;
-clear rough_ts; clear ts_smooth;
-%-----------------------------------------------------------------------------------------
-sfc_t_sm_ts=output_ts;
-incoming_ts=v.sst_mn_ts2_anom;
-%-----------------------------------------------------------------------------------------
-% compute a running mean
-rough_ts=incoming_ts;
-tendindex=tend;
-for ti=7:tendindex-6
-  ts_smooth(ti-6)=(rough_ts(ti-6)+rough_ts(ti-5)+rough_ts(ti-4)+rough_ts(ti-3)+rough_ts(ti-2)+rough_ts(ti-1)+rough_ts(ti)+rough_ts(ti+1)+rough_ts(ti+2)+rough_ts(ti+3)+rough_ts(ti+4)+rough_ts(ti+5)+rough_ts(ti+6))/13.;
-end
-output_ts=ts_smooth;
-clear rough_ts; clear ts_smooth;
-%-----------------------------------------------------------------------------------------
-sfc_t_sm_ts2=output_ts;
-% evolution of surface temperature
-figure; plot(timeindex(1:endt),sfc_t_sm_ts,timeindex(1:endt),sfc_t_sm_ts2)
-title('Time evolution of T_{sfc} for 1% CO2 exp')
-legend('1% per year CO2','Control','boxoff','Location','northwest')
-annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
-%-----------------------------------------------------------------------------------------
-figure;
-ppplot(1)=subplot(2,1,1);
-contourf(squeeze(toa_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
-title('TOA CRE fdbck global mn norm')
-ppplot(2)=subplot(2,1,2);
-contourf(squeeze(toa_cre_fdbck_lnorm),[-4,-3,-2,-1,0,1,2,3,4]);
-title('TOA CRE fdbck local norm')
-cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
-colormap(cmap2(1:8,:))
-h=colorbar('SouthOutside');
-set(h, 'Position', [.1 .05 .8150 .05]);
-for i=1:2
-  pos=get(ppplot(i), 'Position');
-  set(ppplot(i), 'Position', [pos(1) 0.1+pos(2) pos(3) 0.8*pos(4)]);
-end;
-% try to change colorbar size...
-h_bar = findobj(gcf,'Tag','Colorbar');
-initpos = get(h_bar,'Position');
-initfontsize = get(h_bar,'FontSize');
-set(h_bar, ...
-   'Position',[initpos(1)+initpos(3)*0.25 initpos(2)+initpos(4)*0.25 ...
-         initpos(3)*0.5 initpos(4)*0.5], ...
-	    'FontSize',initfontsize*1)
-annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
-%-----------------------------------------------------------------------------------------
-figure;
-ppplot(1)=subplot(2,1,1);
-contourf(squeeze(olr_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
-title('LW CRE fdbck global mn norm')
-ppplot(2)=subplot(2,1,2);
-contourf(squeeze(olr_cre_fdbck_lnorm),[-4,-3,-2,-1,0,1,2,3,4]);
-title('LW CRE fdbck local norm')
-cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
-colormap(cmap2(1:8,:))
-h=colorbar('SouthOutside');
-set(h, 'Position', [.1 .05 .8150 .05]);
-for i=1:2
-  pos=get(ppplot(i), 'Position');
-  set(ppplot(i), 'Position', [pos(1) 0.1+pos(2) pos(3) 0.8*pos(4)]);
-end;
-% try to change colorbar size...
-h_bar = findobj(gcf,'Tag','Colorbar');
-initpos = get(h_bar,'Position');
-initfontsize = get(h_bar,'FontSize');
-set(h_bar, ...
-   'Position',[initpos(1)+initpos(3)*0.25 initpos(2)+initpos(4)*0.25 ...
-         initpos(3)*0.5 initpos(4)*0.5], ...
-	    'FontSize',initfontsize*1)
-annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
-%
-%-----------------------------------------------------------------------------------------
-figure;
-ppplot(1)=subplot(2,1,1);
-contourf(squeeze(sw_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
-title('sw CRE fdbck global mn norm')
-ppplot(2)=subplot(2,1,2);
-contourf(squeeze(sw_cre_fdbck_lnorm),[-4,-3,-2,-1,0,1,2,3,4]);
-title('sw CRE fdbck local norm')
-cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
-colormap(cmap2(1:8,:))
-h=colorbar('SouthOutside');
-set(h, 'Position', [.1 .05 .8150 .05]);
-for i=1:2
-  pos=get(ppplot(i), 'Position');
-  set(ppplot(i), 'Position', [pos(1) 0.1+pos(2) pos(3) 0.8*pos(4)]);
-end;
-% try to change colorbar size...
-h_bar = findobj(gcf,'Tag','Colorbar');
-initpos = get(h_bar,'Position');
-initfontsize = get(h_bar,'FontSize');
-set(h_bar, ...
-   'Position',[initpos(1)+initpos(3)*0.25 initpos(2)+initpos(4)*0.25 ...
-         initpos(3)*0.5 initpos(4)*0.5], ...
-	    'FontSize',initfontsize*1)
-annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
-%---------------------------------------------------------------------------------
-figure; contourf(squeeze(normfaclocal),[-4,-3,-2,-1,0,1,2,3,4]); colorbar;
-title('normalization factor for local temp change')
-%---------------------------------------------------------------------------------
-% possible predifined colormaps: copper, summer, jet(default)
-% to create a custom colormap
-%cmap=[1 1 1 ; .8 .8 1 ; .6 .6 1 ; .4 .4 1 ; .2 .2 1 ; 0 0 1];
-%colormap(cmap(1:5,:))
-% blue: 0 0 1
-% red : 1 0 0
-% white: 1 1 1
-%cmap2=[1 1 1 ; .9 .9 1 ; .8 .8 1 ; .6 .6 1 ; .4 .4 1 ; .2 .2 1 ; .1 .1 1 ; 0 0 1];
-%cmap2=[1 1 1 ; 1 .9 .9 ; 1 .8 .8 ;1 .6 .6 ;1 .4 .4 ;1 .1 .1 ;1 .2 .2 ;1 0 0 ];
-% cmap2 is a color map ranging from reds to blues.
+%figure;
+%ppplot(1)=subplot(2,1,1);
+%contourf(squeeze(toa_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+%title('TOA CRE fdbck global mn norm')
+%ppplot(2)=subplot(2,1,2);
+%contourf(squeeze(toa_cre_fdbck_lnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+%title('TOA CRE fdbck local norm')
 %cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
 %colormap(cmap2(1:8,:))
-%------------------------------------------------------------------------------------------
+%h=colorbar('SouthOutside');
+%set(h, 'Position', [.1 .05 .8150 .05]);
+%for i=1:2
+%  pos=get(ppplot(i), 'Position');
+%  set(ppplot(i), 'Position', [pos(1) 0.1+pos(2) pos(3) 0.8*pos(4)]);
+%end;
+%% try to change colorbar size...
+%h_bar = findobj(gcf,'Tag','Colorbar');
+%initpos = get(h_bar,'Position');
+%initfontsize = get(h_bar,'FontSize');
+%set(h_bar, ...
+%   'Position',[initpos(1)+initpos(3)*0.25 initpos(2)+initpos(4)*0.25 ...
+%         initpos(3)*0.5 initpos(4)*0.5], ...
+%	    'FontSize',initfontsize*1)
+%annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
+%%-----------------------------------------------------------------------------------------
+%figure;
+%ppplot(1)=subplot(2,1,1);
+%contourf(squeeze(olr_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+%title('LW CRE fdbck global mn norm')
+%ppplot(2)=subplot(2,1,2);
+%contourf(squeeze(olr_cre_fdbck_lnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+%title('LW CRE fdbck local norm')
+%cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
+%colormap(cmap2(1:8,:))
+%h=colorbar('SouthOutside');
+%set(h, 'Position', [.1 .05 .8150 .05]);
+%for i=1:2
+%  pos=get(ppplot(i), 'Position');
+%  set(ppplot(i), 'Position', [pos(1) 0.1+pos(2) pos(3) 0.8*pos(4)]);
+%end;
+%% try to change colorbar size...
+%h_bar = findobj(gcf,'Tag','Colorbar');
+%initpos = get(h_bar,'Position');
+%initfontsize = get(h_bar,'FontSize');
+%set(h_bar, ...
+%   'Position',[initpos(1)+initpos(3)*0.25 initpos(2)+initpos(4)*0.25 ...
+%         initpos(3)*0.5 initpos(4)*0.5], ...
+%	    'FontSize',initfontsize*1)
+%annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
+%%
+%%-----------------------------------------------------------------------------------------
+%figure;
+%ppplot(1)=subplot(2,1,1);
+%contourf(squeeze(sw_cre_fdbck_gnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+%title('sw CRE fdbck global mn norm')
+%ppplot(2)=subplot(2,1,2);
+%contourf(squeeze(sw_cre_fdbck_lnorm),[-4,-3,-2,-1,0,1,2,3,4]);
+%title('sw CRE fdbck local norm')
+%cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
+%colormap(cmap2(1:8,:))
+%h=colorbar('SouthOutside');
+%set(h, 'Position', [.1 .05 .8150 .05]);
+%for i=1:2
+%  pos=get(ppplot(i), 'Position');
+%  set(ppplot(i), 'Position', [pos(1) 0.1+pos(2) pos(3) 0.8*pos(4)]);
+%end;
+%% try to change colorbar size...
+%h_bar = findobj(gcf,'Tag','Colorbar');
+%initpos = get(h_bar,'Position');
+%initfontsize = get(h_bar,'FontSize');
+%set(h_bar, ...
+%   'Position',[initpos(1)+initpos(3)*0.25 initpos(2)+initpos(4)*0.25 ...
+%         initpos(3)*0.5 initpos(4)*0.5], ...
+%	    'FontSize',initfontsize*1)
+%annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none')
+%%---------------------------------------------------------------------------------
+%figure; contourf(squeeze(normfaclocal),[-4,-3,-2,-1,0,1,2,3,4]); colorbar;
+%title('normalization factor for local temp change')
+%%---------------------------------------------------------------------------------
+%% possible predifined colormaps: copper, summer, jet(default)
+%% to create a custom colormap
+%%cmap=[1 1 1 ; .8 .8 1 ; .6 .6 1 ; .4 .4 1 ; .2 .2 1 ; 0 0 1];
+%%colormap(cmap(1:5,:))
+%% blue: 0 0 1
+%% red : 1 0 0
+%% white: 1 1 1
+%%cmap2=[1 1 1 ; .9 .9 1 ; .8 .8 1 ; .6 .6 1 ; .4 .4 1 ; .2 .2 1 ; .1 .1 1 ; 0 0 1];
+%%cmap2=[1 1 1 ; 1 .9 .9 ; 1 .8 .8 ;1 .6 .6 ;1 .4 .4 ;1 .1 .1 ;1 .2 .2 ;1 0 0 ];
+%% cmap2 is a color map ranging from reds to blues.
+%%cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
+%%colormap(cmap2(1:8,:))
+%%------------------------------------------------------------------------------------------
 % this is the end
 
