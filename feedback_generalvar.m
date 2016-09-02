@@ -1,15 +1,17 @@
 %------------------------------------------------------------------------------------------
 % feedback_generalvar.m
 %
-% 1. read in variables from input files
-% 2. make figures
-%         - 3 panel figure of same var from two models and diff 
+% 1. read in generalvar from input files for control and forced experiments
+% 2. figures
+%       plot 3 panel figure: top    - generalvar exp b
+%                            middle - generalvar exp a
+%                            bottom - response: forced minus control
 %
 % levi silvers                                        june 2016
 %------------------------------------------------------------------------------------------
 
 dirMing_a='/archive/Ming.Zhao/awglg/ulm/';
-dirMing_b='/archive/Ming.Zhao/awg/ulm/';
+dirMing_b='/archive/Ming.Zhao/awg/ulm_201505/';
 dirLevi='/archive/Levi.Silvers/';
 basedir_a=dirMing_a;
 basedir_b=dirMing_b;

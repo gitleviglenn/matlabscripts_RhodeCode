@@ -41,14 +41,18 @@
 %lengthmon=1800;
 %tm1=1:150;
 %
-%% the two files below are from the an experiment with 4xco2
+%%% the two files below are from the an experiment with 4xco2
 %fin='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g5r11_1860climo_4xCO2/ts_all/atmos.006101-015012_t_surf.nc'
 %fin_ice='/net2/Levi.Silvers/data/AM4OM2F_c96l32_am4g5r11_1860climo_4xCO2/ts_all/atmos.006101-015012_ice_mask.nc'
-%lengthmon=1080;
-%tm1=1:90;
+%%lengthmon=1080;
+%%tm1=1:90;
+%lengthmon=960;
+%tm1=1:80;
 %
-% the two files below are from the 2000 control run....
 % for am4g5r11
+%fin_sst_ctl='/archive/Ming.Zhao/awglg/ulm/AM4OM2F_c96l32_am4g5r11_1860climo/ts_all/atmos.000101-023012.t_surf.nc'
+%fin_ice_ctl='/archive/Ming.Zhao/awglg/ulm/AM4OM2F_c96l32_am4g5r11_1860climo/ts_all/atmos.000101-023012.ice_mask.nc'
+% below is the control that was used before August 30th 2016, in conflict with 4xco2 exps.
 fin_sst_ctl='/archive/Ming.Zhao/awglg/ulm/AM4OM2F_c96l32_am4g5r11_2000climo/ts_all/atmos.000101-014012.t_surf.nc'
 fin_ice_ctl='/archive/Ming.Zhao/awglg/ulm/AM4OM2F_c96l32_am4g5r11_2000climo/ts_all/atmos.000101-014012.ice_mask.nc'
 %% for am4g6
@@ -89,10 +93,14 @@ sst_type=0;    % 0  output ctl and ctl + reg files
   else % default case is the ctl sst from 1860
      'sst_type is(0):'
      sst_type
+     %fnout_sst='sst_am4g6_1860_ctl.nc'
+     %fnout_ice='ice_am4g6_1860_ctl.nc'
+     %fnout_sst_pert='sst_am4g6_1860_ctlpreg_4xco2.nc'
+     %fnout_ice_pert='ice_am4g6_1860_ctlpreg_4xco2.nc'
      fnout_sst='sst_am4g6_2000_ctl.nc'
      fnout_ice='ice_am4g6_2000_ctl.nc'
-     fnout_sst_pert='sst_am4g6_2000_ctlpreg_1per_co2.nc'
-     fnout_ice_pert='ice_am4g6_2000_ctlpreg_1per_co2.nc'
+     fnout_sst_pert='sst_am4g6_2000_ctlpreg_1pct_co2.nc'
+     fnout_ice_pert='ice_am4g6_2000_ctlpreg_1pct_co2.nc'
   end
 
   if (hist > 0 ) % 1
