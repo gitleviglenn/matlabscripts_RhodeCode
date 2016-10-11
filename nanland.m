@@ -17,6 +17,7 @@ normfac=1.87; % surface temperature difference [Kelvin]
 
 fieldin2d=squeeze(fieldin)/normfac;
 
+% create a mask with land points = 0 and ocean points = 1
 onlyocean=zeros(size(v.landm));
 onlyocean(v.landm~=0)=-999.; % shift land points to -999
 onlyocean(onlyocean==0)=1.; % shift ocean points to 1.0

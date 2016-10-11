@@ -143,7 +143,7 @@ lw_cre_gnorm=squeeze(olr_cre_fdbck_gnorm);
 precip_gnorm=squeeze(precip_fdbck_gnorm);
 lwp_gnorm=squeeze(lwp_fdbck_gnorm);
 wvp_gnorm=squeeze(wvp_fdbck_gnorm);
-t_ref_gnorm=squeeze(t_ref_fdbck_gnorm);
+%t_ref_gnorm=squeeze(t_ref_fdbck_gnorm);
 %
 nc{'toa_response'}=ncfloat('lat','lon'); 
 nc{'toa_response'}(:,:)=toa_gnorm(:,:);
@@ -165,7 +165,7 @@ nc{'lwp_response'}(:,:)=lwp_gnorm(:,:);
 nc{'wvp_response'}=ncfloat('lat','lon'); 
 nc{'wvp_response'}(:,:)=wvp_gnorm(:,:);
 nc{'t_ref_response'}=ncfloat('lat','lon'); 
-nc{'t_ref_response'}(:,:)=t_ref_gnorm(:,:);
+%nc{'t_ref_response'}(:,:)=t_ref_gnorm(:,:);
 
 nc{'TIME'}.long_name     ='TIME';      
 %nc{'TIME'}.climatology   ='climatology_bounds';      

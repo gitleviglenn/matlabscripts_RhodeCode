@@ -143,13 +143,13 @@ basedir='/archive/Levi.Silvers/awg/verona/'
 %x1name='c96L32_am4g10r8_2000climo_p2K/';
 %%
 %% 2000climo: hadley center ice and sst, ice thickness reduced from 2m to 1m
-%modelname='Model: c96L32_am4g10r8_2000climo_1mice'
-%expname='am4_p2K_1mice'
-%x1name='c96L32_am4g10r8_2000climo_p2K_1mice/';
-%%
 modelname='Model: c96L32_am4g10r8_2000climo_1mice'
-expname='am4_1mice'
-x1name='c96L32_am4g10r8_2000climo_1mice/';
+expname='am4_p2K_1mice'
+x1name='c96L32_am4g10r8_2000climo_p2K_1mice/';
+%%
+%modelname='Model: c96L32_am4g10r8_2000climo_1mice'
+%expname='am4_1mice'
+%x1name='c96L32_am4g10r8_2000climo_1mice/';
 %
 %modelname='Model: c96L32_am4g10r8_qobs_2000climo'
 %expname='am4_qobs'
@@ -164,24 +164,36 @@ x1name='c96L32_am4g10r8_2000climo_1mice/';
 %modelname='Model: c96L32_am4g10r8_haddicesstp1pctco2_climo'
 %x1name='c96L32_am4g10r8_hadsstp1pctco2_AM4OM2ice_climo/';
 %expname='am4co2icesst1pct'
+%
+% alternate, and probably correct, attempt on the 1pct pattern:
+%modelname='Model: c96L32_am4g10r8_had_p_1pctco2_climo'
+%x1name='c96L32_am4g10r8_had_p_1pctco2_climo';
+%expname='am4co21pct'
 %%
 %x2name='c96L32_am4g10r8_2000climo_p2K/';
 x2name='c96L32_am4g10r8_2000climo/';
 %x2name='c96L32_am4g10r8_qobs_2000climo/';
 addpath='/ts_all/';
 years='000201-001112.';
+%%%% use below for reg + pattern experiments
+%%%%% pstart and pend define the period over which the feedbacks are computed
 lengthyr=10; % length of time series in years
 iend=120;
 iend2=120;
+pstart=1;
+pend=119;
+iarr=[1 10 60 80 100 120];
+%years='000701-001112.';
+%lengthyr=5; % length of time series in years
+%iend=60;
+%iend2=60;
+%pstart=1;
+%pend=59;
+%iarr=[1 10 30 40 50 60];
 %%%% endt is the end index for the time series that have been computed
 %%%% with a running mean of +/- 6 months so it is 13 months shorter
 %%endt=107; % needs to be iend -1 year and one month
 %%%%
-%%%% use below for reg + pattern experiments
-%%%%% pstart and pend define the period over which the feedbacks are computed
-pstart=1;
-pend=119;
-iarr=[1 10 60 80 100 120];
 %%% below is needed both for my experiments and for Ming's cess experiment
 atm='atmos.';
 expyrs1=strcat(atm,years); 
