@@ -25,6 +25,11 @@ modelname='Model: c96L32_am4g10r8_2000climo_p2K'
 expname='am4p2k'
 x1name='c96L32_am4g10r8_2000climo_p2K';
 %%
+% sst pattern from mmm cmip3, from Appendix in Webb et al. 2016
+modelname='Model: c96L32_am4g10r8_had_p_cmip3sstanom'
+expname='am4 cmip3 anom'
+x1name='c96L32_am4g10r8_had_p_cmip3sstanom';
+%%
 %% 2000climo: hadley center ice and sst, ice thickness reduced from 2m to 1m
 %modelname='Model: c96L32_am4g10r8_2000climo_1mice'
 %expname='am4_p2K_1mice'
@@ -69,7 +74,7 @@ x1name='c96L32_am4g10r8_2000climo_p2K';
 x2name='c96L32_am4g10r8_2000climo';
 %x2name='c96L32_am4g10r8_qobs_2000climo/';
 %addpath='/ts_all/';
-addpath='/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_10yr/';
+addpath='/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/';
 %%%% use below for reg + pattern experiments
 %%%%% pstart and pend define the period over which the feedbacks are computed
 %years='0002-0011.';
@@ -94,8 +99,8 @@ addpath='/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_10yr/';
 %exp2=strcat(basedir,x2name,addpath);
 exp1=strcat(basedir,x1name,addpath);
 exp2=strcat(basedir,x2name,addpath);
-filename1=strcat(exp1,'atmos_subsvar.0002-0011.all.nc');
-filename2=strcat(exp2,'atmos_subsvar.0002-0011.all.nc');
+filename1=strcat(exp1,'atmos_subsvar3d.0002-0021.all.nc');
+filename2=strcat(exp2,'atmos_subsvar3d.0002-0021.all.nc');
 %%
 %------------------------------------------------------------------------------------------
 %%%
