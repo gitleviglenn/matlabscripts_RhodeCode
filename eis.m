@@ -21,7 +21,10 @@ press=100:5:1000;
 
 % compute the Lower Tropospheric Stability (LTS)
 % (theta_700-theta_0)
-theta=temp(p/p0)^kappa
+p_z=700;
+theta0=temp.*(1.0)^kappa;
+theta=temp.*(p_z/p0)^kappa;
+lts=theta0-theta;
 
 % compute the saturation mixing ratio qs=0.622*es/(p-es)
 es=6.11*exp((Lv/Rv)*((1./273.15)-(1./temp)));
@@ -41,15 +44,12 @@ for i=1:181;
 end
 
 % compute an approximate lifting condensation level (lcl)
-lcl=(20.+(temp-273.15)/5.)*(1.-rh0)*100.;
+%lcl=(20.+(temp-273.15)/5.)*(1.-rh0)*100.;
+% using only surface values
+lcl=(20.+(T0-273.15)/5.)*(1.-rh0)*100.;
 
+% and now for the estimated inversion strength: estinvs
+% eis=lts - gamma_m(850)*(z(700)-LCL);
+% what value should be used for the height of the 700 mb pressure surface?  
 %
 %%gamma_m=zeros(size(temp,2),size(press,2));
-%frac=zeros(size(temp,2),size(press,2));
-%
-%num=1;
-%den=1;
-%%frac=num./den;
-%frac=10;
-%
-%gamma_m=g/cp.*(1-frac)
