@@ -1,4 +1,4 @@
-function cont_wcolorbar_eis(field_in)
+function cont_wcolorbar_eis(field_in,titlein)
 %------------------------------------------------------------------------------------------
 % this was originally written to take data computed with the script
 % feedback_panel.m and then processes to compute seasonal means.
@@ -40,3 +40,5 @@ cmap_orang=[255,255,255;
 cmap=cmap_orang/256;
 colormap(cmap(1:10,:))
 h=colorbar('SouthOutside');
+
+title(titlein)
