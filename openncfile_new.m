@@ -11,9 +11,9 @@
 %source='/Users/silvers/data/cre_sstpatt/am4_warmpatt/atmos_p2K.0002-0021.jas.tmn.nc'
 %source='/Users/silvers/data/cre_sstpatt/am4_warmpatt/atmos_4xCO2.0002-0021.jas.tmn.nc'
 %source='/Users/silvers/data/cre_sstpatt/am4_warmpatt/atmos_1pctco2.0002-0021.jas.tmn.nc'
-ncid=netcdf.open(source);
-[numdims,nvars,natts]=netcdf.inq(ncid);
-nvars
+%ncid=netcdf.open(source);
+%[numdims,nvars,natts]=netcdf.inq(ncid);
+%nvars
 %[tcld,xtype,dimids,atts]=netcdf.inqVar(ncid,21);
 %vardatatest=ncread(source,tcld);
 v.lat=ncread(source,'lat');
@@ -22,5 +22,8 @@ v.level=ncread(source,'level');
 v.level=100.*v.level;
 v.temp=ncread(source,'temp');
 v.tsurf=ncread(source,'t_surf');
+v.lcloud=ncread(source,'low_cld_amt');
+v.mcloud=ncread(source,'mid_cld_amt');
+v.hcloud=ncread(source,'high_cld_amt');
 v.hght=ncread(source,'hght');
 v.rh=ncread(source,'rh');

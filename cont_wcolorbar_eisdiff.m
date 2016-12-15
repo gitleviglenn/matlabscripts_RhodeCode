@@ -14,6 +14,7 @@ figure;
 conts=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
 fig1=contourf(squeeze(field_in),conts);
 caxis([-5 5]);
+%caxis([-10 10]);
 cmap_blue=[255,255,255;
 197,255,255;
 138,255,255;
@@ -34,7 +35,21 @@ cmap_orang=[255,255,255;
 111,0,0;
 56,0,0;
 0,0,0];
-cmap=cmap_orang/256;
+cmap_coolwarm=[
+0,41,167;
+5,81,197;
+27,153,255;
+82,211,255;
+138,255,255;
+255,255,197;
+255,211,82;
+226,160,50;
+226,120,20;
+111,56,0];
+%111,0,0;
+%56,0,0];
+%cmap=cmap_orang/256;
+cmap=cmap_coolwarm/256;
 colormap(cmap(1:10,:))
 h=colorbar('SouthOutside');
 title(titlein)
