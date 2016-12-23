@@ -1,4 +1,4 @@
-%frchive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_1pctco2_climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_5yr/atmos.0007-0011.ann.nc'unction openncfile(stringincoming)
+%archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_1pctco2_climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_5yr/atmos.0007-0011.ann.nc'unction openncfile(stringincoming)
 %----------------------------------------------------------------------------
 % openncfile.m
 %
@@ -34,8 +34,8 @@ vin.sst =fin{'t_surf'}(:,:,:);
 vin.yr  =fin{'yr'} (:);
 vin.mo  =fin{'mo'} (:);
 vin.dy  =fin{'dy'} (:);
-vin.time = [49354 49385 49413 49444 49474 49505 49535 49566 49597 49627 49658 49688];
-vin.nt=12;
+%vin.time = [49354 49385 49413 49444 49474 49505 49535 49566 49597 49627 49658 49688];
+%vin.nt=12;
 %-------------------------------------------------
 %close(fin);
 

@@ -27,6 +27,7 @@ just_ocean=onlyocean.*fieldin2d; % apply land=0.0 mask to global array...
 just_ocean(just_ocean==0.)=NaN; % shift land points to NaNs
 just_ocean_znm=nanmean(just_ocean,2); % the indexing seems strange here...
 % it will be useful, and confirming to plot the zonal mean array over oceans, and the zonal mean array for the entire globe.
+contourf(just_ocean)
 full_arr_znm=mean(fieldin2d,2);
 %figure;plot(v.lat,full_arr_znm,v.lat,just_ocean_znm)
 figmatrix=[full_arr_znm,just_ocean_znm];

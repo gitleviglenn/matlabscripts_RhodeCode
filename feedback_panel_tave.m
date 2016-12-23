@@ -16,19 +16,53 @@
 %
 % levi silvers                                        Sept 2016
 %------------------------------------------------------------------------------------------
-
+%
+%% locations of the files i am currently interested in: 
+%% control experiment:
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
+%
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_p2K/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
+%
+%% hadley center plus the sst anomaly pattern derived from the multi model cmip3 ensemble.  see webb et al. 2016 for details.
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_cmip3sstanom/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
+%
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_1pctco2_climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_4xCO2_climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
+%
+% experiments using sst patterns from the periods P1,P2,P3 of Paytner et al. 2016
 %%
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sstctl/
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_ptb/
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_p2_ctl/
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_p2_ptb/
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_p3_ctl/
+%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_p3_ptb/
+%
+%------------------------------------------------------------------------------------------
 basedir='/archive/Levi.Silvers/awg/verona/'
 %%
 %% p2k  base: hadley center ice and sst
-modelname='Model: c96L32_am4g10r8_2000climo_p2K'
-expname='am4p2k'
-x1name='c96L32_am4g10r8_2000climo_p2K';
+%modelname='Model: c96L32_am4g10r8_2000climo_p2K'
+%expname='am4p2k'
+%x1name='c96L32_am4g10r8_2000climo_p2K';
 %%
+% sst pattern from from_cm3 runs of Paytner over 3 time periods: P1,P2,P3
+modelname='Model: c96L32 am4g10r8 from cm3 sst ptb'
+expname='cm3_p1'
+x1name='c96L32_am4g10r8_cm3_sst_ptb';
+%
+%modelname='Model: c96L32 am4g10r8 from cm3 sst p2 ptb'
+%expname='cm3_p2'
+%x1name='c96L32_am4g10r8_cm3_sst_p2_ptb';
+%
+%modelname='Model: c96L32 am4g10r8 from cm3 sst p3 ptb'
+%expname='cm3_p3'
+%x1name='c96L32_am4g10r8_cm3_sst_p3_ptb';
+%
 % sst pattern from mmm cmip3, from Appendix in Webb et al. 2016
-modelname='Model: c96L32_am4g10r8_had_p_cmip3sstanom'
-expname='am4 cmip3 anom'
-x1name='c96L32_am4g10r8_had_p_cmip3sstanom';
+%modelname='Model: c96L32_am4g10r8_had_p_cmip3sstanom'
+%expname='am4 cmip3 anom'
+%x1name='c96L32_am4g10r8_had_p_cmip3sstanom';
 %%
 %% 2000climo: hadley center ice and sst, ice thickness reduced from 2m to 1m
 %modelname='Model: c96L32_am4g10r8_2000climo_1mice'
@@ -71,10 +105,13 @@ x1name='c96L32_am4g10r8_had_p_cmip3sstanom';
 %expname='am4_4xCO2'
 %%
 %x2name='c96L32_am4g10r8_2000climo_p2K/';
-x2name='c96L32_am4g10r8_2000climo';
+%x2name='c96L32_am4g10r8_2000climo';
 %x2name='c96L32_am4g10r8_qobs_2000climo/';
+x2name='c96L32_am4g10r8_cm3_sstctl/';
+%x2name='c96L32_am4g10r8_cm3_sst_p2_ctl/';
+%x2name='c96L32_am4g10r8_cm3_sst_p3_ctl/';
 %addpath='/ts_all/';
-addpath='/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/';
+addpath='/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_10yr/';
 %%%% use below for reg + pattern experiments
 %%%%% pstart and pend define the period over which the feedbacks are computed
 %years='0002-0011.';
@@ -99,8 +136,8 @@ addpath='/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/';
 %exp2=strcat(basedir,x2name,addpath);
 exp1=strcat(basedir,x1name,addpath);
 exp2=strcat(basedir,x2name,addpath);
-filename1=strcat(exp1,'atmos_subsvar3d.0002-0021.all.nc');
-filename2=strcat(exp2,'atmos_subsvar3d.0002-0021.all.nc');
+filename1=strcat(exp1,'atmos_subsvar3d.0002-0011.all.nc');
+filename2=strcat(exp2,'atmos_subsvar3d.0002-0011.all.nc');
 %%
 %------------------------------------------------------------------------------------------
 %%%
@@ -258,4 +295,36 @@ midcld_fdbck_gnorm_mn=midcld_fdbck_mn./normfac;
 lowcld_fdbck_gnorm_mn=lowcld_fdbck_mn./normfac;
 highcld_fdbck_gnorm_mn=highcld_fdbck_mn./normfac;
 %t_ref_fdbck_gnorm=t_ref_fdbck_mn./normfac;
+%
+% compute the zonal 
+toa_fdbck_zmn=mean(toa_fdbck_gnorm,3);
+olr_fdbck_zmn=mean(olr_fdbck_gnorm,3);
+sw_fdbck_zmn=mean(sw_fdbck_gnorm,3);
+lw_clr_fdbck_zmn=mean(lw_clr_fdbck_gnorm,3);
+sw_clr_fdbck_zmn=mean(sw_clr_fdbck_gnorm,3);
+toa_cre_fdbck_zmn=mean(toa_cre_fdbck_gnorm,3);
+olr_cre_fdbck_zmn=mean(olr_cre_fdbck_gnorm,3);
+sw_cre_fdbck_zmn=mean(sw_cre_fdbck_gnorm,3);
+
+figure; plot(v.lat',toa_fdbck_zmn,'k',v.lat',olr_fdbck_zmn,'b', ...
+v.lat',sw_fdbck_zmn,'r',v.lat',lw_clr_fdbck_zmn,'b--',v.lat',sw_clr_fdbck_zmn,'r--',...
+v.lat',toa_cre_fdbck_zmn,'k*',v.lat',olr_cre_fdbck_zmn,'b*',v.lat',sw_cre_fdbck_zmn,'r*');
+title('zmn feedbck')
+legend('net','olr','sw','lw_{clr}','sw_{clr}','toa_{cre}','olr_{cre}','sw_{cre}','boxoff','Location','southwest')
+annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none');
+
+figure; plot(sin((pi/180.)*v.lat),toa_fdbck_zmn,'k',sin((pi/180.)*v.lat),olr_fdbck_zmn,'b', ...
+sin((pi/180.)*v.lat),sw_fdbck_zmn,'r',sin((pi/180.)*v.lat),lw_clr_fdbck_zmn,'b--',sin((pi/180.)*v.lat),sw_clr_fdbck_zmn,'r--',...
+sin((pi/180.)*v.lat),toa_cre_fdbck_zmn,'k*',sin((pi/180.)*v.lat),olr_cre_fdbck_zmn,'b*',sin((pi/180.)*v.lat),sw_cre_fdbck_zmn,'r*');
+title('zmn feedbck')
+legend('net','olr','sw','lw_{clr}','sw_{clr}','toa_{cre}','olr_{cre}','sw_{cre}','boxoff','Location','southwest')
+annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none');
+
+%end
 %------------------------------------------------------------------------------------------
+
+
+
+
+
+
