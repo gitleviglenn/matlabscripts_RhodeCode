@@ -28,24 +28,24 @@ basedir=dirMing;
 %expyrs1='ts_all/atmos.000201-001112.';
 %expyrs2='ts_all/atmos.000201-001112.';
 
-%%%% 1pct increase in CO2 experiment and control
-%%%% for CM4 model: 
-%exp1name='AM4OM2F_c96l32_am4g5r11_2000climo_1pct/ts_all/';
-%exp2name='AM4OM2F_c96l32_am4g5r11_2000climo/ts_all/';
-%expname='AM4OM2F'
-%expyrs1='atmos.006101-014012.';
-%expyrs2='atmos.000101-014012.';
-%modelname='Model: AM4OM2'
-%lengthyr=80; % length of time series in years
-%%latinc=30;
-%%sonic=1:latinc:180;
-%% it is possible to have time series of two different lengths
-%% depending on how the output from the forced vs control run was saved...
-%iend=960;
-%iend2=1680;
-%% endt is the end index for the time series that have been computed
-%% with a running mean of +/- 6 months so it is 13 months shorter
-%endt=947; % needs to be iend -1 year and one month
+%%% 1pct increase in CO2 experiment and control
+%%% for CM4 model: 
+exp1name='AM4OM2F_c96l32_am4g5r11_2000climo_1pct/ts_all/';
+exp2name='AM4OM2F_c96l32_am4g5r11_2000climo/ts_all/';
+expname='AM4OM2F'
+expyrs1='atmos.006101-014012.';
+expyrs2='atmos.000101-014012.';
+modelname='Model: AM4OM2'
+lengthyr=80; % length of time series in years
+%latinc=30;
+%sonic=1:latinc:180;
+% it is possible to have time series of two different lengths
+% depending on how the output from the forced vs control run was saved...
+iend=960;
+iend2=1680;
+% endt is the end index for the time series that have been computed
+% with a running mean of +/- 6 months so it is 13 months shorter
+endt=947; % needs to be iend -1 year and one month
 %%
 %%%%% for CM2 model: 
 %%exp1name='CM2.1U-D4_1PctTo2X_I1/ts_all/';
@@ -64,19 +64,17 @@ basedir=dirMing;
 %%%istart2=iend2-iend+1;
 %%%latinc=15;
 %%%sonic=1:latinc:90;
-%%%
-%exp1=strcat(basedir,exp1name);
-%exp2=strcat(basedir,exp2name);
-%%%%
 %%%%%% ------------------
 %%%%% use below for coupled experiments
+exp1=strcat(basedir,exp1name);
+exp2=strcat(basedir,exp2name);
 %%%%% pstart and pend define the period over which the feedbacks are computed
-%pstart=720;
-%%pend=1200;
-%pend=960;
-%iarr=[1 120 240 480 720 960];
-%%%% end coupled block
-%%%%
+pstart=720;
+%pend=1200;
+pend=960;
+iarr=[1 120 240 480 720 960];
+%%% end coupled block
+%%%
 
 %% abrupt 4XCO2 forcing
 %exp1name='AM4OM2F_c96l32_am4g5r11_1860climo_4xCO2/ts_all/';
@@ -129,83 +127,83 @@ basedir=dirMing;
 %%% with a running mean of +/- 6 months so it is 13 months shorter
 %endt=107; % needs to be iend -1 year and one month
 %%%
-%%% use below for reg + pattern experiments
-%%%% pstart and pend define the period over which the feedbacks are computed
+%%%% use below for reg + pattern experiments
+%%%%% pstart and pend define the period over which the feedbacks are computed
+%%pstart=1;
+%%pend=119;
+%%iarr=[1 10 60 80 100 120];
+%%%
+%basedir='/archive/Levi.Silvers/awg/verona/'
+%%%
+%%% p2k  base: hadley center ice and sst
+%%modelname='Model: c96L32_am4g10r8_2000climo_p2K'
+%%expname='am4p2k'
+%%x1name='c96L32_am4g10r8_2000climo_p2K/';
+%%%
+%%% 2000climo: hadley center ice and sst, ice thickness reduced from 2m to 1m
+%modelname='Model: c96L32_am4g10r8_2000climo_1mice'
+%expname='am4_p2K_1mice'
+%x1name='c96L32_am4g10r8_2000climo_p2K_1mice/';
+%%%
+%%modelname='Model: c96L32_am4g10r8_2000climo_1mice'
+%%expname='am4_1mice'
+%%x1name='c96L32_am4g10r8_2000climo_1mice/';
+%%
+%%modelname='Model: c96L32_am4g10r8_qobs_2000climo'
+%%expname='am4_qobs'
+%%x1name='c96L32_am4g10r8_qobs_2000climo_p2K/';
+%%%
+%%%% sst: hadley center base+1%co2 patter      ice: hadley center
+%%modelname='Model: c96L32_am4g10r8_haddsstp1pctco2_climo'
+%%expname='am4co2sst1pct'
+%%x1name='c96L32_am4g10r8_hadsstp1pctco2_climo/';
+%%
+%%%% sst: hadley center base+1%co2 patern      ice: hadley center base + 1%co2 patern
+%%modelname='Model: c96L32_am4g10r8_haddicesstp1pctco2_climo'
+%%x1name='c96L32_am4g10r8_hadsstp1pctco2_AM4OM2ice_climo/';
+%%expname='am4co2icesst1pct'
+%%
+%% alternate, and probably correct, attempt on the 1pct pattern:
+%%modelname='Model: c96L32_am4g10r8_had_p_1pctco2_climo'
+%%x1name='c96L32_am4g10r8_had_p_1pctco2_climo';
+%%expname='am4co21pct'
+%%%
+%%x2name='c96L32_am4g10r8_2000climo_p2K/';
+%x2name='c96L32_am4g10r8_2000climo/';
+%%x2name='c96L32_am4g10r8_qobs_2000climo/';
+%addpath='/ts_all/';
+%years='000201-001112.';
+%%%%% use below for reg + pattern experiments
+%%%%%% pstart and pend define the period over which the feedbacks are computed
+%lengthyr=10; % length of time series in years
+%iend=120;
+%iend2=120;
 %pstart=1;
 %pend=119;
 %iarr=[1 10 60 80 100 120];
-%%
-basedir='/archive/Levi.Silvers/awg/verona/'
-%%
-%% p2k  base: hadley center ice and sst
-%modelname='Model: c96L32_am4g10r8_2000climo_p2K'
-%expname='am4p2k'
-%x1name='c96L32_am4g10r8_2000climo_p2K/';
-%%
-%% 2000climo: hadley center ice and sst, ice thickness reduced from 2m to 1m
-modelname='Model: c96L32_am4g10r8_2000climo_1mice'
-expname='am4_p2K_1mice'
-x1name='c96L32_am4g10r8_2000climo_p2K_1mice/';
-%%
-%modelname='Model: c96L32_am4g10r8_2000climo_1mice'
-%expname='am4_1mice'
-%x1name='c96L32_am4g10r8_2000climo_1mice/';
-%
-%modelname='Model: c96L32_am4g10r8_qobs_2000climo'
-%expname='am4_qobs'
-%x1name='c96L32_am4g10r8_qobs_2000climo_p2K/';
-%%
-%%% sst: hadley center base+1%co2 patter      ice: hadley center
-%modelname='Model: c96L32_am4g10r8_haddsstp1pctco2_climo'
-%expname='am4co2sst1pct'
-%x1name='c96L32_am4g10r8_hadsstp1pctco2_climo/';
-%
-%%% sst: hadley center base+1%co2 patern      ice: hadley center base + 1%co2 patern
-%modelname='Model: c96L32_am4g10r8_haddicesstp1pctco2_climo'
-%x1name='c96L32_am4g10r8_hadsstp1pctco2_AM4OM2ice_climo/';
-%expname='am4co2icesst1pct'
-%
-% alternate, and probably correct, attempt on the 1pct pattern:
-%modelname='Model: c96L32_am4g10r8_had_p_1pctco2_climo'
-%x1name='c96L32_am4g10r8_had_p_1pctco2_climo';
-%expname='am4co21pct'
-%%
-%x2name='c96L32_am4g10r8_2000climo_p2K/';
-x2name='c96L32_am4g10r8_2000climo/';
-%x2name='c96L32_am4g10r8_qobs_2000climo/';
-addpath='/ts_all/';
-years='000201-001112.';
-%%%% use below for reg + pattern experiments
-%%%%% pstart and pend define the period over which the feedbacks are computed
-lengthyr=10; % length of time series in years
-iend=120;
-iend2=120;
-pstart=1;
-pend=119;
-iarr=[1 10 60 80 100 120];
-%years='000701-001112.';
-%lengthyr=5; % length of time series in years
-%iend=60;
-%iend2=60;
-%pstart=1;
-%pend=59;
-%iarr=[1 10 30 40 50 60];
-%%%% endt is the end index for the time series that have been computed
-%%%% with a running mean of +/- 6 months so it is 13 months shorter
-%%endt=107; % needs to be iend -1 year and one month
+%%years='000701-001112.';
+%%lengthyr=5; % length of time series in years
+%%iend=60;
+%%iend2=60;
+%%pstart=1;
+%%pend=59;
+%%iarr=[1 10 30 40 50 60];
+%%%%% endt is the end index for the time series that have been computed
+%%%%% with a running mean of +/- 6 months so it is 13 months shorter
+%%%endt=107; % needs to be iend -1 year and one month
+%%%%%
+%%%% below is needed both for my experiments and for Ming's cess experiment
+%atm='atmos.';
+%expyrs1=strcat(atm,years); 
+%expyrs2=strcat(atm,years); 
 %%%%
-%%% below is needed both for my experiments and for Ming's cess experiment
-atm='atmos.';
-expyrs1=strcat(atm,years); 
-expyrs2=strcat(atm,years); 
+%exp1name=strcat(x1name,addpath,expyrs1);
+%exp2name=strcat(x2name,addpath,expyrs2);
+%exp1=strcat(basedir,x1name,addpath);
+%exp2=strcat(basedir,x2name,addpath);
 %%%
-exp1name=strcat(x1name,addpath,expyrs1);
-exp2name=strcat(x2name,addpath,expyrs2);
-exp1=strcat(basedir,x1name,addpath);
-exp2=strcat(basedir,x2name,addpath);
-%%
-%%%% end sst pattern block
-%%%
+%%%%% end sst pattern block
+%%%%
 
 %------------------------------------------------------------------------------------------
 %%fin_sst='/archive/cjg/mdt/cm3/ipcc_ar5/input/common/sst.climo.1981-2000.data.nc'

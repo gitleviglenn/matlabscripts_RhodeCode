@@ -1,6 +1,9 @@
 %------------------------------------------------------------------------------------------
 % feedback_panel_tave.m
 %
+% modified to take input from am3 experiments that david paytner ran.  the input has
+% already been time averaged so i removed the time averaging bit of code....
+%
 % 1. read in variables from input files
 % 2. compute cosine weighted global mean values
 % 3. compute radiative flux at toa and temp diff pattern
@@ -14,135 +17,30 @@
 %         - global mean patterns of cre
 %         - zonal mean of cre, basic and normalized
 %
-% levi silvers                                        Sept 2016
+% levi silvers                                        Oct 2016
 %------------------------------------------------------------------------------------------
-%
-%% locations of the files i am currently interested in: 
-%% control experiment:
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
-%
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_p2K/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
-%
-%% hadley center plus the sst anomaly pattern derived from the multi model cmip3 ensemble.  see webb et al. 2016 for details.
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_cmip3sstanom/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
-%
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_1pctco2_climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_4xCO2_climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_20yr/atmos_subsvar3d.0002-0021.all.nc
-%
-% experiments using sst patterns from the periods P1,P2,P3 of Paytner et al. 2016
-%%
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sstctl/
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_ptb/
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_p2_ctl/
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_p2_ptb/
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_p3_ctl/
-%/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_cm3_sst_p3_ptb/
-%
-%------------------------------------------------------------------------------------------
-basedir='/archive/Levi.Silvers/awg/verona/'
-%%
-%% p2k  base: hadley center ice and sst
-%modelname='Model: c96L32_am4g10r8_2000climo_p2K'
-%expname='am4p2k'
-%x1name='c96L32_am4g10r8_2000climo_p2K';
-%%
-% sst pattern from from_cm3 runs of Paytner over 3 time periods: P1,P2,P3
-modelname='Model: c96L32 am4g10r8 from cm3 sst ptb'
-expname='cm3_p1'
-x1name='c96L32_am4g10r8_cm3_sst_ptb';
-%
-%modelname='Model: c96L32 am4g10r8 from cm3 sst p2 ptb'
-%expname='cm3_p2'
-%x1name='c96L32_am4g10r8_cm3_sst_p2_ptb';
-%
-%modelname='Model: c96L32 am4g10r8 from cm3 sst p3 ptb'
-%expname='cm3_p3'
-%x1name='c96L32_am4g10r8_cm3_sst_p3_ptb';
-%
-% sst pattern from mmm cmip3, from Appendix in Webb et al. 2016
-%modelname='Model: c96L32_am4g10r8_had_p_cmip3sstanom'
-%expname='am4 cmip3 anom'
-%x1name='c96L32_am4g10r8_had_p_cmip3sstanom';
-%%
-%% 2000climo: hadley center ice and sst, ice thickness reduced from 2m to 1m
-%modelname='Model: c96L32_am4g10r8_2000climo_1mice'
-%expname='am4_p2K_1mice'
-%x1name='c96L32_am4g10r8_2000climo_p2K_1mice/';
-%%
-%modelname='Model: c96L32_am4g10r8_2000climo_1mice'
-%expname='am4_1mice'
-%x1name='c96L32_am4g10r8_2000climo_1mice/';
-%
-%modelname='Model: c96L32_am4g10r8_qobs_2000climo'
-%expname='am4_qobs'
-%x1name='c96L32_am4g10r8_qobs_2000climo_p2K/';
-%%
-%%% sst: hadley center base+1%co2 patter      ice: hadley center
-%modelname='Model: c96L32_am4g10r8_haddsstp1pctco2_climo'
-%expname='am4co2sst1pct'
-%x1name='c96L32_am4g10r8_hadsstp1pctco2_climo/';
-%
-%%% sst: hadley center base+1%co2 patern      ice: hadley center base + 1%co2 patern
-%modelname='Model: c96L32_am4g10r8_haddicesstp1pctco2_climo'
-%x1name='c96L32_am4g10r8_hadsstp1pctco2_AM4OM2ice_climo/';
-%expname='am4co2icesst1pct'
-%
-% the ice and sst patterns where first derived as means from the last 20years of
-% the coupled run and then added to the hadley center data.
-%modelname='Model: c96L32_am4g10r8_1pctco2_climo'
-%x1name='c96L32_am4g10r8_1pctco2_climo';
-%expname='am4co21pct_lst20yr'
-
-% alternate, and probably correct, attempt on the 1pct pattern:
-% ice field has not changed from control
-%modelname='Model: c96L32_am4g10r8_had_p_1pctco2_climo'
-%x1name='c96L32_am4g10r8_had_p_1pctco2_climo';
-%expname='am4co21pct'
-%
-% ice field has not changed from control
-%modelname='Model: c96L32_am4g10r8_had_p_4xCO2_climo'
-%x1name='c96L32_am4g10r8_had_p_4xCO2_climo';
-%expname='am4_4xCO2'
-%%
-%x2name='c96L32_am4g10r8_2000climo_p2K/';
-%x2name='c96L32_am4g10r8_2000climo';
-%x2name='c96L32_am4g10r8_qobs_2000climo/';
-x2name='c96L32_am4g10r8_cm3_sstctl/';
-%x2name='c96L32_am4g10r8_cm3_sst_p2_ctl/';
-%x2name='c96L32_am4g10r8_cm3_sst_p3_ctl/';
-%addpath='/ts_all/';
-addpath='/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_10yr/';
-%%%% use below for reg + pattern experiments
-%%%%% pstart and pend define the period over which the feedbacks are computed
-%years='0002-0011.';
-%lengthyr=5; % length of time series in years
-%iend=60;
-%iend2=60;
-%pstart=1;
-%pend=59;
-%iarr=[1 10 30 40 50 60];
-%%%% endt is the end index for the time series that have been computed
-%%%% with a running mean of +/- 6 months so it is 13 months shorter
-%%endt=107; % needs to be iend -1 year and one month
-%%%%
-%%% below is needed both for my experiments and for Ming's cess experiment
-%atm='atmos.';
-%expyrs1=strcat(atm,years); 
-%expyrs2=strcat(atm,years); 
-%%%
-%exp1name=strcat(x1name,addpath,expyrs1);
-%exp2name=strcat(x2name,addpath,expyrs2);
-%exp1=strcat(basedir,x1name,addpath);
-%exp2=strcat(basedir,x2name,addpath);
-exp1=strcat(basedir,x1name,addpath);
-exp2=strcat(basedir,x2name,addpath);
-filename1=strcat(exp1,'atmos_subsvar3d.0002-0011.all.nc');
-filename2=strcat(exp2,'atmos_subsvar3d.0002-0011.all.nc');
-%%
-%------------------------------------------------------------------------------------------
-%%%
 
 % read input file
+% below are the files for am3 with the cmip3 multi-model mean sst pattern as input
+%filename1='/archive/djp/fms/AM3/c48L48_am3p11_1860climo_HADSST_CMIP3PERT_SV/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_10yr/atmos.0001-0010.ann.nc';
+%filename2='/archive/djp/fms/AM3/c48L48_am3p11_1860climo_HADSST_SV/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_10yr/atmos.0001-0010.ann.nc';
+
+% below are the paths for experiments fro David P using sst patterns from different periods
+% time.  The periods are labelled P1,P2, and P3
+%
+%filename1='/archive/djp/fms/AM3/c48L48_am3p11_1860climo_CM3_EXP_P1/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_10yr/atmos.0001-0010.ann.nc'
+%filename2='/archive/djp/fms/AM3/c48L48_am3p11_1860climo_CM3_CTL_P1/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_10yr/atmos.0001-0010.ann.nc'
+%modelname='am3 P1';
+
+%filename1='/archive/djp/fms/AM3/c48L48_am3p11_1860climo_CM3_EXP_P2/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_10yr/atmos.0001-0010.ann.nc'
+%filename2='/archive/djp/fms/AM3/c48L48_am3p11_1860climo_CM3_CTL_P2/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_10yr/atmos.0001-0010.ann.nc'
+%modelname='am3 P2';
+%
+filename1='/archive/djp/fms/AM3/c48L48_am3p11_1860climo_CM3_EXP_P3/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_10yr/atmos.0001-0010.ann.nc'
+filename2='/archive/djp/fms/AM3/c48L48_am3p11_1860climo_CM3_CTL_P3/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_10yr/atmos.0001-0010.ann.nc'
+modelname='am3 P3';
+
+
 f =netcdf(filename1,'nowrite');
 f2 =netcdf(filename2,'nowrite');
 %------------------------------------------------------------------------------------------
@@ -234,23 +132,23 @@ highcld_fdbck=v.hcld-v.hcld2;
 %lwup_sfc_clr_fdbck=v.lwup_sfc_clr-v.lwup_sfc_clr2;
 
 % time mean response fields
-toa_fdbck_mn=mean(toa_net_fdbck,1);
-olr_fdbck_mn=mean(olr_fdbck,1);
-sw_fdbck_mn=mean(sw_fdbck,1);
-lw_clr_fdbck_mn=mean(lw_clr_fdbck,1);
-sw_clr_fdbck_mn=mean(sw_clr_fdbck,1);
-olr_cre_fdbck_mn=mean(olr_cre_fdbck,1);
-sw_cre_fdbck_mn=mean(sw_cre_fdbck,1);
+toa_fdbck_mn=toa_net_fdbck;
+olr_fdbck_mn=olr_fdbck;
+sw_fdbck_mn=sw_fdbck;
+lw_clr_fdbck_mn=lw_clr_fdbck;
+sw_clr_fdbck_mn=sw_clr_fdbck;
+olr_cre_fdbck_mn=olr_cre_fdbck;
+sw_cre_fdbck_mn=sw_cre_fdbck;
 toa_cre_fdbck_mn=olr_cre_fdbck_mn+sw_cre_fdbck_mn;
 
-precip_fdbck_mn=mean(precip_fdbck,1);
-wvp_fdbck_mn=mean(wvp_fdbck,1);
-lwp_fdbck_mn=mean(lwp_fdbck,1);
-wp_allcld_fdbck_mn=mean(wp_allcld_fdbck,1);
-tot_cld_fdbck_mn=mean(tot_cld_fdbck,1);
-midcld_fdbck_mn=mean(midcld_fdbck,1);
-lowcld_fdbck_mn=mean(lowcld_fdbck,1);
-highcld_fdbck_mn=mean(highcld_fdbck,1);
+precip_fdbck_mn=precip_fdbck;
+wvp_fdbck_mn=wvp_fdbck;
+lwp_fdbck_mn=lwp_fdbck;
+wp_allcld_fdbck_mn=wp_allcld_fdbck;
+tot_cld_fdbck_mn=tot_cld_fdbck;
+midcld_fdbck_mn=midcld_fdbck;
+lowcld_fdbck_mn=lowcld_fdbck;
+highcld_fdbck_mn=highcld_fdbck;
 %t_ref_fdbck_mn=mean(t_ref_fdbck,1);
 %-----------------------------------------------------%
 % compute global means using the cosine weighted latitude
@@ -262,10 +160,10 @@ for index=1:v.nlon-1;
     glblatweight=horzcat(glblatweight,v.latweight);
 end
 glbsumweight=sum(glblatweight(:));
-wgt_sst=squeeze(mean(v.sst,1)).*glblatweight;
-wgt_sst2=squeeze(mean(v.sst2,1)).*glblatweight;
-wgt_radflux=squeeze(mean(v.radflux,1)).*glblatweight;
-wgt_radflux2=squeeze(mean(v.radflux2,1)).*glblatweight;
+wgt_sst=squeeze(v.sst).*glblatweight;
+wgt_sst2=squeeze(v.sst2).*glblatweight;
+wgt_radflux=squeeze(v.radflux).*glblatweight;
+wgt_radflux2=squeeze(v.radflux2).*glblatweight;
 mnsst=sum(wgt_sst(:))/glbsumweight;
 mnsst2=sum(wgt_sst2(:))/glbsumweight;
 mnradflux=sum(wgt_radflux(:))/glbsumweight;
@@ -295,16 +193,16 @@ midcld_fdbck_gnorm_mn=midcld_fdbck_mn./normfac;
 lowcld_fdbck_gnorm_mn=lowcld_fdbck_mn./normfac;
 highcld_fdbck_gnorm_mn=highcld_fdbck_mn./normfac;
 %t_ref_fdbck_gnorm=t_ref_fdbck_mn./normfac;
-%
+%------------------------------------------------------------------------------------------
 % compute the zonal 
-toa_fdbck_zmn=mean(toa_fdbck_gnorm,3);
-olr_fdbck_zmn=mean(olr_fdbck_gnorm,3);
-sw_fdbck_zmn=mean(sw_fdbck_gnorm,3);
-lw_clr_fdbck_zmn=mean(lw_clr_fdbck_gnorm,3);
-sw_clr_fdbck_zmn=mean(sw_clr_fdbck_gnorm,3);
-toa_cre_fdbck_zmn=mean(toa_cre_fdbck_gnorm,3);
-olr_cre_fdbck_zmn=mean(olr_cre_fdbck_gnorm,3);
-sw_cre_fdbck_zmn=mean(sw_cre_fdbck_gnorm,3);
+toa_fdbck_zmn=mean(toa_fdbck_gnorm,2);
+olr_fdbck_zmn=mean(olr_fdbck_gnorm,2);
+sw_fdbck_zmn=mean(sw_fdbck_gnorm,2);
+lw_clr_fdbck_zmn=mean(lw_clr_fdbck_gnorm,2);
+sw_clr_fdbck_zmn=mean(sw_clr_fdbck_gnorm,2);
+toa_cre_fdbck_zmn=mean(toa_cre_fdbck_gnorm,2);
+olr_cre_fdbck_zmn=mean(olr_cre_fdbck_gnorm,2);
+sw_cre_fdbck_zmn=mean(sw_cre_fdbck_gnorm,2);
 
 figure; plot(v.lat',toa_fdbck_zmn,'k',v.lat',olr_fdbck_zmn,'b', ...
 v.lat',sw_fdbck_zmn,'r',v.lat',lw_clr_fdbck_zmn,'b--',v.lat',sw_clr_fdbck_zmn,'r--',...
@@ -313,18 +211,12 @@ title('zmn feedbck')
 legend('net','olr','sw','lw_{clr}','sw_{clr}','toa_{cre}','olr_{cre}','sw_{cre}','boxoff','Location','southwest')
 annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none');
 
+%figure; plot(sin((pi/180.)*v.lat),toa_fdbck_zmn,'k')
 figure; plot(sin((pi/180.)*v.lat),toa_fdbck_zmn,'k',sin((pi/180.)*v.lat),olr_fdbck_zmn,'b', ...
 sin((pi/180.)*v.lat),sw_fdbck_zmn,'r',sin((pi/180.)*v.lat),lw_clr_fdbck_zmn,'b--',sin((pi/180.)*v.lat),sw_clr_fdbck_zmn,'r--',...
 sin((pi/180.)*v.lat),toa_cre_fdbck_zmn,'k*',sin((pi/180.)*v.lat),olr_cre_fdbck_zmn,'b*',sin((pi/180.)*v.lat),sw_cre_fdbck_zmn,'r*');
 title('zmn feedbck')
 legend('net','olr','sw','lw_{clr}','sw_{clr}','toa_{cre}','olr_{cre}','sw_{cre}','boxoff','Location','southwest')
 annotation('textbox',[0.0 0.9 1 0.1],'string',modelname, 'EdgeColor', 'none');
-
-%end
+%
 %------------------------------------------------------------------------------------------
-
-
-
-
-
-

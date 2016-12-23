@@ -2,6 +2,8 @@
 % see Wood and Bretherton 2006
 % 
 % this script computes the LTS and EIS using equation 4 and 5
+% it is assumed that the necessary variables have already been loaded
+% e.g. v.tsurf
 %
 % do I want to make this into a function that outputs LTS and EIS?
 % if so it could work nicely to have the input from the function be the 
