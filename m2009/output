@@ -1,0 +1,79 @@
+netcdf atmos.198101-201012.hght {
+dimensions:
+	time = UNLIMITED ; // (360 currently)
+	level = 23 ;
+	lat = 180 ;
+	lon = 288 ;
+	bnds = 2 ;
+variables:
+	double average_DT(time) ;
+		average_DT:long_name = "Length of average period" ;
+		average_DT:units = "days" ;
+		average_DT:missing_value = 1.e+20 ;
+		average_DT:_FillValue = 1.e+20 ;
+	double average_T1(time) ;
+		average_T1:long_name = "Start time for average period" ;
+		average_T1:units = "days since 1980-01-01 00:00:00" ;
+		average_T1:missing_value = 1.e+20 ;
+		average_T1:_FillValue = 1.e+20 ;
+	double average_T2(time) ;
+		average_T2:long_name = "End time for average period" ;
+		average_T2:units = "days since 1980-01-01 00:00:00" ;
+		average_T2:missing_value = 1.e+20 ;
+		average_T2:_FillValue = 1.e+20 ;
+	float hght(time, level, lat, lon) ;
+		hght:units = "m" ;
+		hght:long_name = "height" ;
+		hght:missing_value = -1000.f ;
+		hght:_FillValue = -1000.f ;
+		hght:cell_methods = "time: mean" ;
+		hght:time_avg_info = "average_T1,average_T2,average_DT" ;
+		hght:interp_method = "conserve_order2" ;
+	double lat(lat) ;
+		lat:long_name = "latitude" ;
+		lat:units = "degrees_N" ;
+		lat:cartesian_axis = "Y" ;
+		lat:bounds = "lat_bnds" ;
+	double lat_bnds(lat, bnds) ;
+		lat_bnds:long_name = "latitude bounds" ;
+		lat_bnds:units = "degrees_N" ;
+		lat_bnds:cartesian_axis = "Y" ;
+	float level(level) ;
+		level:units = "hPa" ;
+		level:long_name = "pressure" ;
+		level:cartesian_axis = "Z" ;
+		level:axis = "Z" ;
+		level:positive = "down" ;
+	double lon(lon) ;
+		lon:long_name = "longitude" ;
+		lon:units = "degrees_E" ;
+		lon:cartesian_axis = "X" ;
+		lon:bounds = "lon_bnds" ;
+	double lon_bnds(lon, bnds) ;
+		lon_bnds:long_name = "longitude bounds" ;
+		lon_bnds:units = "degrees_E" ;
+		lon_bnds:cartesian_axis = "X" ;
+	double time(time) ;
+		time:long_name = "time" ;
+		time:units = "days since 1980-01-01 00:00:00" ;
+		time:cartesian_axis = "T" ;
+		time:calendar_type = "JULIAN" ;
+		time:calendar = "JULIAN" ;
+		time:bounds = "time_bnds" ;
+	double time_bnds(time, bnds) ;
+		time_bnds:long_name = "time axis boundaries" ;
+		time_bnds:units = "days" ;
+		time_bnds:missing_value = 1.e+20 ;
+		time_bnds:_FillValue = 1.e+20 ;
+
+// global attributes:
+		:filename = "atmos.198101-198512.hght.nc" ;
+		:title = "c96L32_am4g11r11_SOAv2" ;
+		:grid_type = "regular" ;
+		:grid_tile = "N/A" ;
+		:comment = "pressure level interpolator, version 3.0, precision=double" ;
+		:history = "Wed Dec 21 12:20:10 2016: ncrcat atmos.198101-198512.hght.nc atmos.198601-199012.hght.nc atmos.199101-199512.hght.nc atmos.199601-200012.hght.nc atmos.200101-200512.hght.nc atmos.200601-201012.hght.nc /archive/Ming.Zhao/awg/verona/c96L32_am4g11r11_SOAv2/ts_all/atmos.198101-201012.hght.nc\n",
+			"fregrid --standard_dimension --input_mosaic C96_mosaic.nc --input_file 19850101.atmos_month --interp_method conserve_order2 --remap_file .fregrid_remap_file_288_by_180.nc --nlon 288 --nlat 180 --scalar_field (**please see the field list in this file**) --output_file out.nc" ;
+		:code_version = "$Name: bronx-10_performance_z1l $" ;
+		:nco_openmp_thread_number = 1 ;
+}
