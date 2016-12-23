@@ -27,7 +27,8 @@ theta_f=zeros(288,180,23);
 temp3=zeros(288,180);
 lts_f=zeros(288,180);
 rh_sfc=zeros(288,180);
-  theta_temp1=v.tsurf(:,:).*((p0/v.level(1))^kappa);
+  %theta_temp1=v.tsurf(:,:).*((p0/v.level(1))^kappa);
+  theta_temp1=v.tref(:,:).*((p0/v.level(1))^kappa);
   %theta_f(1,:,:)=theta_temp1;
   theta_f(:,:,1)=theta_temp1;
 for lev=2:23;
@@ -62,7 +63,11 @@ rh_sfc(isnan(rh_sfc))=rh0;
 % using only surface values
 %lcl=(20.+(T0-273.15)/5.)*(1.-rh0)*100.;
 %lcl=(20.+(v.tsurf-273.15)/5.)*(1.-rh0)*100.;
-lcl=(20.+(v.tsurf-273.15)/5.).*(1.-rh_sfc)*100.;
+%lcl=(20.+(v.tsurf-273.15)/5.).*(1.-rh_sfc)*100.;
+% see Lawrence 2005, BAMS, equation 24
+% the lcl can presumably also be computed with a method from
+% Georgakakos and Bras (1984), as used in Myers and Norris, 2013
+lcl=(20.+(v.tref-273.15)/5.).*(1.-rh_sfc)*100.;
 
 %
 estinvs=lts_f-gamma_m_850.*(squeeze(v.hght(:,:,5))-lcl);
