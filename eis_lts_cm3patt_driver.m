@@ -6,6 +6,14 @@
 % derived from cm3 experiments that david paytner performed over 3 different time 
 % periods.
 %
+% for each control and perturbation this script defines a source file and then 
+% runs the scripts: 
+%   openncfile_new
+%   comp_eis_lts
+%
+% the output from these scripts is stored and then the difference fields are computed
+% locally in this script.  zonal means are also computed here.
+%
 % levi silvers                     dec 2016
 %
 %source='/Users/silvers/data/cre_sstpatt/am4_sst_from_cm3/am4g10r8_cm3sst_ctl_atmos.0002-0011.jas.tmn.nc';
@@ -84,11 +92,16 @@ eis_ptbmctl_p3=eis_ptb_p3-eis_ctl_p3;
 eis_znm=mean(eis_ptb_p3,1,'omitnan');
 lts_ptbmctl_p3=lts_ptb_p3-lts_ctl_p3;
 eis_diff_p3_nanland=eis_ptbmctl_p3.*onlyocean;
-cont_wcolorbar_eisdiff(eis_diff_p3_nanland','ptb minus ctl P3');
+lts_diff_p3_nanland=lts_ptbmctl_p3.*onlyocean;
+cont_wcolorbar_eisdiff(eis_diff_p3_nanland','eis ptb minus ctl P3');
+cont_wcolorbar_eisdiff(lts_diff_p3_nanland','lts ptb minus ctl P3');
 
 deleis_p1=mean(eis_diff_p1_nanland,1,'omitnan');
 deleis_p2=mean(eis_diff_p2_nanland,1,'omitnan');
 deleis_p3=mean(eis_diff_p3_nanland,1,'omitnan');
+%dellts_p1=mean(lts_diff_p1_nanland,1,'omitnan');
+%dellts_p2=mean(lts_diff_p2_nanland,1,'omitnan');
+%dellts_p3=mean(lts_diff_p3_nanland,1,'omitnan');
 figure;
 %plot(sin((pi/180.)*v.lat),deleis_p1,'r',sin((pi/180.)*v.lat),deleis_p2,'b',sin((pi/180.)*v.lat),deleis_p3,'k')
 plot(v.lat,deleis_p1,'r',v.lat,deleis_p2,'b',v.lat,deleis_p3,'k')
