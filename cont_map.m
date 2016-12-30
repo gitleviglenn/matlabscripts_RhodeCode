@@ -5,18 +5,23 @@ function cont_map(field_in,vlat,vlon)
 %
 % it build on the cont_wcolorbar.m script
 %
+% field_in should be lat x lon, second incoming var lat and third lon
+%
 % the colormaps have been taken from
 % http://jdherman.github.io/colormap/
 % which is a great resource to create others
 %
 % levi silvers                                       aug 2016
+%
+% recently modified for use with modis.              dec 2016
 %------------------------------------------------------------------------------------------
 
 % first get the continental outlines
 load coast
 figure; 
 %axesm('MapProjection','ortho','origin',[90,180])
-axesm('MapProjection','ortho','origin',[-90,180])
+%axesm('MapProjection','ortho','origin',[-90,180])
+axesm('MapProjection','hammer','origin',[0,-180])
 framem
 plotm(lat,long,'k')
 gridm
@@ -24,10 +29,17 @@ clear lat long;
 %
 %conts=[-2,-1,0,1,2,3,4,5,6,7,8,9];
 %conts=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
-caxis([-5 5]);
-conts=[100,245,250,255,260,265,270,275,280,285,288];
-caxis([100 288]);
+%caxis([-5 5]);
+conts=[10,20,30,40,50,60,70,75,80,85,90];
+%caxis([10 90]);
+caxis([0 100]);
+%conts=[100,245,250,255,260,265,270,275,280,285,288];
+%caxis([100 288]);
 %fig1=contourf(squeeze(field_in),[-5,-4,-3,-2,-1,0,1,2,3,4,5]);
+%fig1=contourfm(vlat,vlon,squeeze(field_in),conts);
+%fig1=contourfm(squeeze(field_in),vlat,vlon,squeeze(field_in),conts);
+%fig1=contourfm(vlon,vlat,squeeze(field_in),conts);
+%fig1=contourfm(vlon,vlat,squeeze(field_in));
 fig1=contourfm(vlat,vlon,squeeze(field_in),conts);
 %cmap2=[0 0 1 ; .4 .4 1; .6 .6 1 ; .9 .9 1 ; 1 .9 .9 ; 1 .6 .6 ;1 .4 .4 ;1 0 0 ];
 %cmap_blue=[255,255,255;
