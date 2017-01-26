@@ -12,9 +12,10 @@ function cont_wcolorbar_eisdiff(field_in,titlein)
 figure; 
 %conts=[4,6,8,10,12,13,14,15,16,18,20];
 conts=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
+%conts=[-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8,1.0];
 fig1=contourf(squeeze(field_in),conts);
 caxis([-5 5]);
-%caxis([-10 10]);
+%caxis([-1 1]);
 cmap_blue=[255,255,255;
 197,255,255;
 138,255,255;

@@ -29,7 +29,8 @@ theta_f=zeros(288,180,23);
 temp3=zeros(288,180);
 lts_f=zeros(288,180);
 rh_sfc=zeros(288,180);
-  theta_temp1=v.tsurf(:,:).*((p0/v.level(1))^kappa);
+  %theta_temp1=v.tsurf(:,:).*((p0/v.level(1))^kappa);
+  theta_temp1=v.tref(:,:).*((p0/v.level(1))^kappa);
   %theta_f(1,:,:)=theta_temp1;
   theta_f(:,:,1)=theta_temp1;
 for lev=2:23;
@@ -51,7 +52,8 @@ lts_f=theta_f(:,:,5)-theta_f(:,:,1);
 %t_850=(v.temp(1,:,:)+v.temp(5,:,:))/2.;
 t_850=v.temp(:,:,3); % temperature on 850 hPa level
 t_850(t_850<0)=150.;
-es_850=6.11*exp((Lv/Rv)*((1./273.15)-(1./t_850))); % sat vapor press on 850 hPa level
+%es_850=6.11*exp((Lv/Rv)*((1./273.15)-(1./t_850))); % sat vapor press on 850 hPa level
+es_850=610.8*exp(17.27.*(t_850-273.15)./(t_850-35.85)); % [Pa] sat vapor press on 850 hPa level
 pp=es_850.*0;
 pp=pp+85000.;
 qs_850=0.622.*es_850./(pp-es_850); % sat mixing ratio on 850 hPa level
@@ -64,17 +66,42 @@ rh_sfc(isnan(rh_sfc))=rh0;
 % using only surface values
 %lcl=(20.+(T0-273.15)/5.)*(1.-rh0)*100.;
 %lcl=(20.+(v.tsurf-273.15)/5.)*(1.-rh0)*100.;
-lcl=(20.+(v.tsurf-273.15)/5.).*(1.-rh_sfc)*100.;
+%lcl=(20.+(v.tsurf-273.15)/5.).*(1.-rh_sfc)*100.;
+% see Lawrence 2005, BAMS, equation 24
+% the lcl can presumably also be computed with a method from
+% Georgakakos and Bras (1984), as used in Myers and Norris, 2013
+lcl=(20.+(v.tref-273.15)/5.).*(1.-rh_sfc)*100.;
 
 %
 estinvs=lts_f-gamma_m_850.*(squeeze(v.hght(:,:,5))-lcl);
 %
 % plot the LTS and EIS
 %
-titin='lower tropispheric stability';
+titin='Lower Tropispheric Stability';
 cont_wcolorbar_eis(lts_f',titin)
-titin='estimated inversion strength';
-cont_wcolorbar_eis(estinvs',titin)
+%titin='estimated inversion strength';
+%cont_wcolorbar_eis(estinvs',titin)
+figure;
+conts=[-6,-4,-2,0,2,4,6,8,10,12,14];
+fig1=contourf(squeeze(estinvs)',conts);
+caxis([-6 14]);
+cmap_orang=[
+82,211,255;
+138,255,255;
+197,255,255;
+255,255,138;
+255,211,82;
+255,153,27;
+226,96,0;
+168,41,0;
+111,0,0;
+56,0,0];
+%0,0,0];
+cmap=cmap_orang/256;
+colormap(cmap(1:10,:))
+h=colorbar('SouthOutside');
+title('Estimated Inversion Strength')
+
 %
 %%
 % commands to generate differences after teh ctl,p2K,4xCO2, and 1pctCO2 fields are computed

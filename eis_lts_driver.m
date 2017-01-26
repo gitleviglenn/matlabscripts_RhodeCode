@@ -47,17 +47,17 @@ onlyocean(land<0.5)=1.;
 eis_p2Kmctl=eis_p2K-eis_ctl;
 lts_p2Kmctl=lts_p2K-lts_ctl;
 newsurface=eis_p2Kmctl.*onlyocean;
-cont_wcolorbar_eisdiff(newsurface','p2K minus ctl');
+cont_wcolorbar_eisdiff(newsurface','EIS p2K minus ctl');
 %
 eis_4xCO2mctl=eis_4xCO2-eis_ctl;
 lts_4xCO2mctl=lts_4xCO2-lts_ctl;
 newsurface=eis_4xCO2mctl.*onlyocean;
-cont_wcolorbar_eisdiff(newsurface','4xCO2 minus ctl');
+cont_wcolorbar_eisdiff(newsurface','EIS 4xCO2 minus ctl');
 %
 lts_1pctCO2mctl=lts_1pctCO2-lts_ctl;
 eis_1pctCO2mctl=eis_1pctCO2-eis_ctl;
 newsurface=eis_1pctCO2mctl.*onlyocean;
-cont_wcolorbar_eisdiff(newsurface','1pctCO2 minus ctl');
+cont_wcolorbar_eisdiff(newsurface','EIS 1pctCO2 minus ctl');
 
 
 

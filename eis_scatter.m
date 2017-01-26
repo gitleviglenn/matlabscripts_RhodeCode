@@ -1,9 +1,9 @@
 % compute a landmask to apply to the output fields
-%landm='/Users/silvers/data/c96L32_landmask_atmos.static.nc'
-%land=ncread(landm,'land_mask');
-%onlyocean=zeros(size(land));
-%onlyocean(land>=0.5)=NaN;
-%onlyocean(land<0.5)=1.;
+landm='/Users/silvers/data/c96L32_landmask_atmos.static.nc'
+land=ncread(landm,'land_mask');
+onlyocean=zeros(size(land));
+onlyocean(land>=0.5)=NaN;
+onlyocean(land<0.5)=1.;
 
 % to get teh v_ctl structure loaded, run open_sstpatt.m
 
