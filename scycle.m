@@ -9,10 +9,11 @@ function [mamavg,jjaavg,sonavg,djfavg] = scycle(field_in);
 %------------------------------------------------------------------------------------------
 
 % first create lists of indices for each 3 month period
-mam=sort([[3:12:120],[4:12:120],[5:12:120]]);
-jja=sort([[6:12:120],[7:12:120],[8:12:120]]);
-son=sort([[9:12:120],[10:12:120],[11:12:120]]);
-djf=sort([[1:12:120],[2:12:120],[12:12:120]]);
+endt=360;
+mam=sort([[3:12:endt],[4:12:endt],[5:12:endt]]);
+jja=sort([[6:12:endt],[7:12:endt],[8:12:endt]]);
+son=sort([[9:12:endt],[10:12:endt],[11:12:endt]]);
+djf=sort([[1:12:endt],[2:12:endt],[12:12:endt]]);
 
 % create new arrays containing only the given 3 month period
 mampart=field_in(mam,:,:);
@@ -29,4 +30,7 @@ djfavg=mean(djfpart,1);
 % plot one of the fields for demonstration
 % 
 % can also use contourf(squeeze(field_in),[-5,-4,-3,-2,-1,0,1,2,3,4,5]);
+cont_wcolorbar(mamavg);
+title('mam')
 cont_wcolorbar(djfavg);
+title('djf')
