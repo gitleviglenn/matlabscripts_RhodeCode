@@ -9,21 +9,54 @@
 
 %figure;
 %scatter(eis_ctl_p3(:),lts_ctl_p3(:))
-new_lcloud=v_ctl.lcloud.*onlyocean;
-new_lts=lts_ctl_p1.*onlyocean;
-new_eis=eis_ctl_p1.*onlyocean;
+%new_lcloud=v_ctl.lcloud.*onlyocean;
+%new_lts=lts_ctl_p1.*onlyocean;
+%new_eis=eis_ctl_p1.*onlyocean;
 
 %figure;
 %scatter(new_lts(:),new_lcloud(:))
 
-
-long1=1;
-long2=288;
-lat1=34;
-lat2=35;
-wind_lcloud=new_lcloud(long1:long2,lat1:lat2);
-wind_lts=new_lts(long1:long2,lat1:lat2);
-wind_eis=new_eis(long1:long2,lat1:lat2);
+% define the window of interest
+% the five windows below are those defined in Klein and Hartmann 1993;
+% latitude runs from 0 at the SP to 180 at NP
+% i think that 0 long is at Greenwich...
+conv=288.0/360.;
+% peruvian window
+long1=conv*270.;
+long2=conv*280.; % max of 288
+lat1=70;
+lat2=80;
+% namibian window;
+long1=conv*0;
+long2=conv*10;
+lat1=70;
+lat2=80;
+%Californian window;
+long1=conv*230;
+long1=conv*220;
+lat1=110;
+lat2=120;
+%Australian window;
+long1=conv*95;
+long2=conv*105;
+lat1=55;
+lat2=65;
+%Canarian window;
+long1=conv*325;
+long2=conv*335;
+lat1=105;
+lat2=115;
+%
+%wind_lcloud=new_lcloud(long1:long2,lat1:lat2);
+%wind_lts=new_lts(long1:long2,lat1:lat2);
+%wind_eis=new_eis(long1:long2,lat1:lat2);
+clear wind_lcloud; 
+clear wind_lts;
+clear wind_eis;
+%wind_lcloud=v.lcloud(:,long1:long2,lat1:lat2);
+wind_lcloud=v.lcloud(:,lat1:lat2,long1:long2);
+wind_lts=lts_ts(:,lat1:lat2,long1:long2);
+wind_eis=eis_ts(:,lat1:lat2,long1:long2);
 %figure;
 %scatter(wind_lts(:),wind_lcloud(:))
 figure
