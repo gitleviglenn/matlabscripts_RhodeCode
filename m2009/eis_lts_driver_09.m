@@ -26,19 +26,6 @@ boo='have you saved changes you numskull?'
 % compute a mask to eliminate values over continents
 onlyocean=make_onlyocean; 
 
-lts_ts=zeros(ts_length,nlat,nlon);
-eis_ts=zeros(ts_length,nlat,nlon);
-%
-timenow=1;
-%%timenow=endtime-ts_length;
-%%
-for timindex=1:ts_length;
-  comp_eis_lts_09
-  lts_ts(timindex,:,:)=lts_f(:,:);
-  eis_ts(timindex,:,:)=estinvs(:,:);
-  timenow=timenow+1;
-end
-fintimeindex=timenow
 
 %% compute the weighted global mean values of the 2m temperature
 % careful with the size of v.tref_full... it may not be full!
@@ -225,6 +212,28 @@ plot(eis_trend_znm',v.lat)
 % zonal mean plot of selected quantities
 %figure
 %plot(sw_cre_znm',v.lat,'k',3.*eis_trend_znm',v.lat,500.*omega500_trend_znm',v.lat,'r',lcloud_znm',v.lat,'g')
+
+%% code to check how similar the surface temperature actually is between the models
+%% first run openncfile_3mods.m to get all three runs loaded
+%boohiss_am2p1000=squeeze(v.tsurf_am2ts(1000,:,:));
+%boohiss_am3p1000=squeeze(v.tsurf_am3ts(1000,:,:));
+%boohiss_am3p1000=squeeze(v.tsurf_am3ts(1000,:,:));
+%
+%vlat=v.lat_am2;
+%vlon=v.lon_am2;
+%vlat4=v.lat_am4;
+%vlon4=v.lon_am4;
+%
+%contsin=[269,272,275,278,282,285,288,291,294,297,300];
+%caxisin=[266 303];
+%
+%cont_map_modis(boohiss_am2p1000,vlat,vlon,contsin,caxisin)
+%title('am2 time1000')
+%cont_map_modis(boohiss_am3p1000,vlat,vlon,contsin,caxisin)
+%title('am3 time1000')
+%cont_map_modis(boohiss_am4p1000,vlat4,vlon4,contsin,caxisin)
+%title('am4 time1000')
+
 
 
 
