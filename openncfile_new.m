@@ -22,6 +22,7 @@ v.level=ncread(source,'level');
 v.level=100.*v.level;
 v.temp=ncread(source,'temp');
 v.tsurf=ncread(source,'t_surf');
+v.tref=ncread(source,'t_ref');
 v.lcloud=ncread(source,'low_cld_amt');
 v.mcloud=ncread(source,'mid_cld_amt');
 v.hcloud=ncread(source,'high_cld_amt');
