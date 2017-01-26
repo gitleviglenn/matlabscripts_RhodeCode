@@ -2,9 +2,9 @@ function [onlyocean]=make_onlyocean
 % grap the land from one of Ming's files, or one of mine.
 
 % am4 land mask
-landhandle=netcdf('/archive/Ming.Zhao/awg/verona/c96L32_am4g11r11_SOAv2/gfdl.ncrc3-intel-prod-openmp/pp/atmos/atmos.static.nc','nowrite');
-% am2 land mask
-%landhandle=netcdf('/archive/fjz/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/pp/atmos/atmos.static.nc','nowrite');
+%landhandle=netcdf('/archive/Ming.Zhao/awg/verona/c96L32_am4g11r11_SOAv2/gfdl.ncrc3-intel-prod-openmp/pp/atmos/atmos.static.nc','nowrite');
+% am2 and am3 land mask
+landhandle=netcdf('/archive/fjz/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/pp/atmos/atmos.static.nc','nowrite');
 
 land=landhandle{'land_mask'}(:,:);
 
