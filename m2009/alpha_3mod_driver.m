@@ -16,7 +16,10 @@ swup_ts=v.swup_toa_am4ts;
 vlon   =v.lon_am4;
 vlat   =v.lat_am4;
 
+'calling alpha09'
 alpha_09
+window_yr
+alpha_tsam4_cre=alpha_cre_30y;
 alpha_tsam4=alpha_30y;
 delTs_am4=delTs;
 delR_am4=delR;
@@ -37,6 +40,7 @@ vlon   =v.lon_am3;
 vlat   =v.lat_am3;
 
 alpha_09
+alpha_tsam3_cre=alpha_cre_30y;
 alpha_tsam3=alpha_30y;
 delTs_am3=delTs;
 delR_am3=delR;
@@ -55,6 +59,7 @@ vlon   =v.lon_am2;
 vlat   =v.lat_am2;
 
 alpha_09
+alpha_tsam2_cre=alpha_cre_30y;
 alpha_tsam2=alpha_30y;
 delTs_am2=delTs;
 delR_am2=delR;
@@ -62,4 +67,67 @@ correlation=num2str(whycorr(2));
 titin=strcat(modtitle_am2,' corr: ',correlation)
 title(titin)
 
+% compute the 30 point running mean of the low level temperature
+windwind=window_yr;
+for ti=1:tend;
+  delT_per_am2=delTs_am2(ti:ti+windwind);
+  delT_am2_run(ti)=mean(delT_per_am2);
+  delT_per_am3=delTs_am3(ti:ti+windwind);
+  delT_am3_run(ti)=mean(delT_per_am3);
+  delT_per_am4=delTs_am4(ti:ti+windwind);
+  delT_am4_run(ti)=mean(delT_per_am4);
+end
 
+% plot figure with all 3 time series 
+figure
+firstyr=1871;
+lastyr=2014;
+
+%firstyr:lastyr % length of am4 ts
+%tend/2
+timearr=1886:1999;
+tgap=window_yr/2;
+window_ts_str=firstyr+tgap;
+window_ts_end=lastyr-tgap;
+timearr=window_ts_str:window_ts_end;
+%
+figure
+plot(timearr,alpha_tsam4,'k')
+hold on
+mn_arr=zeros(length(alpha_tsam4),1);
+mn_arr=mn_arr+mean(alpha_tsam4,1);
+plot(timearr,mn_arr,'k')
+%
+plot(timearr(1:tend),alpha_tsam3(2:tend+1),'r')
+mn_arr=zeros(length(alpha_tsam4),1);
+mn_arr=mn_arr+mean(alpha_tsam3,1);
+plot(timearr,mn_arr,'r')
+%
+plot(timearr(1:tend-1),alpha_tsam2(2:tend),'b')
+mn_arr=zeros(length(alpha_tsam4));
+mn_arr=mn_arr+mean(alpha_tsam2,1);
+plot(timearr,mn_arr,'b')
+title('net feedback')
+hold off
+%plot(timearr(1:104),alpha_tsam3(2:105),'r')
+%plot(timearr(1:103),alpha_tsam2(2:104),'b')
+%
+figure
+plot(timearr,-alpha_tsam4_cre,'k')
+hold on
+mn_arr=zeros(length(alpha_tsam4_cre));
+mn_arr=mn_arr-mean(alpha_tsam4_cre,1);
+plot(timearr,mn_arr,'k')
+%
+plot(timearr(1:tend),-alpha_tsam3_cre(2:tend+1),'r')
+mn_arr=zeros(length(alpha_tsam4_cre));
+mn_arr=mn_arr-mean(alpha_tsam3_cre,1);
+plot(timearr,mn_arr,'r')
+%
+plot(timearr(1:tend-1),-alpha_tsam2_cre(2:tend),'b')
+mn_arr=zeros(length(alpha_tsam4_cre));
+mn_arr=mn_arr-mean(alpha_tsam2_cre,1);
+plot(timearr,mn_arr,'b')
+title('cre feedback')
+hold off
+%
