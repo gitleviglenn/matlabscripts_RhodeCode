@@ -17,15 +17,21 @@ modtitle_am2='am2longamip';
 piece=strcat(path2,years2);
 
 source_tsurf_ts    = strcat(piece,'.t_surf.nc')
+source_temp_ts     = strcat(piece,'.temp.nc')
 source_tref_ts     = strcat(piece,'.t_ref.nc')
+source_rh_ts       = strcat(piece,'.rh.nc')
 source_swdn_ts     = strcat(piece,'.swdn_toa.nc')
 source_swup_ts     = strcat(piece,'.swup_toa.nc')
 source_swup_clr_ts = strcat(piece,'.swup_toa_clr.nc')
 source_olr_ts      = strcat(piece,'.olr.nc')
 source_olr_clr_ts  = strcat(piece,'.olr_clr.nc')
+source_hght_ts     = strcat(piece,'.hght.nc')
 
 fin_tsurf     = netcdf(source_tsurf_ts,'nowrite');
+fin_temp      = netcdf(source_temp_ts,'nowrite');
 fin_tref      = netcdf(source_tref_ts,'nowrite');
+fin_hght      = netcdf(source_hght_ts,'nowrite');
+fin_rh        = netcdf(source_rh_ts,'nowrite');
 fin_swdn      = netcdf(source_swdn_ts,'nowrite');
 fin_swup      = netcdf(source_swup_ts,'nowrite');
 fin_swup_clr  = netcdf(source_swup_clr_ts,'nowrite');
@@ -33,8 +39,14 @@ fin_olr       = netcdf(source_olr_ts,'nowrite');
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
 
 % grab entire time series 
+v.lon_am2ts                   = fin_temp{'lon'}(:); 
+v.lat_am2ts                   = fin_temp{'lat'}(:);
+v.level_am2ts                 = fin_temp{'level'}(:);
+v.hght_am2ts             = fin_hght{'hght'}(:,4,:,:);
 v.tsurf_am2ts           = fin_tsurf{'t_surf'}(:,:,:); 
+v.temp_am2ts            = fin_temp{'temp'}(:,:,:,:); 
 v.tref_am2ts            = fin_tref{'t_ref'}(:,:,:); 
+v.rh_am3ts              = fin_rh{'rh'}(:,1,:,:); 
 v.lon_am2               = fin_tref{'lon'}(:); 
 v.lat_am2               = fin_tref{'lat'}(:);
 v.swdn_toa_am2ts        = fin_swdn{'swdn_toa'}(:,:,:,:);
@@ -51,15 +63,21 @@ modtitle_am3='am3p9longamip';
 piece=strcat(path3,years3);
 
 source_tsurf_ts    = strcat(piece,'.t_surf.nc')
+source_temp_ts     = strcat(piece,'.temp.nc')
 source_tref_ts     = strcat(piece,'.t_ref.nc')
+source_rh_ts       = strcat(piece,'.rh.nc')
 source_swdn_ts     = strcat(piece,'.swdn_toa.nc')
 source_swup_ts     = strcat(piece,'.swup_toa.nc')
 source_swup_clr_ts = strcat(piece,'.swup_toa_clr.nc')
 source_olr_ts      = strcat(piece,'.olr.nc')
 source_olr_clr_ts  = strcat(piece,'.olr_clr.nc')
+source_hght_ts     = strcat(piece,'.hght.nc')
 
 fin_tsurf     = netcdf(source_tsurf_ts,'nowrite');
+fin_temp      = netcdf(source_temp_ts,'nowrite');
 fin_tref      = netcdf(source_tref_ts,'nowrite');
+fin_hght      = netcdf(source_hght_ts,'nowrite');
+fin_rh        = netcdf(source_rh_ts,'nowrite');
 fin_swdn      = netcdf(source_swdn_ts,'nowrite');
 fin_swup      = netcdf(source_swup_ts,'nowrite');
 fin_swup_clr  = netcdf(source_swup_clr_ts,'nowrite');
@@ -67,13 +85,19 @@ fin_olr       = netcdf(source_olr_ts,'nowrite');
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
 
 % grab entire time series 
+v.lon_am3ts             = fin_temp{'lon'}(:); 
+v.lat_am3ts             = fin_temp{'lat'}(:);
+v.level_am3ts           = fin_temp{'level'}(:);
+v.hght_am3ts            = fin_hght{'hght'}(:,5,:,:);
 v.tsurf_am3ts           = fin_tsurf{'t_surf'}(:,:,:); 
+v.temp_am3ts            = fin_temp{'temp'}(:,:,:,:); 
 v.tref_am3ts            = fin_tref{'t_ref'}(:,:,:); 
+v.rh_am3ts              = fin_rh{'rh'}(:,1,:,:); 
 v.lon_am3               = fin_tref{'lon'}(:); 
 v.lat_am3               = fin_tref{'lat'}(:);
 v.swdn_toa_am3ts        = fin_swdn{'swdn_toa'}(:,:,:,:);
 v.swup_toa_am3ts        = fin_swup{'swup_toa'}(:,:,:,:);
-v.swup_toa_clr_am3ts        = fin_swup_clr{'swup_toa_clr'}(:,:,:,:);
+v.swup_toa_clr_am3ts    = fin_swup_clr{'swup_toa_clr'}(:,:,:,:);
 v.olr_toa_am3ts         = fin_olr{'olr'}(:,:,:,:);
 v.olr_toa_clr_am3ts     = fin_olr_clr{'olr_clr'}(:,:,:,:);
 
@@ -85,24 +109,36 @@ modtitle_am4='am4g10r8longamip: ';
 piece=strcat(path4,years4);
 
 source_tsurf_ts    = strcat(piece,'.t_surf.nc')
+source_temp_ts     = strcat(piece,'.temp.nc')
 source_tref_ts     = strcat(piece,'.t_ref.nc')
+source_rh_ts       = strcat(piece,'.rh.nc')
 source_swdn_ts     = strcat(piece,'.swdn_toa.nc')
 source_swup_ts     = strcat(piece,'.swup_toa.nc')
 source_swup_clr_ts = strcat(piece,'.swup_toa_clr.nc')
 source_olr_ts      = strcat(piece,'.olr.nc')
 source_olr_clr_ts  = strcat(piece,'.olr_clr.nc')
+source_hght_ts     = strcat(piece,'.hght.nc')
 
 fin_tsurf     = netcdf(source_tsurf_ts,'nowrite');
+fin_temp      = netcdf(source_temp_ts,'nowrite');
+fin_rh        = netcdf(source_rh_ts,'nowrite');
 fin_tref      = netcdf(source_tref_ts,'nowrite');
 fin_swdn      = netcdf(source_swdn_ts,'nowrite');
 fin_swup      = netcdf(source_swup_ts,'nowrite');
 fin_swup_clr  = netcdf(source_swup_clr_ts,'nowrite');
 fin_olr       = netcdf(source_olr_ts,'nowrite');
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
+fin_hght      = netcdf(source_hght_ts,'nowrite');
 
 % grab entire time series 
+v.lon_am4ts             = fin_temp{'lon'}(:); 
+v.lat_am4ts             = fin_temp{'lat'}(:);
+v.level_am4ts           = fin_temp{'level'}(:);
+v.hght_am4ts            = fin_hght{'hght'}(:,5,:,:);
 v.tsurf_am4ts           = fin_tsurf{'t_surf'}(:,:,:); 
+v.temp_am4ts            = fin_temp{'temp'}(:,:,:,:); 
 v.tref_am4ts            = fin_tref{'t_ref'}(:,:,:); 
+v.rh_am4ts              = fin_rh{'rh'}(:,1,:,:); 
 v.lon_am4               = fin_tref{'lon'}(:); 
 v.lat_am4               = fin_tref{'lat'}(:);
 v.swdn_toa_am4ts        = fin_swdn{'swdn_toa'}(:,:,:,:);

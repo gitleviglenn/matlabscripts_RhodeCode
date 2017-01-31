@@ -31,8 +31,8 @@
 %%path='/archive/fjz/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/pp/atmos/ts/monthly/135yr/';
 path='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/';
 years='atmos.187001-200412'; % 1620 months
-%endtime=1620;
-endtime=1080;
+endtime=1620;
+%endtime=1080;
 modtitle='am2';
 %%% AM3
 %path='/net2/Levi.Silvers/data/amip_long/c48L48_am3p9_1860_ext/';
