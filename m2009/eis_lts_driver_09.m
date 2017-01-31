@@ -40,9 +40,18 @@ onlyocean=make_onlyocean;
 % compute a time series of the toa feedback parameter
 % should be comparable to ts shown in Gregory and Andrews 2016
 %alpha_ts=zeros(tindex,1);
-%for ti=1:tindex;
+eis_ts=zeros(ts_length,nlat,nlon);
+lts_ts=zeros(ts_length,nlat,nlon);
+timenow=1;
+tindex=size(v.tref_full,1);
+for ti=1:tindex;
+  comp_eis_lts_09;
 %  alpha_ts(ti)=delR/delT_surf;
-%end
+  eis_ts(ti,:,:)=estinvs(:,:);
+  lts_ts(ti,:,:)=lts_f(:,:);
+  timenow=timenow+1;
+end
+fintimeindex=timenow
 % this can be done with:
 %alpha_3mod_driver.m  or 
 %alpha_09.m

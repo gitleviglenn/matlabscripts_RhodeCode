@@ -35,21 +35,24 @@ nlon=v.nlon;
 %
 % in most cases this will be the amip period of roughly 30 years.  
 %
-%endyr=size(v.temp_full(:,1,1,1),1);
-%months=360; % 360 -> 30 years
-%time0=endyr-months;
-%v.temp_per=v.temp_full(time0:endyr,:,:,:);
-%v.rh_per=v.rh_full(time0:endyr,:,:,:);
-%v.hght_per=v.hght_full(time0:endyr,:,:,:);
-%v.tsurf_per=v.tsurf_full(time0:endyr,:,:);
-%v.tref_per=v.tref_full(time0:endyr,:,:);
+endyr=size(v.temp_full(:,1,1,1),1);
+months=360; % 360 -> 30 years
+time0=endyr-months+1;
+v.temp_per=v.temp_full(time0:endyr,:,:,:);
+v.rh_per=v.rh_full(time0:endyr,:,:,:);
+v.hght_per=v.hght_full(time0:endyr,:,:,:);
+v.tsurf_per=v.tsurf_full(time0:endyr,:,:);
+v.tref_per=v.tref_full(time0:endyr,:,:);
 
 % used for generating a time series.... when called from eis_lts_driver_09
-v.temp_per=v.temp_full(timenow,:,:,:);
-v.rh_per=v.rh_full(timenow,:,:,:);
-v.hght_per=v.hght_full(timenow,:,:,:);
-v.tsurf_per=v.tsurf_full(timenow,:,:);
-v.tref_per=v.tref_full(timenow,:,:);
+% if time and memory become a problem, the rh, and hght can all be 
+% reduced.  we don't use most of the space they take up...
+
+%v.temp_per=v.temp_full(timenow,:,:,:);
+%v.rh_per=v.rh_full(timenow,:,:,:);
+%v.hght_per=v.hght_full(timenow,:,:,:);
+%v.tsurf_per=v.tsurf_full(timenow,:,:);
+%v.tref_per=v.tref_full(timenow,:,:);
 
 v.temp=squeeze(nanmean(v.temp_per,1));
 v.tsurf=squeeze(nanmean(v.tsurf_per,1));
@@ -66,13 +69,14 @@ nlev=size(v.level,1);
 % v.rh
 % v.hght
 
-theta_f=zeros(nlev,nlat,nlon);
-temp3=zeros(nlat,nlon);
-lts_f=zeros(nlat,nlon);
-rh_sfc=zeros(nlat,nlon);
-theta_temp1=zeros(nlat,nlon);
-  theta_temp1=v.tsurf.*((p0/v.level(1))^kappa);
-  theta_f(1,:,:)=theta_temp1(:,:);
+theta_f     = zeros(nlev,nlat,nlon);
+temp3       = zeros(nlat,nlon);
+lts_f       = zeros(nlat,nlon);
+rh_sfc      = zeros(nlat,nlon);
+theta_temp1 = zeros(nlat,nlon);
+
+theta_temp1=v.tsurf.*((p0/v.level(1))^kappa);
+theta_f(1,:,:)=theta_temp1(:,:);
 for lev=2:nlev;
   p_lev=v.level(lev);
   temptemp=squeeze(v.temp(lev,:,:));
@@ -118,8 +122,6 @@ lcl=(20.+(temp_llev-273.15)/5.).*(1.-rh_llev)*100.;
 %estinvs=lts_f-gamma_m_850.*(squeeze(v.hght(5,:,:))-lcl);
 estinvs=squeeze(lts_f)-squeeze(gamma_m_850).*(squeeze(v.hght(5,:,:))-lcl);
 %
-% plot the LTS and EIS
-%
 onlyocean=make_onlyocean;
 %
 lts_f=lts_f.*onlyocean;
@@ -150,6 +152,8 @@ estinvs=estinvs.*onlyocean;
 %h=colorbar('SouthOutside');
 %title('Estimated Inversion Strength')
 %
-
+contsin=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
+caxisin=[-5 5];
+cont_map_modis(estinvs,v.lat,v.lon,contsin,caxisin)
 %
 %
