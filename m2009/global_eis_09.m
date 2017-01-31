@@ -5,6 +5,8 @@
 % it is assumed that the necessary variables have already been loaded
 % e.g. v.tsurf --> use something like openncfile_new.m
 %
+% this should work after calling openncfile_3mods.m
+%
 % m2009/eis_lts_driver_09.m is one of the scripts that calls this one
 %
 % do I want to make this into a function that outputs LTS and EIS?
@@ -39,13 +41,37 @@ kappa=Ra/cp;
 % if time and memory become a problem, the rh, and hght can all be 
 % reduced.  we don't use most of the space they take up...
 
-v.temp_per=v.temp_am4ts(timenow,:,:,:);
-v.rh_per=v.rh_am4ts(timenow,:,:,:);
-v.hght_per=v.hght_am4ts(timenow,:,:,:);
-v.tref_per=v.tref_am4ts(timenow,:,:);
-v.level=v.level_am4ts(:);
+%% the idea is to specify 'modelnum' in the calling script/driver
+%modelnum='_am4ts';
+%
+%tempstr=strcat('v.temp',modelnum);
+%rhstr=strcat('v.rh',modelnum);
+%hghtstr=strcat('v.hght',modelnum);
+%trefstr=strcat('v.tref',modelnum);
+%levstr=strcat('v.level',modelnum);
+%latstr=strcat('v.lat',modelnum);
+%lonstr=strcat('v.lon',modelnum);
+
+v.temp=squeeze(v.temp_am4ts(timenow,:,:,:));
+v.rh=squeeze(v.rh_am4ts(timenow,:,:,:));
+v.hght=squeeze(v.hght_am4ts(timenow,:,:,:));
+v.tref=squeeze(v.tref_am4ts(timenow,:,:));
+v.tsurf=squeeze(v.tsurf_am4ts(timenow,:,:));
+v.level=squeeze(v.level_am4ts(:));
+v.lat=squeeze(v.lat_am4ts(:));
+v.lon=squeeze(v.lon_am4ts(:));
+
 nlat=size(v.lat_am4ts,1);
 nlon=size(v.lon_am4ts,1);
+
+%v.temp=squeeze(v.temp_am4ts(timenow,:,:,:));
+%v.rh=squeeze(v.rh_am4ts(timenow,:,:,:));
+%v.hght=squeeze(v.hght_am4ts(timenow,:,:,:));
+%v.tref=squeeze(v.tref_am4ts(timenow,:,:));
+%v.tsurf=squeeze(v.tsurf_am4ts(timenow,:,:));
+%v.level=squeeze(v.level_am4ts(:));
+%v.lat=squeeze(v.lat'(:));
+%v.lon=squeeze(lonstr(:));
 
 v.level=100.*v.level;
 
@@ -56,11 +82,11 @@ v.level=100.*v.level;
 %v.tref_per=v.tref_full(timenow,:,:);
 %v.level=v.level_full(:);
 
-v.temp=squeeze(nanmean(v.temp_per,1));
-v.tsurf=squeeze(nanmean(v.tsurf_per,1));
-v.tref=squeeze(nanmean(v.tref_per,1));
-v.rh=squeeze(nanmean(v.rh_per,1));
-v.hght=squeeze(nanmean(v.hght_per,1));
+%v.temp=squeeze(nanmean(v.temp_per,1));
+%v.tsurf=squeeze(nanmean(v.tsurf_per,1));
+%v.tref=squeeze(nanmean(v.tref_per,1));
+%v.rh=squeeze(nanmean(v.rh_per,1));
+%v.hght=squeeze(nanmean(v.hght_per,1));
 
 nlev=size(v.level,1);
 
@@ -118,6 +144,9 @@ estinvs=squeeze(lts_f)-squeeze(gamma_m_850).*(squeeze(v.hght(:,:))-lcl);
 %%
 %lts_f=lts_f.*onlyocean;
 %estinvs=estinvs.*onlyocean;
-
+%
+contsin=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
+caxisin=[-5 5];
+cont_map_modis(estinvs,v.lat,v.lon,contsin,caxisin)
 %
 %
