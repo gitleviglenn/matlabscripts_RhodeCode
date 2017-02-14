@@ -1,0 +1,29 @@
+#  1. openncfile_3mods
+#
+#  2. alpha_3mod_driver --> computes time series of alpha for three models
+#
+#  3. eis_lts_driver_09.m --> we also want time series of eis and lts.  
+#  to do this eis_lts_driver_09.m 
+#  should be used.  but it needs to be done individually for each model.  each
+#  time the following needs to be changed manually: 
+#  3.a substitute throughout global_eis_09.m for '_am2ts', '_am3ts', or '_am4ts'  
+#  3.b substitute throughout eis_lts_driver_09.m for '_am2ts', '_am3ts', or '_am4ts'  
+#  3.c due to the infantile way these scripts have been written, first enter: 
+#      timenow=1; then run global_eis_09, then run eis_lts_driver_09.
+#
+#  4. eis_reg_driver.m  --> computes eis values in the tropics and specific windows.
+#     eis_trend_09.m is used.
+#
+#  5. openncfile_new.m --> for additional variables such as lcloud, hcloud, omega
+#     this is only written to work for one model at a time.  this is necessary to compute#     things like the trend of low-level clouds.
+#
+#  6. Klein-line
+#     openncfile_new.m will need to be used to fill the low cloud variables v.lcloud for
+#     each of the models (individually).  The time series of the LTS (e.g. lts_am2ts) 
+#     will also need to exist.  the use
+#     6.a [scycle_stmn_wind,mamavg,jjaavg,sonavg,djfavg] = scycle_windows(v.lcloud);
+#     and save the scycle_stmn_wind array to var1.
+#     6.b [scycle_stmn_wind,mamavg,jjaavg,sonavg,djfavg] = scycle_windows(lts_am4ts_end);
+#     and save the scycle_stmn_wind array to var2.
+#     make a plot using scatter(var2(:),var1(:)).  So far this results in crap.  
+#
