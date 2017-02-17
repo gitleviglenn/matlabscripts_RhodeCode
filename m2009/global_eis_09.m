@@ -17,6 +17,9 @@
 % directly, or to compute differences between LTS and EIS and then use
 % cont_wcolorbar_eis to plot the differences.  
 %
+% CAUTION!  the number of levels is different between AM2.1 and the later models
+% this matters! 
+%
 % variables used in computations below:
 % v.level
 % v.tsurf or v.tref
@@ -42,52 +45,16 @@ kappa=Ra/cp;
 % reduced.  we don't use most of the space they take up...
 
 %% the idea is to specify 'modelnum' in the calling script/driver
-%modelnum='_am4ts';
+%modelnum='_am3ts';
 %
-%tempstr=strcat('v.temp',modelnum);
-%rhstr=strcat('v.rh',modelnum);
-%hghtstr=strcat('v.hght',modelnum);
-%trefstr=strcat('v.tref',modelnum);
-%levstr=strcat('v.level',modelnum);
-%latstr=strcat('v.lat',modelnum);
-%lonstr=strcat('v.lon',modelnum);
+v.level=squeeze(v.level_am3ts(:));
+v.lat=squeeze(v.lat_am3ts(:));
+v.lon=squeeze(v.lon_am3ts(:));
 
-v.temp=squeeze(v.temp_am4ts(timenow,:,:,:));
-v.rh=squeeze(v.rh_am4ts(timenow,:,:,:));
-v.hght=squeeze(v.hght_am4ts(timenow,:,:,:));
-v.tref=squeeze(v.tref_am4ts(timenow,:,:));
-v.tsurf=squeeze(v.tsurf_am4ts(timenow,:,:));
-v.level=squeeze(v.level_am4ts(:));
-v.lat=squeeze(v.lat_am4ts(:));
-v.lon=squeeze(v.lon_am4ts(:));
-
-nlat=size(v.lat_am4ts,1);
-nlon=size(v.lon_am4ts,1);
-
-%v.temp=squeeze(v.temp_am4ts(timenow,:,:,:));
-%v.rh=squeeze(v.rh_am4ts(timenow,:,:,:));
-%v.hght=squeeze(v.hght_am4ts(timenow,:,:,:));
-%v.tref=squeeze(v.tref_am4ts(timenow,:,:));
-%v.tsurf=squeeze(v.tsurf_am4ts(timenow,:,:));
-%v.level=squeeze(v.level_am4ts(:));
-%v.lat=squeeze(v.lat'(:));
-%v.lon=squeeze(lonstr(:));
+nlat=size(v.lat_am3ts,1);
+nlon=size(v.lon_am3ts,1);
 
 v.level=100.*v.level;
-
-%v.temp_per=v.temp_full(timenow,:,:,:);
-%v.rh_per=v.rh_full(timenow,:,:,:);
-%v.hght_per=v.hght_full(timenow,:,:,:);
-%%v.tsurf_per=v.tsurf_full(timenow,:,:);
-%v.tref_per=v.tref_full(timenow,:,:);
-%v.level=v.level_full(:);
-
-%v.temp=squeeze(nanmean(v.temp_per,1));
-%v.tsurf=squeeze(nanmean(v.tsurf_per,1));
-%v.tref=squeeze(nanmean(v.tref_per,1));
-%v.rh=squeeze(nanmean(v.rh_per,1));
-%v.hght=squeeze(nanmean(v.hght_per,1));
-
 nlev=size(v.level,1);
 
 theta_f     = zeros(nlev,nlat,nlon);
@@ -96,11 +63,15 @@ lts_f       = zeros(nlat,nlon);
 rh_sfc      = zeros(nlat,nlon);
 theta_temp1 = zeros(nlat,nlon);
 
-theta_temp1=v.tsurf.*((p0/v.level(1))^kappa);
+%should I use tsurf or tref?
+%theta_temp1=v.tsurf.*((p0/v.level(1))^kappa);
+%theta_temp1=squeeze(v.tref_am3ts(timenow,:,:)).*((p0/v.level(1))^kappa);
+theta_temp1=squeeze(v.tsurf_am3ts(timenow,:,:)).*((p0/v.level(1))^kappa);
 theta_f(1,:,:)=theta_temp1(:,:);
 for lev=2:nlev;
   p_lev=v.level(lev);
-  temptemp=squeeze(v.temp(lev,:,:));
+  temptemp=squeeze(v.temp_am3ts(timenow,lev,:,:));
+%v.temp=squeeze(v.temp_am3ts(timenow,:,:,:));
   temp3=temptemp;
   temp3(temptemp<240)=240.;
   theta_temp=temp3.*((p0/p_lev)^kappa);
@@ -108,12 +79,18 @@ for lev=2:nlev;
 end
 
 %theta0_f=v.tsurf.*(1.0)^kappa;
+%lts_f=theta_f(5,:,:)-theta_f(1,:,:);
+%lts = theta_700 - theta_sfc
+% for AM3, and AM4 this corresponds to theta_f(5,:,:-theta_f(1,:,:));
 lts_f=theta_f(5,:,:)-theta_f(1,:,:);
+% when computing eis, lts for AM2: 
+%lts_f=theta_f(4,:,:)-theta_f(1,:,:);
 lts_f=squeeze(lts_f);
 
-% compute gamma_m_850
+% compute gamma_m_850 (level 3 for AM2,AM3, and AM4)
 %t_850=(v.temp(1,:,:)+v.temp(5,:,:))/2.;
-t_850=v.temp(3,:,:);
+t_850=v.temp_am3ts(timenow,3,:,:);
+%v.temp=squeeze(v.temp_am3ts(timenow,:,:,:));
 t_850(t_850<0)=50.;
 es_850=610.8*exp(17.27.*(t_850-273.15)./(t_850-35.85)); % [Pa] sat vapor press on 850 hPa level
 pp=es_850.*0;
@@ -123,30 +100,31 @@ gamma_m_850=(g/cp)*(1-(1+Lv*qs_850./(Ra*t_850))./(1+Lv*Lv*qs_850./(cp*Rv*t_850.*
 %
 % compute an approximate lifting condensation level (lcl)
 % i thnk that Espy's lcl formula is intended for RH>50% and temp>0 C.  
-rh_sfc=squeeze(v.rh(1,:,:))./100.;
+%rh_sfc=squeeze(v.rh(1,:,:))./100.;
+rh_sfc=squeeze(v.rh_am3ts(timenow,1,:,:))./100.;
 rh_sfc(isnan(rh_sfc))=rh0;
 % using only surface values
 %lcl=(20.+(v.tsurf-273.15)/5.).*(1.-rh_sfc)*100.;
-temp_llev=squeeze(v.temp(1,:,:));
-rh_llev=v.rh(:,:)./100;
+temp_llev=squeeze(v.temp_am3ts(timenow,1,:,:));
+%rh_llev=v.rh(:,:)./100;
+rh_llev=squeeze(v.rh_am3ts(timenow,1,:,:))./100;
 %temp_llev(temp_llev<0)=NaN;
 %rh_llev(rh_llev<0)=NaN;
 temp_llev(temp_llev<200)=200;
 rh_llev(rh_llev<0.05)=0.05;
 lcl=(20.+(temp_llev-273.15)/5.).*(1.-rh_llev)*100.;
-
 %
 %estinvs=lts_f-gamma_m_850.*(squeeze(v.hght(5,:,:))-lcl);
 % hght(5,:,:) = corresponds to the height at the 700hPa level
-estinvs=squeeze(lts_f)-squeeze(gamma_m_850).*(squeeze(v.hght(:,:))-lcl);
+estinvs=squeeze(lts_f)-squeeze(gamma_m_850).*(squeeze(v.hght_am3ts(timenow,1,:,:))-lcl);
 %
-%onlyocean=make_onlyocean;
+%%onlyocean=make_onlyocean;
+%%%
+%%lts_f=lts_f.*onlyocean;
+%%estinvs=estinvs.*onlyocean;
 %%
-%lts_f=lts_f.*onlyocean;
-%estinvs=estinvs.*onlyocean;
-%
-contsin=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
-caxisin=[-5 5];
-cont_map_modis(estinvs,v.lat,v.lon,contsin,caxisin)
-%
-%
+%contsin=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
+%caxisin=[-5 5];
+%cont_map_modis(estinvs,v.lat,v.lon,contsin,caxisin)
+%%
+%%

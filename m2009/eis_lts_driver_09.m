@@ -1,10 +1,13 @@
 %------------------------------------------------------------------------------------
 % this script uses amip data to compute eis and lts
 %
+% i believe this is the driver which was used to create the global trend plots
+%
 % used with: 
 % m2009/openncfile_new.m
 % m2009/comp_eis_lts_09.m
 % m2009/reg_trend.m
+% global_eis_09.m
 %
 % levi silvers                                                 jan 2017
 %------------------------------------------------------------------------------------
@@ -29,43 +32,44 @@ onlyocean=make_onlyocean;
 
 %% compute the weighted global mean values of the 2m temperature
 % careful with the size of v.tref_full... it may not be full!
-%tindex=size(v.tref_full,1);
+%clear tindex;
+%tindex=size(v.tref_am3ts,1);
 %tref_gmn_ts=zeros(tindex,1);
 %for ti=1:tindex;
-%  fullfield=squeeze(v.tref_full(ti,:,:));
+%  fullfield=squeeze(v.tref_am3ts(ti,:,:));
 %  global_wmean_script;
-%  tref_gmn_ts(ti)=wgt_mean;
+%  tref_gmn_am3ts(ti)=wgt_mean;
+%  fullfield=squeeze(v.tsurf_am3ts(ti,:,:));
+%  global_wmean_script;
+%  tsurf_gmn_am3ts(ti)=wgt_mean;
 %end
 
-% compute a time series of the toa feedback parameter
-% should be comparable to ts shown in Gregory and Andrews 2016
-%alpha_ts=zeros(tindex,1);
-eis_ts=zeros(ts_length,nlat,nlon);
-lts_ts=zeros(ts_length,nlat,nlon);
-timenow=1;
-tindex=size(v.tref_full,1);
-for ti=1:tindex;
-%for ti=1:3;
-  %comp_eis_lts_09;
-  global_eis_09;
-  eis_ts(ti,:,:)=estinvs(:,:);
-  lts_ts(ti,:,:)=lts_f(:,:);
-  timenow=timenow+1;
-end
-fintimeindex=timenow
-% this can be done with:
-%alpha_3mod_driver.m  or 
-%alpha_09.m
-
+%clear tindex;
+%tindex=size(v.tref_am3ts,1);
+%eis_am3ts=zeros(tindex,nlat,nlon);
+%lts_am3ts=zeros(tindex,nlat,nlon);
+%%%
+%timenow=1;
+%for ti=1:tindex;
+%  %comp_eis_lts_09;
+%  global_eis_09;
+%  eis_am3ts(ti,:,:)=estinvs(:,:);
+%  lts_am3ts(ti,:,:)=lts_f(:,:);
+%  timenow=timenow+1;
+%end
+%fintimeindex=timenow
+%stop
+%%eis_ts=eis_am3ts(1260:1620,:,:);
+%%%% this can be done with:
+%%%%alpha_3mod_driver.m  or 
+%%%%alpha_09.m
+%%stop
+%%%%
+%%%%lts_amip=lts_f;
+%%%%eis_amip=estinvs;
+%%%%diff_term=eis_amip-lts_amip;
 %%
-%% if it is desired to only call comp_eis_lts_09 once..
-%%comp_eis_lts_09
-%%
-%%lts_amip=lts_f;
-%%eis_amip=estinvs;
-%%diff_term=eis_amip-lts_amip;
-
-% default plotting contours
+%% default plotting contours
 contsin=[-5,-4,-3,-2,-1,0,1,2,3,4,5]; 
 caxisin=[-5 5];   
 
@@ -101,6 +105,16 @@ hcloud_trend=regtrend_var_oo;
 titin=strcat(modtitle,': high cloud trend')
 title(titin);
 hcloud_znm=nanmean(hcloud_trend,2);
+
+% tsurf 
+%rstime=stime;
+%rendtime=endtime;
+vartotrend=v.tsurf_full;
+reg_trend
+tsurf_trend=regtrend_var_oo;
+titin=strcat(modtitle,': surface temp trend')
+title(titin);
+hcloud_znm=nanmean(tsurf_trend,2);
 
 % lw_clr 
 vartotrend=v.olr_toa_clr;
@@ -145,15 +159,6 @@ toa_trend=toa_clr_trend-cre_trend;
 %lw_cre_trend
 %lw_cre_trend
 
-ncfilename=strcat(modtitle,'_trends_early.nc')
-file_out=ncfilename;
-amip_trends_ncout
-
-%lw_cre_trend;
-%sw_cre_trend;
-%lw_clr_trend;
-%sw_clr_trend;
-
 % temp_700
 %rstime=stime;
 %rendtime=endtime;
@@ -162,6 +167,8 @@ amip_trends_ncout
 % del EIS = del T_700 - 1.2*del T_s
 contsin=[-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8,1.0]; 
 caxisin=[-1.1 1.1];   
+% level 5 is correct for am4, check for am2
+%temp_700=squeeze(v.temp_full(stime:endtime,5,:,:));
 temp_700=squeeze(v.temp_full(:,5,:,:));
 vartotrend=temp_700;
 reg_trend
@@ -174,6 +181,7 @@ title(titin);
 %rendtime=endtime;
 contsin=[-0.025,-0.02,-0.015,-0.01,-0.005,0,0.005,0.01,0.015,0.02,0.025];
 caxis=[-0.025 0.025];
+%omega_500=squeeze(v.omega(stime:endtime,7,:,:));
 omega_500=squeeze(v.omega(:,7,:,:));
 vartotrend=omega_500;
 reg_trend
@@ -189,15 +197,29 @@ contsin=[-1.5,-1,-0.75,-0.5,-0.25,0,0.25,0.5,0.75,1,1.5];
 caxisin=[-1.75 1.75];   
 vartotrend=v.tref_full;
 reg_trend
-tsurf_trend=regtrend_var_oo;
-titin=strcat(modtitle,': surface temp trend')
+tref_trend=regtrend_var_oo;
+titin=strcat(modtitle,': T ref trend')
 title(titin);
-tsurf_trend_znm=nanmean(tsurf_trend,2);
+tref_trend_znm=nanmean(tref_trend,2);
+%rstime=stime;
+%rendtime=endtime;
+%% LWP
+%contsin=[-0.01,-0.008,-0.006,-0.004,-0.002,0,0.002,0.004,0.006,0.008,0.01]; 
+%caxisin=[-0.01 0.01];   
+%%vartotrend=v.lwp_ts;
+%vartotrend=eis_ts;
+%reg_trend
+%lwp_trend=regtrend_var_oo;
+lwp_trend=0;
+%titin=strcat(modtitle,': LWP trend')
+%title(titin);
+%lwp_trend_znm=nanmean(lwp_trend,2);
 % eis
 %rstime=1;
 %rendtime=ts_length;
 contsin=[-2.5,-2.0,-1.5,-1,-0.5,0,0.5,1,1.5,2.0,2.5]; 
 caxisin=[-2.5 2.5];   
+eis_ts=eis_am3ts(stime:endtime,:,:);
 vartotrend=eis_ts;
 reg_trend
 eis_trend=regtrend_var_oo;
@@ -206,6 +228,21 @@ title(titin);
 eis_trend_znm=nanmean(eis_trend,2);
 figure;
 plot(eis_trend_znm',v.lat)
+% lts
+lts_ts=lts_am3ts(stime:endtime,:,:);
+vartotrend=lts_ts;
+reg_trend
+lts_trend=regtrend_var_oo;
+
+
+%% write out netcdf files
+%ncfilename=strcat(modtitle,'_rad_trends_am2.nc')
+%file_out=ncfilename;
+%amip_trends_ncout
+%
+%ncfilename=strcat(modtitle,'_eiscl_trends_am2.nc')
+%file_out=ncfilename;
+%amip_eiscltrends_ncout
 
 %% compute the mean sw_cre over the entire time period
 %sw_crecre_mn=mean(sw_crecre,1);
@@ -243,7 +280,15 @@ plot(eis_trend_znm',v.lat)
 %title('am3 time1000')
 %cont_map_modis(boohiss_am4p1000,vlat4,vlon4,contsin,caxisin)
 %title('am4 time1000')
+%
+%
+ncfilename=strcat(modtitle,'_rad_trends_am3_1620_tsurf.nc')
+file_out=ncfilename;
+amip_trends_ncout
+%
+ncfilename=strcat(modtitle,'_eiscl_trends_am3_1620_tsurf.nc')
+file_out=ncfilename;
+amip_eiscltrends_ncout
 
-
-
-
+%
+%

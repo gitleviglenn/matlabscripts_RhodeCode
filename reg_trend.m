@@ -19,12 +19,14 @@ for ilon=1:1:nlon
 end
 
 trend_reg=ts_length.*regarray;
-regtrend_var_oo=trend_reg.*onlyocean;
+%regtrend_var_oo=trend_reg.*onlyocean;
+'ocean mask not applied in reg_trend.m!'
+regtrend_var_oo=trend_reg;
 
 %cont_wcolorbar_eisdiff(regtrend_var_oo,regtitle)
 
-%%%contsin=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
-%%%caxisin=[-5 5];
-%%cont_map_modis(regtrend_var_oo,v.lat,v.lon,contsin,caxisin)
-%contourf(regtrend_var_oo)
+%%%%contsin=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
+%%%%caxisin=[-5 5];
+%cont_map_modis(regtrend_var_oo,v.lat,v.lon,contsin,caxisin)
+%%contourf(regtrend_var_oo)
 %colorbar

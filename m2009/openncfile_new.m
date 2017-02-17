@@ -27,25 +27,26 @@
 %lateper=1975-2005;  % 1260:1620   Zhou et al. look at 1980-2010;
 %earlyper=1930-1960; % 720:1080
 
-%% AM2
-%%path='/archive/fjz/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/pp/atmos/ts/monthly/135yr/';
-path='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/';
-years='atmos.187001-200412'; % 1620 months
+%%% AM2
+%%%path='/archive/fjz/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/pp/atmos/ts/monthly/135yr/';
+%path='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/';
+%years='atmos.187001-200412'; % 1620 months
+%endtime=1620;
+%%endtime=1080;
+%modtitle='am2';
+%%%% AM3
+path='/net2/Levi.Silvers/data/amip_long/c48L48_am3p9_1860_ext/';
+years='atmos.187001-200512'; % 1632 months
+%endtime=1632;
 endtime=1620;
-%endtime=1080;
-modtitle='am2';
-%%% AM3
-%path='/net2/Levi.Silvers/data/amip_long/c48L48_am3p9_1860_ext/';
-%years='atmos.187001-200512'; % 1632 months
-%%endtime=1632;
-%endtime=1080;
-%modtitle='am3p9';
-%% AM4 long amip
+%%endtime=1080;
+modtitle='am3p9';
+%%%% AM4 long amip
 %path='/net2/Levi.Silvers/data/amip_long/c96L32_am4g10r8_longamip_1860rad/'
 %years='atmos.187101-201512';
 %%endtime=1740; % complete endtime
-%%endtime=1620;
-%endtime=1080;
+%endtime=1620;
+%%%endtime=1080;
 %modtitle='am4g10r8';
 %% AM4 normal amip
 %path='/net2/Levi.Silvers/data/amip_long/c96L32_am4g12r04_cosp/'
@@ -79,6 +80,7 @@ source_swup_ts     = strcat(piece1,'.swup_toa.nc')
 source_swup_clr_ts = strcat(piece1,'.swup_toa_clr.nc')
 source_olr_ts     = strcat(piece1,'.olr.nc')
 source_olr_clr_ts     = strcat(piece1,'.olr_clr.nc')
+source_lwp_ts     = strcat(piece1,'.LWP.nc')
 
 fin_temp  = netcdf(source_temp_ts,'nowrite');
 fin_tsurf = netcdf(source_tsurf_ts,'nowrite');
@@ -94,6 +96,7 @@ fin_swup_clr  = netcdf(source_swup_clr_ts,'nowrite');
 fin_olr       = netcdf(source_olr_ts,'nowrite');
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
 fin_omega     = netcdf(source_omega_ts,'nowrite');
+fin_lwp       = netcdf(source_lwp_ts,'nowrite');
 
 v.lon            = fin_temp{'lon'}(:); 
 v.lat            = fin_temp{'lat'}(:);
@@ -115,11 +118,12 @@ v.olr_toa       = fin_olr{'olr'}(stime:endtime,:,:,:);
 v.olr_toa_clr   = fin_olr_clr{'olr_clr'}(stime:endtime,:,:,:);
 
 % grab entire time series 
-v.tsurf_ts       = fin_tsurf{'t_surf'}(:,:,:); 
-v.tref_ts        = fin_tref{'t_ref'}(:,:,:); 
-v.swdn_toa_ts    = fin_swdn{'swdn_toa'}(:,:,:,:);
-v.swup_toa_ts    = fin_swup{'swup_toa'}(:,:,:,:);
-v.olr_toa_ts     = fin_olr{'olr'}(:,:,:,:);
+v.tsurf_ts       = fin_tsurf{'t_surf'}(stime:endtime,:,:); 
+v.tref_ts        = fin_tref{'t_ref'}(stime:endtime,:,:); 
+v.swdn_toa_ts    = fin_swdn{'swdn_toa'}(stime:endtime,:,:,:);
+v.swup_toa_ts    = fin_swup{'swup_toa'}(stime:endtime,:,:,:);
+v.olr_toa_ts     = fin_olr{'olr'}(stime:endtime,:,:,:);
+v.lwp_ts         = fin_lwp{'LWP'}(stime:endtime,:,:,:);
 
 v.level=100.*v.level;
 v.nlon=length(v.lon); 

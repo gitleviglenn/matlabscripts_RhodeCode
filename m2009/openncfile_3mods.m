@@ -26,6 +26,8 @@ source_swup_clr_ts = strcat(piece,'.swup_toa_clr.nc')
 source_olr_ts      = strcat(piece,'.olr.nc')
 source_olr_clr_ts  = strcat(piece,'.olr_clr.nc')
 source_hght_ts     = strcat(piece,'.hght.nc')
+source_lcloud_ts   = strcat(piece,'.low_cld_amt.nc')
+source_lwp_ts      = strcat(piece,'.LWP.nc')
 
 fin_tsurf     = netcdf(source_tsurf_ts,'nowrite');
 fin_temp      = netcdf(source_temp_ts,'nowrite');
@@ -37,6 +39,8 @@ fin_swup      = netcdf(source_swup_ts,'nowrite');
 fin_swup_clr  = netcdf(source_swup_clr_ts,'nowrite');
 fin_olr       = netcdf(source_olr_ts,'nowrite');
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
+fin_lcloud    = netcdf(source_lcloud_ts,'nowrite');
+fin_lwp       = netcdf(source_lwp_ts,'nowrite');
 
 % grab entire time series 
 v.lon_am2ts                   = fin_temp{'lon'}(:); 
@@ -46,7 +50,7 @@ v.hght_am2ts             = fin_hght{'hght'}(:,4,:,:);
 v.tsurf_am2ts           = fin_tsurf{'t_surf'}(:,:,:); 
 v.temp_am2ts            = fin_temp{'temp'}(:,:,:,:); 
 v.tref_am2ts            = fin_tref{'t_ref'}(:,:,:); 
-v.rh_am3ts              = fin_rh{'rh'}(:,1,:,:); 
+v.rh_am2ts              = fin_rh{'rh'}(:,1,:,:); 
 v.lon_am2               = fin_tref{'lon'}(:); 
 v.lat_am2               = fin_tref{'lat'}(:);
 v.swdn_toa_am2ts        = fin_swdn{'swdn_toa'}(:,:,:,:);
@@ -54,6 +58,9 @@ v.swup_toa_am2ts        = fin_swup{'swup_toa'}(:,:,:,:);
 v.swup_toa_clr_am2ts    = fin_swup_clr{'swup_toa_clr'}(:,:,:,:);
 v.olr_toa_am2ts         = fin_olr{'olr'}(:,:,:,:);
 v.olr_toa_clr_am2ts     = fin_olr_clr{'olr_clr'}(:,:,:,:);
+
+v.lcloud_am2ts          = fin_lcloud{'low_cld_amt'}(:,:,:);
+v.lwp_am2ts             = fin_lwp{'LWP'}(:,:,:);
 
 %% AM3 long amip
 path3='/net2/Levi.Silvers/data/amip_long/c48L48_am3p9_1860_ext/';
@@ -72,6 +79,7 @@ source_swup_clr_ts = strcat(piece,'.swup_toa_clr.nc')
 source_olr_ts      = strcat(piece,'.olr.nc')
 source_olr_clr_ts  = strcat(piece,'.olr_clr.nc')
 source_hght_ts     = strcat(piece,'.hght.nc')
+source_lcloud_ts   = strcat(piece,'.low_cld_amt.nc')
 
 fin_tsurf     = netcdf(source_tsurf_ts,'nowrite');
 fin_temp      = netcdf(source_temp_ts,'nowrite');
@@ -83,6 +91,7 @@ fin_swup      = netcdf(source_swup_ts,'nowrite');
 fin_swup_clr  = netcdf(source_swup_clr_ts,'nowrite');
 fin_olr       = netcdf(source_olr_ts,'nowrite');
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
+fin_lcloud    = netcdf(source_lcloud_ts,'nowrite');
 
 % grab entire time series 
 v.lon_am3ts             = fin_temp{'lon'}(:); 
@@ -101,6 +110,8 @@ v.swup_toa_clr_am3ts    = fin_swup_clr{'swup_toa_clr'}(:,:,:,:);
 v.olr_toa_am3ts         = fin_olr{'olr'}(:,:,:,:);
 v.olr_toa_clr_am3ts     = fin_olr_clr{'olr_clr'}(:,:,:,:);
 
+v.lcloud_am3ts          = fin_lcloud{'low_cld_amt'}(:,:,:);
+
 % AM4 long amip
 path4='/net2/Levi.Silvers/data/amip_long/c96L32_am4g10r8_longamip_1860rad/'
 years4='atmos.187101-201512';
@@ -118,6 +129,8 @@ source_swup_clr_ts = strcat(piece,'.swup_toa_clr.nc')
 source_olr_ts      = strcat(piece,'.olr.nc')
 source_olr_clr_ts  = strcat(piece,'.olr_clr.nc')
 source_hght_ts     = strcat(piece,'.hght.nc')
+source_lwp_ts      = strcat(piece,'.LWP.nc')
+source_lcloud_ts   = strcat(piece,'.low_cld_amt.nc')
 
 fin_tsurf     = netcdf(source_tsurf_ts,'nowrite');
 fin_temp      = netcdf(source_temp_ts,'nowrite');
@@ -129,6 +142,8 @@ fin_swup_clr  = netcdf(source_swup_clr_ts,'nowrite');
 fin_olr       = netcdf(source_olr_ts,'nowrite');
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
 fin_hght      = netcdf(source_hght_ts,'nowrite');
+fin_lcloud    = netcdf(source_lcloud_ts,'nowrite');
+fin_lwp       = netcdf(source_lwp_ts,'nowrite');
 
 % grab entire time series 
 v.lon_am4ts             = fin_temp{'lon'}(:); 
@@ -147,3 +162,5 @@ v.swup_toa_clr_am4ts    = fin_swup_clr{'swup_toa_clr'}(:,:,:,:);
 v.olr_toa_am4ts         = fin_olr{'olr'}(:,:,:,:);
 v.olr_toa_clr_am4ts     = fin_olr_clr{'olr_clr'}(:,:,:,:);
 
+v.lcloud_am4ts          = fin_lcloud{'low_cld_amt'}(:,:,:);
+v.lwp_am4ts             = fin_lwp{'LWP'}(:,:,:);
