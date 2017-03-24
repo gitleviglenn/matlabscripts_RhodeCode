@@ -14,14 +14,14 @@
 %
 % if these variables haven't already been set by a calling 
 % script then use below:
-%temp_ts=v.tref_ts;
+%temp_ll_ts=v.tref_ts;
 %olr_ts=v.olr_toa_ts;
 %swdn_ts=v.swdn_toa_ts;
 %swup_ts=v.swup_toa_ts;
 
 % compute the weighted global mean values of the 2m temperature
 % careful with the size of v.tref_full... it may not be full!
-tindex=size(temp_ts,1);
+tindex=size(temp_ll_ts,1);
 nyears=tindex/12;
 tref_gmn_ts=zeros(tindex,1);
 olr_gmn_ts=zeros(tindex,1);
@@ -34,7 +34,7 @@ latla=40;
 lonla=70;
 for ti=1:tindex;
  
-  fullfield=squeeze(temp_ts(ti,:,:));
+  fullfield=squeeze(temp_ll_ts(ti,:,:));
   global_wmean_script;
   tref_gmn_ts(ti)=wgt_mean;
 
@@ -60,7 +60,7 @@ for ti=1:tindex;
 end
 
 %for ti=1:tindex;
-%  tref_gmn_ts(ti)=squeeze(temp_ts(ti,latla,lonla));
+%  tref_gmn_ts(ti)=squeeze(temp_ll_ts(ti,latla,lonla));
 %  olr_gmn_ts(ti)=squeeze(olr_ts(ti,latla,lonla));
 %  olr_clr_gmn_ts(ti)=squeeze(olr_clr_ts(ti,latla,lonla));
 %  swdn_gmn_ts(ti)=squeeze(swdn_ts(ti,latla,lonla));
