@@ -1,18 +1,19 @@
 %----------------------------------------------------------------
-% scripts to read and open data from a netcdf files from 
-% 3 different sources and open them into Matlab
+% scripts to read and open data from a netcdf files 
+%
+% this script is general and thus requires the 
+% pathbase, path, and years2 vars to be predefined
+%
+% e.g.
+%pathbase='/net2/Levi.Silvers/data/amip_long/';
+%path='AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A1/';
+%years2='atmos.187001-200412'; % 1620 months
 %
 % this should work for Matlab 2009 
 %
 % levi silvers                     march 2017
 %----------------------------------------------------------------
 
-% AM2 long amip run
-%path='/archive/fjz/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/pp/atmos/ts/monthly/135yr/';
-%path2='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A3/';
-%years2='atmos.187001-200412'; % 1620 months
-%endtime_am2=1620;
-%modtitle_am2='am2longamip';
 piece=strcat(pathbase,path,years2);
 
 source_tsurf_ts    = strcat(piece,'.t_surf.nc')
