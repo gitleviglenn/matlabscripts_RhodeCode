@@ -6,17 +6,24 @@
 % some minor modifications are necessary to allow the scripts which have been developed in 
 % the past 3 months to work for individual ensemble members
 %
+% calls the following scripts:
+% readvars
+% alpha_09
+%
+% this was written to work with something like readvars.m to read in the data using the 
+% 'pathbase' variables.  
+%
 % march 20, 2017                                                           levi silvers
 %-----------------------------------------------------------------------------------------
 %
 pathbase='/net2/Levi.Silvers/data/amip_long/';
 
-% indices over which trends will be taken
 ts_length=360; % length of time series in months over which a trend will be computed
 % rstime and rendtime are the starting and ending times for the period to compute the
 % trend over.  
 %rstime=1; 
 %rendtime=360;  
+% indices over which trends will be taken
 % for early period
 rstime=781; 
 rendtime=1140;  
@@ -31,6 +38,13 @@ period='early'
 timest=1;
 timeend=1620;
 
+% alpha_09 now requires wlat1,wlat2,wlon1, and wlon2 to be defined
+% when alpha_09 is called but a speicific window of interest is not defined 
+% wlat1,wlat2,wlon1,wlon2 need to be defined:
+wlat1=10;
+wlat2=20;
+wlon1=10;
+wlon2=20;
 
 %-----------------------------------------------------------------------------------------
 % for AM2
