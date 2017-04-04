@@ -13,19 +13,28 @@
 %------------------------------------------------------------
 
 longit=vlon;
+%nlongit=size(longit,1);
 latit=vlat;
+%nlatit=size(latit,1);
 % compute the weights
 latitweight=cos(pi/180*latit);
 glblatweight=cos(pi/180*latit);
+%latitweight=1.*latit;
+%glblatweight=1.*latit;
 nlongit=length(longit);
 for index=1:nlongit-1;
   glblatweight=horzcat(glblatweight,latitweight);
 end
 %glbsumweight=sum(glblatweight(:));
+%
 glbsumweight=nansum(glblatweight(:));
+%glbsumweight=nlongit*nlatit;
 
 %
 wgt_var       = fullfield.*glblatweight;
 
 %out_var = sum(wgt_var(:))/glbsumweight
 wgt_mean = nansum(wgt_var(:))/glbsumweight;
+
+
+
