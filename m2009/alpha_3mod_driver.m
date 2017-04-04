@@ -97,7 +97,8 @@ mn_arr=zeros(length(alpha_tsam4),1);
 mn_arr=mn_arr+mean(alpha_tsam4,1);
 plot(timearr,mn_arr,'k','LineWidth',2)
 %
-plot(timearr(1:tend),alpha_tsam3(2:tend+1),'r','LineWidth',2)
+%plot(timearr(1:tend),alpha_tsam3(2:tend+1),'r','LineWidth',2)
+plot(timearr(1:tend-1),alpha_tsam3(2:tend),'r','LineWidth',2)
 mn_arr=zeros(length(alpha_tsam4),1);
 mn_arr=mn_arr+mean(alpha_tsam3,1);
 plot(timearr,mn_arr,'r','LineWidth',2)
@@ -118,7 +119,8 @@ mn_arr=zeros(length(alpha_tsam4_cre));
 mn_arr=mn_arr-mean(alpha_tsam4_cre,1);
 plot(timearr,mn_arr,'k','LineWidth',2)
 %
-plot(timearr(1:tend),-alpha_tsam3_cre(2:tend+1),'r','LineWidth',2)
+%plot(timearr(1:tend),-alpha_tsam3_cre(2:tend+1),'r','LineWidth',2)
+plot(timearr(1:tend-1),-alpha_tsam3_cre(2:tend),'r','LineWidth',2)
 mn_arr=zeros(length(alpha_tsam4_cre));
 mn_arr=mn_arr-mean(alpha_tsam3_cre,1);
 plot(timearr,mn_arr,'r','LineWidth',2)
