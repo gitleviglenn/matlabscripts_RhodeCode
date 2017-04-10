@@ -12,6 +12,16 @@
 % it appears that the fields shown on the quicklooks page are means
 % of the january data from either 1989(model) or 2008(data)
 %
+% this scripts needs: 
+%    vin.tclmodis
+%    normlremn
+%    lwp_norm_tcl
+%    vin.lwp
+%
+% this scripts uses: 
+%    global_wmean_script
+%    cont_map_modis
+%
 % levi silvers                            dec 2016
 %------------------------------------------------------------
 
@@ -28,9 +38,9 @@ tcl2d_new(tcl2d<0.0)=NaN;
 
 fullfield=tcl2d;
 global_wmean_script;
-%cont_map(tcl2d,vlat,vlon)
-figure;
-contourf(vlon,vlat,tcl2d_new)
+cont_map(tcl2d,vlat,vlon)
+%figure;
+%contourf(vlon,vlat,tcl2d_new)
 colorbar
 title('modis total cloud fraction: am4g10r8')
 %cont_map(tcl2d_new,vlat,vlon)
@@ -39,26 +49,38 @@ title('modis total cloud fraction: am4g10r8')
 %title(tit)
 %
 %lre normalized by total cloud frac 
-normlren=squeeze(normlremn.*10e6);
+normlren=squeeze(lre_norm_tcl.*1e6);
+lre_norm_lcl=squeeze(lre_norm_lcl.*1e6);
 normlren(normlren>400)=NaN;
 %lre normalized by total liquid cloud frac
-normlrebylcln=squeeze(normlrebylclmn.*10e6);
-normlrebylcln(normlrebylcln>400)=NaN;
+%normlrebylcln=squeeze(normlrebylclmn.*10e6);
+%normlrebylcln(normlrebylcln>400)=NaN;
 % lre unnormalized 
-nonormlren=squeeze(nonormlremn.*10e6);
-nonormlren(nonormlren>400)=NaN;
+%nonormlren=squeeze(nonormlremn.*10e6);
+%nonormlren(nonormlren>400)=NaN;
 %contslre=[70,80,90,100,110,120,130,140];
 %caxislre=[60 150];
 %figure;
-contslre=[10,15,20,25,30,35,40,45,50,55,60];
-caxislre=[0 70];
+%contslre=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6];
+contslre=[1,2,3,4,5,6,7,8,9,10,11];
+caxislre=[0 11];
 cont_map_modis(normlren,vlat,vlon,contslre,caxislre)
+%figure
 %contourf(vlon,vlat,normlren)
 colorbar
 title('lre modis/tcl modis')
 max(max(normlremn))
 min(min(normlremn))
 colorbar
+
+cont_map_modis(lre_norm_lcl,vlat,vlon,contslre,caxislre)
+colorbar
+title('lre modis/lcl modis')
+
+% plot Yi Ming's approximate lre:
+cont_map_modis(lre_yim,vlat,vlon,contslre,caxislre)
+colorbar
+title('reffmodis/reffmodis2')
 
 %lremodisn=vin.lremodis.*10e6;
 %contslrenn=[130,140,150,160,170,180,190,200];
@@ -68,17 +90,49 @@ colorbar
 %max(max(lremodisn))
 %min(min(lremodisn))
 
-normiren=normire*10e6;
+normiremn=normiremn*1e6;
 %contsire=[140,150,160,170,180,190,200,210,220];
 %caxisire=[130 230];
 %figure;
 contsire=[10,20,30,40,50,60,70,80,90,100,110];
 caxisire=[0 120];
-cont_map_modis(normiren,vlat,vlon,contsire,caxisire)
-%contourf(vlon,vlat,normiren)
+cont_map_modis(normiremn,vlat,vlon,contsire,caxisire)
+%figure
+%contourf(vlon,vlat,normiremn)
 title('ire modis/tcl modis')
-max(max(normire))
-min(min(normire))
+max(max(normiremn))
+min(min(normiremn))
+colorbar
+
+% LWP
+contsire=[10,20,30,40,50,60,70,80,90,100,110];
+caxisire=[0 12];
+varin=lwp_norm_tcl*1000; % converts to g/m2
+varin(lwp_norm_tcl>0.99)=NaN;
+cont_map_modis(varin,vlat,vlon,contsire,caxisire)
+%figure
+%contourf(vlon,vlat,varin)
+title('lwp modis/tcl modis')
+max(max(varin))
+min(min(varin))
+colorbar
+
+%varin=lwp_norm_lcl*100;
+%varin(lwp_norm_lcl>0.99)=NaN;
+%cont_map_modis(varin,vlat,vlon,contsire,caxisire)
+%title('lwp modis/lcl modis')
+%max(max(normire))
+%min(min(normire))
+%colorbar
+
+varin=vin.lwp*1000; % converts to g/m2
+%varin(lwp_norm_tcl>0.99)=NaN;
+cont_map_modis(varin,vlat,vlon,contsire,caxisire)
+%figure
+%contourf(vlon,vlat,varin)
+title('lwp ')
+max(max(varin))
+min(min(varin))
 colorbar
 
 %function cont_map_modis(field_in,vlat,vlon)
