@@ -1,4 +1,15 @@
 %---------------------------------------------------------
+% alpha_09.m
+%
+% computes the global climate feedback parameter using 
+% linear regression on a moving 30 year window.  the time
+% series used in the computation have been averaged over 
+% the entire globe for each year of data.
+%
+% the TOA radiative imbalance is also computed for particular
+% geographic windows as set in regional_alpha.m
+%
+%---------------------------------------------------------
 % what vars need to be loaded for this to run? 
 % wlat1,wlat2,wlon2,wlon1 
 %
@@ -9,9 +20,14 @@
 %
 %
 % calls:
-% global_wmean_script
+%   global_wmean_script
+%
+% called by: 
+%   regional_alpha
 %
 % levi silvers                                jan 2017
+% 
+% updated:                                    apr 2017
 %---------------------------------------------------------
 %
 % if these variables haven't already been set by a calling 
@@ -44,15 +60,16 @@ olr_clr_wind_ts  =zeros(tindex,1);
 %latla=40;
 %lonla=70;
 % related to initializing the glblatweight array
-  fullfield=squeeze(temp_ll_ts(1,:,:));
-  global_wmean_script;
-  test_wgt_wind=wgt_var(wlat1:wlat2,wlon1:wlon2);
+fullfield=squeeze(temp_ll_ts(1,:,:));
+global_wmean_script;
+test_wgt_wind=wgt_var(wlat1:wlat2,wlon1:wlon2);
 
-latlen=size(test_wgt_wind,1)
+latlen=size(test_wgt_wind,1);
 lonlen=size(test_wgt_wind,2);
+
 temp_glblatweight=zeros(latlen,lonlen);
 temp_glblatweight=glblatweight(wlat1:wlat2,wlon1:wlon2);
-reg_area_sum=sum(temp_glblatweight(:));
+reg_area_sum=sum(temp_glblatweight(:)); % # of grid points in window
 
 for ti=1:tindex;
  
@@ -94,26 +111,14 @@ for ti=1:tindex;
 %  reg_area_sum=sum(temp_glblatweight(:));
 
   tref_wind_ts(ti)=nansum(tref_wgt_wind(:))/reg_area_sum;
-
   olr_wind_ts(ti)=nansum(olr_wgt_wind(:))/reg_area_sum; 
-
   olr_clr_wind_ts(ti)=nansum(olr_clr_wgt_wind(:))/reg_area_sum; 
-
   swdn_wind_ts(ti)=nansum(swdn_wgt_wind(:))/reg_area_sum; 
-
   swup_wind_ts(ti)=nansum(swup_wgt_wind(:))/reg_area_sum; 
-
   swup_clr_wind_ts(ti)=nansum(swup_clr_wgt_wind(:))/reg_area_sum; 
 end
 
-%for ti=1:tindex;
-%  tref_gmn_ts(ti)=squeeze(temp_ll_ts(ti,latla,lonla));
-%  olr_gmn_ts(ti)=squeeze(olr_ts(ti,latla,lonla));
-%  olr_clr_gmn_ts(ti)=squeeze(olr_clr_ts(ti,latla,lonla));
-%  swdn_gmn_ts(ti)=squeeze(swdn_ts(ti,latla,lonla));
-%  swup_clr_gmn_ts(ti)=squeeze(swup_clr_ts(ti,latla,lonla));
-%  swup_gmn_ts(ti)=squeeze(swup_ts(ti,latla,lonla));
-%end
+size(tref_wgt_wind)
 
 % compute a time series of the toa feedback parameter
 % should be comparable to ts shown in Gregory and Andrews 2016
@@ -192,7 +197,8 @@ delR_cre=toa_cre_R-mn30yr_cre_R;
 
 window_yr=30;
 st=1;
-tend=nyears-window_yr-1;
+%tend=nyears-window_yr-1;
+tend=nyears-window_yr;
 alpha_30y=zeros(tend,1);
 alpha_30y_wind=zeros(tend,1);
 %alpha_lw_30y=zeros(tend,1);
@@ -202,16 +208,31 @@ alpha_clr_30y=zeros(tend,1);
 %delT_run=zeros(tend,1);
 
 % compute the linear regressino over 30 yr windows
+% slope can also be computed using endpoints of 30 yr window.
+% end point computation of slope is given by regval_ep compared 
+% to regval
+denlimit=0.1;
 for ti=1:tend;
     endt            =st+window_yr;
+    %endt            =ti+window_yr; % to follow david P's method
     delTs30yr       =delTs(st:endt);
     delR30yr        =delR(st:endt);
     delR_cre_30yr   =delR_cre(st:endt);
     delR_clr_30yr   =delR_clr(st:endt);
 
     regval       =polyfit(delTs30yr,delR30yr,1);
+    denom=delTs(endt)-delTs(st);
+    denom(abs(denom)<denlimit)=denlimit;
+    %regval=(delR(endt)-delR(st))/(delTs(endt)-delTs(st));
+    regval_ep=(delR(endt)-delR(st))/denom;
+    %regval(abs(regval)<denlimit)=denlimit;
+
     regval_cre   =polyfit(delTs30yr,delR_cre_30yr,1);
+    regval_cre_ep=(delR_cre(endt)-delR_cre(st))/denom;
+    %regval_cre(abs(regval_cre)<denlimit)=denlimit;
     regval_clr   =polyfit(delTs30yr,delR_clr_30yr,1);
+    regval_clr_ep=(delR_clr(endt)-delR_clr(st))/denom;
+    %regval_clr(abs(regval_clr)<denlimit)=denlimit;
 
     alpha_30y(ti)       =regval(1);
     alpha_cre_30y(ti)   =regval_cre(1);
@@ -228,6 +249,7 @@ for ti=1:tend;
     delTs30yr_wind  =delTs_wind(st:endt);
     delR30yr_wind   =delR_wind(st:endt);
     regval_wind     =polyfit(delTs30yr_wind,delR30yr_wind,1);
+    regval_wind_ep=(delR_wind(endt)-delR_wind(st))/denom;
     alpha_30y_wind(ti)  =regval_wind(1);
 
     st=st+1;

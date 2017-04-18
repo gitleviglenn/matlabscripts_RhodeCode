@@ -62,8 +62,9 @@ normlren(normlren>400)=NaN;
 %caxislre=[60 150];
 %figure;
 %contslre=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6];
-contslre=[1,2,3,4,5,6,7,8,9,10,11];
-caxislre=[0 11];
+%contslre=[1,2,3,4,5,6,7,8,9,10,11];
+contslre=[2,3,4,5,6,7,8,9,10,11,12];
+caxislre=[1 13];
 cont_map_modis(normlren,vlat,vlon,contslre,caxislre)
 %figure
 %contourf(vlon,vlat,normlren)
@@ -94,8 +95,8 @@ normiremn=normiremn*1e6;
 %contsire=[140,150,160,170,180,190,200,210,220];
 %caxisire=[130 230];
 %figure;
-contsire=[10,20,30,40,50,60,70,80,90,100,110];
-caxisire=[0 120];
+contsire=[10,11,12,13,14,15,16,17,18,19,20];
+caxisire=[10 20];
 cont_map_modis(normiremn,vlat,vlon,contsire,caxisire)
 %figure
 %contourf(vlon,vlat,normiremn)
@@ -106,7 +107,7 @@ colorbar
 
 % LWP
 contsire=[10,20,30,40,50,60,70,80,90,100,110];
-caxisire=[0 12];
+caxisire=[0 120];
 varin=lwp_norm_tcl*1000; % converts to g/m2
 varin(lwp_norm_tcl>0.99)=NaN;
 cont_map_modis(varin,vlat,vlon,contsire,caxisire)

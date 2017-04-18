@@ -10,7 +10,7 @@
 
 % AM2 long amip run
 %path='/archive/fjz/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/pp/atmos/ts/monthly/135yr/';
-path2='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/';
+path2='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A3/';
 years2='atmos.187001-200412'; % 1620 months
 endtime_am2=1620;
 modtitle_am2='am2longamip';
@@ -63,7 +63,7 @@ v.lcloud_am2ts          = fin_lcloud{'low_cld_amt'}(:,:,:);
 v.lwp_am2ts             = fin_lwp{'LWP'}(:,:,:);
 
 %% AM3 long amip
-path3='/net2/Levi.Silvers/data/amip_long/c48L48_am3p9_1860_ext/';
+path3='/net2/Levi.Silvers/data/amip_long/AM3/c48L48_am3p9_1860_ext3/';
 years3='atmos.187001-200512'; % 1632 months
 endtime_am3=1632;
 modtitle_am3='am3p9longamip';
@@ -94,28 +94,30 @@ fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
 fin_lcloud    = netcdf(source_lcloud_ts,'nowrite');
 
 % grab entire time series 
+stime=1;
+etime=1620;
 v.lon_am3ts             = fin_temp{'lon'}(:); 
 v.lat_am3ts             = fin_temp{'lat'}(:);
 v.level_am3ts           = fin_temp{'level'}(:);
-v.hght_am3ts            = fin_hght{'hght'}(:,5,:,:);
-v.tsurf_am3ts           = fin_tsurf{'t_surf'}(:,:,:); 
-v.temp_am3ts            = fin_temp{'temp'}(:,:,:,:); 
-v.tref_am3ts            = fin_tref{'t_ref'}(:,:,:); 
-v.rh_am3ts              = fin_rh{'rh'}(:,1,:,:); 
+v.hght_am3ts            = fin_hght{'hght'}(stime:etime,5,:,:);
+v.tsurf_am3ts           = fin_tsurf{'t_surf'}(stime:etime,:,:); 
+v.temp_am3ts            = fin_temp{'temp'}(stime:etime,:,:,:); 
+v.tref_am3ts            = fin_tref{'t_ref'}(stime:etime,:,:); 
+v.rh_am3ts              = fin_rh{'rh'}(stime:etime,1,:,:); 
 v.lon_am3               = fin_tref{'lon'}(:); 
 v.lat_am3               = fin_tref{'lat'}(:);
-v.swdn_toa_am3ts        = fin_swdn{'swdn_toa'}(:,:,:,:);
-v.swup_toa_am3ts        = fin_swup{'swup_toa'}(:,:,:,:);
-v.swup_toa_clr_am3ts    = fin_swup_clr{'swup_toa_clr'}(:,:,:,:);
-v.olr_toa_am3ts         = fin_olr{'olr'}(:,:,:,:);
-v.olr_toa_clr_am3ts     = fin_olr_clr{'olr_clr'}(:,:,:,:);
+v.swdn_toa_am3ts        = fin_swdn{'swdn_toa'}(stime:etime,:,:,:);
+v.swup_toa_am3ts        = fin_swup{'swup_toa'}(stime:etime,:,:,:);
+v.swup_toa_clr_am3ts    = fin_swup_clr{'swup_toa_clr'}(stime:etime,:,:,:);
+v.olr_toa_am3ts         = fin_olr{'olr'}(stime:etime,:,:,:);
+v.olr_toa_clr_am3ts     = fin_olr_clr{'olr_clr'}(stime:etime,:,:,:);
 
-v.lcloud_am3ts          = fin_lcloud{'low_cld_amt'}(:,:,:);
+v.lcloud_am3ts          = fin_lcloud{'low_cld_amt'}(stime:etime,:,:);
 
 % AM4 long amip
 path4='/net2/Levi.Silvers/data/amip_long/c96L32_am4g10r8_longamip_1860rad/'
 years4='atmos.187101-201512';
-endtime_am4=1740;
+endtime_am4=1620;
 modtitle_am4='am4g10r8longamip: ';
 piece=strcat(path4,years4);
 

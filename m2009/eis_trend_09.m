@@ -1,4 +1,13 @@
 %----------------------------------------------------------------------------------
+%
+% computes global or tropical and yearly mean values of incoming time series
+%
+% called by eis_reg_driver.m
+%
+%  global_wmean_script; % computes wgt_mean and wgt_var fields can I use wgt_var
+%                         to grab data from geographic regions and then perform 
+%                         a simple average that will be properly cosine weighted?
+%
 % levi silvers					jan 2017
 %----------------------------------------------------------------------------------
 
@@ -45,7 +54,7 @@ for ti=1:tindex;
   %tref_windmn_ts(ti)=windmn;
 
   fullfield=squeeze(eis_ts(ti,:,:));
-  global_wmean_script;
+  global_wmean_script; % computes wgt_mean and wgt_var fields
   eis_gmn_ts(ti)=wgt_mean;
 
   tropfield=squeeze(eis_ts(ti,lat1:lat2,:));
@@ -147,7 +156,9 @@ hold on
 plot(3.7.*eis_tryrmn_anom_ts,'k')
 plot(-0.9.*tref_tryrmn_anom_ts,'r')
 plot(lcloud_tryrmn_anom_ts,'b','LineWidth',2)
-title('tr product time series')
+titgoin=strcat('tropical ts: ',modelver)
+%title('tr product time series')
+title(titgoin)
 corrcoef(lcloud_tryrmn_anom_ts,jackhearts)
 
 % figures for anomalies
@@ -158,7 +169,9 @@ hold on
 plot(3.7.*eis_gyrmn_anom_ts,'k')
 plot(-0.9.*tref_gyrmn_anom_ts,'r')
 plot(lcloud_gyrmn_anom_ts,'b','LineWidth',2)
-title('gl product time series')
+titgoin=strcat('global ts: ',modelver)
+%title('gl product time series')
+title(titgoin)
 corrcoef(lcloud_gyrmn_anom_ts,jackhearts_g)
 
 %------------------------------------------------------------------

@@ -1,6 +1,5 @@
-%frchive/Levi.Silvers/awg/verona/c96L32_am4g10r8_had_p_1pctco2_climo/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/annual_5yr/atmos.0007-0011.ann.nc'unction openncfile(stringincoming)
 %----------------------------------------------------------------------------
-% openncfile.m
+% openncfile_cosp.m
 %
 % this script opens a netcdf file and stores variables in a structure 'v'
 %
@@ -21,51 +20,48 @@
 %
 % 4.  The magnitude of [lremodis]/[tclmodis] needs to be checked.  
 %
-% levi silvers                                        Apr 2016
+% levi silvers                                        Jan 2017
 %----------------------------------------------------------------------------
-%fin_sst='/archive/cjg/mdt/cm3/ipcc_ar5/input/common/sst.climo.1981-2000.data.nc'
-%fin='/archive/Ming.Zhao/awglg/ulm/AM4OM2F_c96l32_am4g5r11_2000climo/ts_all/atmos.000101-014012.t_surf.nc'
 
 % paths for am4g10r8
 years='.000201-000312.'
 yearsav='.0002-0003.'
-basedir='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/av/monthly_2yr/'
-basedir_ts='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/ts/monthly/2yr/'
 
-%% paths for am4g11r11
-%years='.000701-001112.'
-%yearsav='.0007-0011.'
-%basedir='/archive/Levi.Silvers/awg/verona/c96L32_am4g11r11_2010climo_cosp/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/av/monthly_5yr/'
-%basedir_ts='/archive/Levi.Silvers/awg/verona/c96L32_am4g11r11_2010climo_cosp/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/ts/monthly/5yr/'
+realbase='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/'
+
+basedir=strcat(realbase,'atmos_month_modis/av/monthly_2yr/');
+basedir_ts=strcat(realbase,'atmos_month_modis/ts/monthly/2yr/');
+
+base_atm_dir_ts=strcat(realbase,'atmos/ts/monthly/2yr/');
 
 basepalltmn=strcat(basedir,'atmos_month_modis',yearsav,'alltmn.nc');
 stringincoming=basepalltmn
-%stringincoming='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/av/monthly_2yr/atmos_month_modis.0002-0003.alltmn.nc'
+
 basepatm=strcat(basedir,'atmos',yearsav,'alltmn.nc');
 stringincoming_atm=basepatm
-%stringincoming_atm='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos/av/monthly_2yr/atmos.0002-0003.alltmn.nc'
 % time series data
+
+basepLWP=strcat(base_atm_dir_ts,'atmos',years,'LWP.nc');
+stringincoming_mLWP=basepLWP
+%
 baseplclmodis=strcat(basedir_ts,'atmos_month_modis',years,'lclmodis.nc');
 stringincoming_lcl=baseplclmodis
-%stringincoming_lcl='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/ts/monthly/2yr/atmos_month_modis.000201-000312.lclmodis.nc'
 basepiclmodis=strcat(basedir_ts,'atmos_month_modis',years,'iclmodis.nc');
 stringincoming_icl=basepiclmodis
-%stringincoming_icl='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/ts/monthly/2yr/atmos_month_modis.000201-000312.iclmodis.nc'
 basepiremodis=strcat(basedir_ts,'atmos_month_modis',years,'iremodis.nc');
 stringincoming_ire=basepiremodis
-%stringincoming_ire='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/ts/monthly/2yr/atmos_month_modis.000201-000312.iremodis.nc'
 baseplremodis=strcat(basedir_ts,'atmos_month_modis',years,'lremodis.nc');
 stringincoming_lre=baseplremodis
 %
 baseplwpmodis=strcat(basedir_ts,'atmos_month_modis',years,'lwpmodis.nc');
 stringincoming_lwp=baseplwpmodis
-%stringincoming_lwp='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/ts/monthly/2yr/atmos_month_modis.000201-000312.lwpmodis.nc'
 basepiwpmodis=strcat(basedir_ts,'atmos_month_modis',years,'iwpmodis.nc');
 stringincoming_iwp=basepiwpmodis
-%stringincoming_iwp='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/ts/monthly/2yr/atmos_month_modis.000201-000312.iwpmodis.nc'
 baseptclmodis=strcat(basedir_ts,'atmos_month_modis',years,'tclmodis.nc');
 stringincoming_tcl=baseptclmodis
-%stringincoming_tcl='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000climo_cosp_bigout/gfdl.ncrc3-intel-prod-openmp/pp/atmos_month_modis/ts/monthly/2yr/atmos_month_modis.000201-000312.tclmodis.nc'
+%
+basepttaumodis=strcat(basedir_ts,'atmos_month_modis',years,'ttaumodis.nc');
+stringincoming_ttau=basepttaumodis
 % try modis from am4g11r11
 %stringincoming_oldmod='/archive/Levi.Silvers/awg/verona/c96L32_am4g11r11_2010climo_cosp/gfdl.ncrc3-intel-prod-openmp/pp/atmos/ts/monthly/5yr/atmos.000701-001112.reff_modis.nc'
 %stringincoming_oldmod2='/archive/Levi.Silvers/awg/verona/c96L32_am4g11r11_2010climo_cosp/gfdl.ncrc3-intel-prod-openmp/pp/atmos/ts/monthly/5yr/atmos.000701-001112.reff_modis2.nc'
@@ -83,16 +79,18 @@ stringincoming_oldmod2='/archive/Levi.Silvers/awg/verona/c96L32_am4g10r8_2000cli
 fin =netcdf(stringincoming,'nowrite');
 fin_atm =netcdf(stringincoming_atm,'nowrite');
 fin_lcl =netcdf(stringincoming_lcl,'nowrite');
+fin_modLWP =netcdf(stringincoming_mLWP,'nowrite');
 fin_icl =netcdf(stringincoming_icl,'nowrite');
 fin_ire =netcdf(stringincoming_ire,'nowrite');
 fin_lre =netcdf(stringincoming_lre,'nowrite');
 fin_lwp =netcdf(stringincoming_lwp,'nowrite');
 fin_iwp =netcdf(stringincoming_iwp,'nowrite');
 fin_tcl =netcdf(stringincoming_tcl,'nowrite');
+fin_ttau =netcdf(stringincoming_ttau,'nowrite');
 fin_reffmod =netcdf(stringincoming_oldmod,'nowrite');
 fin_reffmod2 =netcdf(stringincoming_oldmod2,'nowrite');
-%ncid=netcdf.open(fin,'NC_NOWRITE');
-%[ndim,nvar,natt,unlim]=netcdf.inq(ncid);
+
+
 % set up a structure(v) to hold info related to variables
 %-------------------------------------------------
 vin.lon=fin{'lon'}(:); vin.lat =fin{'lat'}(:);
@@ -147,6 +145,8 @@ vin.iclmodis_full=fin_icl{'iclmodis'}(:,:,:); % time,lat,lon
 vin.lremodis_full=fin_lre{'lremodis'}(:,:,:); % time,lat,lon
 vin.iremodis_full=fin_ire{'iremodis'}(:,:,:); % time,lat,lon
 vin.lwpmodis_full=fin_lwp{'lwpmodis'}(:,:,:); % time,lat,lon
+vin.ttaumodis_full=fin_ttau{'ttaumodis'}(:,:,:);
+vin.lwp_full=fin_modLWP{'LWP'}(:,:,:); % time,lat,lon
 vin.iwpmodis_full=fin_iwp{'iwpmodis'}(:,:,:); % time,lat,lon
 vin.reffmodis_full=fin_reffmod{'reff_modis'}(:,:,:); % time,lat,lon
 vin.reffmodis2_full=fin_reffmod2{'reff_modis2'}(:,:,:); % time,lat,lon
@@ -157,6 +157,8 @@ vin.iclmodis=nanmean(vin.iclmodis_full,1);
 vin.lremodis=nanmean(vin.lremodis_full,1);
 vin.iremodis=nanmean(vin.iremodis_full,1);
 vin.lwpmodis=nanmean(vin.lwpmodis_full,1);
+vin.ttaumodis=nanmean(vin.ttaumodis_full,1);
+vin.lwp=nanmean(vin.lwp_full,1);
 vin.iwpmodis=nanmean(vin.iwpmodis_full,1);
 reffmodis_mn=mean(vin.reffmodis_full,1);
 reffmodis2_mn=mean(vin.reffmodis2_full,1);
@@ -165,7 +167,9 @@ vin.lclmodis=squeeze(vin.lclmodis);
 vin.iclmodis=squeeze(vin.iclmodis);
 vin.lremodis=squeeze(vin.lremodis);
 vin.iremodis=squeeze(vin.iremodis);
+vin.ttaumodis=squeeze(vin.ttaumodis);
 vin.lwpmodis=squeeze(vin.lwpmodis);
+vin.lwp=squeeze(vin.lwp);
 vin.iwpmodis=squeeze(vin.iwpmodis);
 reffmodis_mn=squeeze(reffmodis_mn);
 reffmodis2_mn=squeeze(reffmodis2_mn);
@@ -277,7 +281,8 @@ normire=vin.iremodis./vin.tclmodis;
 %title('iwp modis')
 %%9
 %figure
-normlwp=vin.lwpmodis./vin.lclmodis;
+lwp_norm_lcl=vin.lwpmodis./vin.lclmodis;
+lwp_norm_tcl=vin.lwpmodis./vin.tclmodis;
 %contourf(normlwp)
 %colorbar
 %title('norm lwp modis')

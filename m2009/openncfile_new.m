@@ -27,27 +27,28 @@
 %lateper=1975-2005;  % 1260:1620   Zhou et al. look at 1980-2010;
 %earlyper=1930-1960; % 720:1080
 
-%%% AM2
+%%%% AM2
 %%%path='/archive/fjz/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/pp/atmos/ts/monthly/135yr/';
-%path='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/';
+%%path='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/';
+%path='/net2/Levi.Silvers/data/amip_long/AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/';
 %years='atmos.187001-200412'; % 1620 months
 %endtime=1620;
 %%endtime=1080;
 %modtitle='am2';
-%%%% AM3
-path='/net2/Levi.Silvers/data/amip_long/c48L48_am3p9_1860_ext/';
-years='atmos.187001-200512'; % 1632 months
-%endtime=1632;
-endtime=1620;
-%%endtime=1080;
-modtitle='am3p9';
-%%%% AM4 long amip
-%path='/net2/Levi.Silvers/data/amip_long/c96L32_am4g10r8_longamip_1860rad/'
-%years='atmos.187101-201512';
-%%endtime=1740; % complete endtime
+%%%%% AM3
+%path='/net2/Levi.Silvers/data/amip_long/c48L48_am3p9_1860_ext/';
+%years='atmos.187001-200512'; % 1632 months
+%%endtime=1632;
 %endtime=1620;
 %%%endtime=1080;
-%modtitle='am4g10r8';
+%modtitle='am3p9';
+%%% AM4 long amip
+path='/net2/Levi.Silvers/data/amip_long/c96L32_am4g10r8_longamip_1860rad/'
+years='atmos.187101-201512';
+%endtime=1740; % complete endtime
+endtime=1620;
+%%%endtime=1080;
+modtitle='am4g10r8';
 %% AM4 normal amip
 %path='/net2/Levi.Silvers/data/amip_long/c96L32_am4g12r04_cosp/'
 %years='atmos.198101-201012'; % 1740 months

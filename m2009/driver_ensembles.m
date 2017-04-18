@@ -35,8 +35,12 @@ period='early'
 
 % for AM2 and AM3
 % indices over which data will be read from files
-timest=1;
+timest=13;
 timeend=1620;
+
+% define time array lengths
+nyears_alpha=104;
+nmonths=1608;
 
 % alpha_09 now requires wlat1,wlat2,wlon1, and wlon2 to be defined
 % when alpha_09 is called but a speicific window of interest is not defined 
@@ -68,18 +72,18 @@ level500=6; % for AM2
 %pathbase='/net2/Levi.Silvers/data/amip_long/';
 readvars % openncfile_3mods
 %
-alpha_array=zeros(104,6);
-alpha_cre_array=zeros(104,6);
-eis_gmn_array=zeros(1620,6);
-lts_gmn_array=zeros(1620,6);
+alpha_array=zeros(nyears_alpha,6);
+alpha_cre_array=zeros(nyears_alpha,6);
+eis_gmn_array=zeros(nmonths,6);
+lts_gmn_array=zeros(nmonths,6);
 
-eis_array=zeros(1620,nlat,nlon,6);
-lts_array=zeros(1620,nlat,nlon,6);
-omega500_array=zeros(1620,nlat,nlon,6);
-temp700_array=zeros(1620,nlat,nlon,6);
-temp_sfc_array=zeros(1620,nlat,nlon,6);
-lcloud_array=zeros(1620,nlat,nlon,6);
-hcloud_array=zeros(1620,nlat,nlon,6);
+eis_array=zeros(nmonths,nlat,nlon,6);
+lts_array=zeros(nmonths,nlat,nlon,6);
+omega500_array=zeros(nmonths,nlat,nlon,6);
+temp700_array=zeros(nmonths,nlat,nlon,6);
+temp_sfc_array=zeros(nmonths,nlat,nlon,6);
+lcloud_array=zeros(nmonths,nlat,nlon,6);
+hcloud_array=zeros(nmonths,nlat,nlon,6);
 %-----------------------------------------------------------------------------------------
 %% variables on which to compute trends
 %% lcloud_ts --> readvars
@@ -306,17 +310,17 @@ level500=7; % for AM3 and AM4
 %pathbase='/net2/Levi.Silvers/data/amip_long/';
 readvars % openncfile_3mods
 
-alpha_array_am3     =zeros(104,5);
-alpha_cre_array_am3 =zeros(104,5);
-eis_gmn_array_am3   =zeros(1620,5);
-lts_gmn_array_am3   =zeros(1620,5);
-eis_array_am3       =zeros(1620,nlat,nlon,5);
-lts_array_am3       =zeros(1620,nlat,nlon,5);
-omega500_array_am3  =zeros(1620,nlat,nlon,5);
-temp700_array_am3   =zeros(1620,nlat,nlon,5);
-temp_sfc_array_am3  =zeros(1620,nlat,nlon,5);
-lcloud_array_am3    =zeros(1620,nlat,nlon,5);
-hcloud_array_am3    =zeros(1620,nlat,nlon,5);
+alpha_array_am3     =zeros(nyears_alpha,5);
+alpha_cre_array_am3 =zeros(nyears_alpha,5);
+eis_gmn_array_am3   =zeros(nmonths,5);
+lts_gmn_array_am3   =zeros(nmonths,5);
+eis_array_am3       =zeros(nmonths,nlat,nlon,5);
+lts_array_am3       =zeros(nmonths,nlat,nlon,5);
+omega500_array_am3  =zeros(nmonths,nlat,nlon,5);
+temp700_array_am3   =zeros(nmonths,nlat,nlon,5);
+temp_sfc_array_am3  =zeros(nmonths,nlat,nlon,5);
+lcloud_array_am3    =zeros(nmonths,nlat,nlon,5);
+hcloud_array_am3    =zeros(nmonths,nlat,nlon,5);
 
 alpha_09
 
@@ -517,13 +521,15 @@ amip_eiscltrends_ncout
 % ens 1
 %-----------------------------------------------------------------------------------------
 path='/c96L32_am4g10r8_longamip_1860rad/';
-years2='atmos.187101-201512'; % 1620 months
+years2='atmos.187101-201512'; 
 
 modtitle='am4';
 
 % for AM4
-timest=13;
-timeend=1632;
+%timest=13;
+timest=1;
+%timeend=1632;
+timeend=1608;
 
 level700=5; % for AM3, and AM4
 
@@ -531,17 +537,17 @@ level700=5; % for AM3, and AM4
 readvars 
 
 % create arrays to fill
-alpha_array_am4     =zeros(104,1);
-alpha_cre_array_am4 =zeros(104,1);
-eis_gmn_array_am4   =zeros(1620,1);
-lts_gmn_array_am4   =zeros(1620,1);
-eis_array_am4       =zeros(1620,nlat,nlon,1);
-lts_array_am4       =zeros(1620,nlat,nlon,1);
-omega500_array_am4  =zeros(1620,nlat,nlon,1);
-temp700_array_am4   =zeros(1620,nlat,nlon,1);
-temp_sfc_array_am4  =zeros(1620,nlat,nlon,1);
-lcloud_array_am4    =zeros(1620,nlat,nlon,1);
-hcloud_array_am4    =zeros(1620,nlat,nlon,1);
+alpha_array_am4     =zeros(nyears_alpha,1);
+alpha_cre_array_am4 =zeros(nyears_alpha,1);
+eis_gmn_array_am4   =zeros(nmonths,1);
+lts_gmn_array_am4   =zeros(nmonths,1);
+eis_array_am4       =zeros(nmonths,nlat,nlon,1);
+lts_array_am4       =zeros(nmonths,nlat,nlon,1);
+omega500_array_am4  =zeros(nmonths,nlat,nlon,1);
+temp700_array_am4   =zeros(nmonths,nlat,nlon,1);
+temp_sfc_array_am4  =zeros(nmonths,nlat,nlon,1);
+lcloud_array_am4    =zeros(nmonths,nlat,nlon,1);
+hcloud_array_am4    =zeros(nmonths,nlat,nlon,1);
 %
 
 alpha_09
@@ -589,6 +595,9 @@ compute_trends
 ncfilename=strcat(modtitle,'_eiscl_trends_',period,'_test.nc')  
 file_out=ncfilename;   
 amip_eiscltrends_ncout
+
+% create a figure of alpha for 3 different models: 
+plot_alpha_3mods
 %%-----------------------------------------------------------------------------------------
 %%contsin=[-1.25,-1.0,-0.75,-0.5,-0.25,0,0.25,0.5,0.75,1.0,1.25];
 %%caxisin=[-1.25 1.25];
