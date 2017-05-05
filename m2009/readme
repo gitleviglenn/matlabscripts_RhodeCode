@@ -1,3 +1,6 @@
+#
+#  Much of this is now done by calling driver_ensembles
+#
 #  1. openncfile_3mods
 #
 #  2. alpha_3mod_driver --> computes time series of alpha for three models

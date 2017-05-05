@@ -1,9 +1,10 @@
 %---------------------------------------------------------
-% compute the cliamate feedback parameter over the whole
+% compute the climate feedback parameter over the whole
 % globe as well as over particular window regions
 %
 % calls:
 %   alpha_09.m
+%   alpha_simplemn.m
 %
 % needs: 
 %   readvars.m or something equivalent
@@ -30,8 +31,8 @@ level500=7; % for AM3 and AM4
 level700=5; % for AM3, and AM4
 
 %
-timest=13;
-timeend=1632;
+timest=1;
+timeend=1608;
 %
 readvars
 %
@@ -50,12 +51,18 @@ temp_ll_ts = temp_ref_ts;
 %eis_ts  =eis_ens_am4_mn;
 %lcloud_ts=lcloud_am4_mn;
 
-wlat1=70;
+wlat1=71;
 wlat2=110;
 wlon1=1;
 wlon2=288;
 
-alpha_09
+%alpha_09
+alpha_simplemn
+
+alpha_full_late=alpha_reg_late;
+alpha_wind1_late=alpha_wind_reg_late;
+alpha_full_early=alpha_reg_early;
+alpha_wind1_early=alpha_wind_reg_early;
 
 alpha_full=alpha_30y;
 tref_full=tref_gmn_ts;
@@ -67,16 +74,26 @@ wlat2=70;
 wlon1=1;
 wlon2=288;
 
-alpha_09
+%alpha_09
+alpha_simplemn
+
+alpha_wind2_late=alpha_wind_reg_late;
+alpha_wind2_early=alpha_wind_reg_early;
+
 tref_window_1th70=tref_wind_ts;
 alpha_window_1th70=alpha_30y_wind;
 
-wlat1=110;
+wlat1=111;
 wlat2=180;
 wlon1=1;
 wlon2=288;
 
-alpha_09
+%alpha_09
+alpha_simplemn
+
+alpha_wind3_late=alpha_wind_reg_late;
+alpha_wind3_early=alpha_wind_reg_early;
+
 tref_window_110th180=tref_wind_ts;
 alpha_window_110th180=alpha_30y_wind;
 
