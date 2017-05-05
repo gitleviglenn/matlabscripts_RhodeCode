@@ -27,8 +27,8 @@ path='/c96L32_am4g10r8_longamip_1860rad/';
 years2='atmos.187101-201512';
 piece=strcat(pathbase,path,years2);
 
-timest=13;
-timeend=1632;
+timest=1;
+timeend=1608;
 
 source_tsurf_ts    = strcat(piece,'.t_surf.nc')
 source_tref_ts    = strcat(piece,'.t_ref.nc')
@@ -58,7 +58,13 @@ lat2=110;
 
 eis_trend_09
 
-eis_gyrmn_tsam4=eis_30y;
+%save output for figure of lcc estimates
+est_lcc_am4=jackhearts_g;
+est_lcc_tr_am4=jackhearts;
+lcc_am4=lcloud_gyrmn_anom_ts;
+lcc_tr_am4=lcloud_tryrmn_anom_ts;
+
+eis_gyrmn_tsam4=eis_30y; % K/K regression of eis and tref anomalies
 eis_tryrmn_tsam4=tr_eis_30y;
 delTrf_am4ts=delTrf;
 delEIS_am4ts=delEIS;
@@ -117,7 +123,7 @@ path='/AM3/c48L48_am3p9_1860_ext/';
 years2='atmos.187001-200512';
 piece=strcat(pathbase,path,years2);
 
-timest=1;
+timest=13;
 timeend=1620;
 
 source_tsurf_ts    = strcat(piece,'.t_surf.nc')
@@ -147,8 +153,14 @@ clear delTrf;
 clear delEIS;
 eis_trend_09
 
-eis_gyrmn_tsam3=eis_30y;
-eis_tryrmn_tsam3=tr_eis_30y;
+%save output for figure of lcc estimates
+est_lcc_am3=jackhearts_g;
+est_lcc_tr_am3=jackhearts;
+lcc_am3=lcloud_gyrmn_anom_ts;
+lcc_tr_am3=lcloud_tryrmn_anom_ts;
+
+eis_gyrmn_tsam3=eis_30y; % polyfit(delTrf,delEIS)
+eis_tryrmn_tsam3=tr_eis_30y; % del indicates anomaly fields
 delTrf_am3ts=delTrf;
 delEIS_am3ts=delEIS;
 delEIS_tr_am3ts=delEIS_tr;
@@ -159,7 +171,7 @@ path='AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A1/';
 years2='atmos.187001-200412';
 piece=strcat(pathbase,path,years2);
 
-timest=1;
+timest=13;
 timeend=1620;
 
 source_tsurf_ts    = strcat(piece,'.t_surf.nc')
@@ -181,6 +193,12 @@ lcloud_ts=lcloud_am2_mn;
 clear delTrf;
 clear delEIS;
 eis_trend_09
+
+%save output for figure of lcc estimates
+est_lcc_am2=jackhearts_g;
+est_lcc_tr_am2=jackhearts;
+lcc_am2=lcloud_gyrmn_anom_ts;
+lcc_tr_am2=lcloud_tryrmn_anom_ts;
 
 eis_gyrmn_tsam2=eis_30y;
 eis_tryrmn_tsam2=tr_eis_30y;
@@ -205,6 +223,31 @@ eis_tr_tsam3_anom=delEIS_tr_am3ts-mean(delEIS_tr_am3ts,2);
 eis_tsam2_anom=delEIS_am2ts-mean(delEIS_am2ts,2);
 eis_tr_tsam2_anom=delEIS_tr_am2ts-mean(delEIS_tr_am2ts,2);
 
+figure
+timearr=1875:1:2000;
+plot(timearr,est_lcc_am4,'k','LineStyle','--')
+hold on
+plot(timearr,lcc_am4,'k')
+plot(timearr,est_lcc_am3,'r','LineStyle','--')
+hold on
+plot(timearr,lcc_am3,'r')
+plot(timearr,est_lcc_am2,'b','LineStyle','--')
+hold on
+plot(timearr,lcc_am2,'b')
+title('global hogwash')
+
+figure
+timearr=1875:1:2000;
+plot(timearr,est_lcc_tr_am4,'k','LineStyle','--')
+hold on
+plot(timearr,lcc_tr_am4,'k')
+plot(timearr,est_lcc_tr_am3,'r','LineStyle','--')
+hold on
+plot(timearr,lcc_tr_am3,'r')
+plot(timearr,est_lcc_tr_am2,'b','LineStyle','--')
+hold on
+plot(timearr,lcc_tr_am2,'b')
+title('global hogwash')
 
 %% figure
 %timearr=1885:2000;

@@ -9,6 +9,10 @@
 % calls the following scripts:
 % readvars
 % alpha_09
+% eis_lts_ts
+% compute_trends
+% amip_eiscltrends_ncout
+% plot_alpha_3mods
 %
 % this was written to work with something like readvars.m to read in the data using the 
 % 'pathbase' variables.  
@@ -40,6 +44,7 @@ timeend=1620;
 
 % define time array lengths
 nyears_alpha=104;
+%nyears_alpha=129; % for David P's method...
 nmonths=1608;
 
 % alpha_09 now requires wlat1,wlat2,wlon1, and wlon2 to be defined
@@ -537,17 +542,17 @@ level700=5; % for AM3, and AM4
 readvars 
 
 % create arrays to fill
-alpha_array_am4     =zeros(nyears_alpha,1);
-alpha_cre_array_am4 =zeros(nyears_alpha,1);
-eis_gmn_array_am4   =zeros(nmonths,1);
-lts_gmn_array_am4   =zeros(nmonths,1);
-eis_array_am4       =zeros(nmonths,nlat,nlon,1);
-lts_array_am4       =zeros(nmonths,nlat,nlon,1);
-omega500_array_am4  =zeros(nmonths,nlat,nlon,1);
-temp700_array_am4   =zeros(nmonths,nlat,nlon,1);
-temp_sfc_array_am4  =zeros(nmonths,nlat,nlon,1);
-lcloud_array_am4    =zeros(nmonths,nlat,nlon,1);
-hcloud_array_am4    =zeros(nmonths,nlat,nlon,1);
+alpha_array_am4     =zeros(nyears_alpha,2);
+alpha_cre_array_am4 =zeros(nyears_alpha,2);
+eis_gmn_array_am4   =zeros(nmonths,2);
+lts_gmn_array_am4   =zeros(nmonths,2);
+eis_array_am4       =zeros(nmonths,nlat,nlon,2);
+lts_array_am4       =zeros(nmonths,nlat,nlon,2);
+omega500_array_am4  =zeros(nmonths,nlat,nlon,2);
+temp700_array_am4   =zeros(nmonths,nlat,nlon,2);
+temp_sfc_array_am4  =zeros(nmonths,nlat,nlon,2);
+lcloud_array_am4    =zeros(nmonths,nlat,nlon,2);
+hcloud_array_am4    =zeros(nmonths,nlat,nlon,2);
 %
 
 alpha_09
@@ -555,7 +560,7 @@ alpha_09
 alpha_array_am4(:,1)=alpha_30y;
 alpha_cre_array_am4(:,1)=alpha_cre_30y;
 
-eis_lts_ts
+eis_lts_ts % compute time series of eis and lts.  both gmn and full fields are computed.
 
 % save output to appropriate local vars:
 eis_gmn_array_am4(:,1)      =eis_gmn_ts; %=zeros(1620,6);
@@ -571,6 +576,48 @@ temp700_array_am4(:,:,:,1)  =temp700_ens;
 temp_sfc_array_am4(:,:,:,1) =temp_sfc_ts;
 lcloud_array_am4(:,:,:,1)   =lcloud_ts;
 hcloud_array_am4(:,:,:,1)   =hcloud_ts;
+
+%% from AM4 long amip run
+%%/net2/Levi.Silvers/data/amip_long/c96L33_am4p0_longamip_1850rad/ts_all
+pathbase='/net2/Levi.Silvers/data/amip_long/';
+path='c96L33_am4p0_longamip_1850rad/ts_all/';
+years2='atmos.187001-201412'; 
+
+modtitle='AM4p0';
+
+%% for AM4
+timest=13;
+%timest=1;
+%%timeend=1632;
+timeend=1620;
+%timeend=1608;
+%
+%level700=5; % for AM3, and AM4
+%
+readvars
+%
+alpha_09
+%
+alpha_array_am4(:,2)=alpha_30y;
+alpha_cre_array_am4(:,2)=alpha_cre_30y;
+%
+eis_lts_ts
+%
+%% save output to appropriate local vars:
+eis_gmn_array_am4(:,2)      =eis_gmn_ts; %=zeros(1620,6);
+lts_gmn_array_am4(:,2)      =lts_gmn_ts; %=zeros(1620,6);
+eis_array_am4(:,:,:,2)      =eis_ts;
+lts_array_am4(:,:,:,2)      =lts_ts;
+omega500_ens                =squeeze(omega_ts(:,level500,:,:));
+omega500_array_am4(:,:,:,2) =omega500_ens;
+temp700_ens                 =squeeze(temp3d(:,level700,:,:));
+temp700_array_am4(:,:,:,2)  =temp700_ens;
+%temp_sfc_ens=temp_sfc_ts; % it looks like there is something wrong 
+% with temp_sfc_ens from the 5th ensemble member...
+temp_sfc_array_am4(:,:,:,2) =temp_sfc_ts;
+lcloud_array_am4(:,:,:,2)   =lcloud_ts;
+hcloud_array_am4(:,:,:,2)   =hcloud_ts;
+%
 
 %%% compute the ensemble means 
 eis_ens_am4_mn  =mean(eis_array_am4,4);
@@ -598,6 +645,19 @@ amip_eiscltrends_ncout
 
 % create a figure of alpha for 3 different models: 
 plot_alpha_3mods
+
+eis_gmn_ensmn_am2=mean(eis_gmn_array,2);
+eis_gmn_ensmn_am3=mean(eis_gmn_array_am3,2);
+%eis_gmn_ensmn_am4=eis_gmn_array_am4;
+eis_gmn_ensmn_am4=mean(eis_gmn_array_am4,2);
+
+eis_gmn_am4_re=reshape(eis_gmn_ensmn_am4,[12,134]);
+eis_gymn_am4=mean(eis_gmn_am4_re,1);
+eis_gmn_am3_re=reshape(eis_gmn_ensmn_am3,[12,134]);
+eis_gymn_am3=mean(eis_gmn_am3_re,1);
+eis_gmn_am2_re=reshape(eis_gmn_ensmn_am2,[12,134]);
+eis_gymn_am2=mean(eis_gmn_am2_re,1);
+
 %%-----------------------------------------------------------------------------------------
 %%contsin=[-1.25,-1.0,-0.75,-0.5,-0.25,0,0.25,0.5,0.75,1.0,1.25];
 %%caxisin=[-1.25 1.25];

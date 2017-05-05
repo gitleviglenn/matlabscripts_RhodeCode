@@ -197,8 +197,9 @@ delR_cre=toa_cre_R-mn30yr_cre_R;
 
 window_yr=30;
 st=1;
-%tend=nyears-window_yr-1;
+endt=0;
 tend=nyears-window_yr;
+%tend=nyears-5; % to follow david P's method
 alpha_30y=zeros(tend,1);
 alpha_30y_wind=zeros(tend,1);
 %alpha_lw_30y=zeros(tend,1);
@@ -214,7 +215,7 @@ alpha_clr_30y=zeros(tend,1);
 denlimit=0.1;
 for ti=1:tend;
     endt            =st+window_yr;
-    %endt            =ti+window_yr; % to follow david P's method
+    %endt            =ti+5; % to follow david P's method
     delTs30yr       =delTs(st:endt);
     delR30yr        =delR(st:endt);
     delR_cre_30yr   =delR_cre(st:endt);
@@ -252,7 +253,7 @@ for ti=1:tend;
     regval_wind_ep=(delR_wind(endt)-delR_wind(st))/denom;
     alpha_30y_wind(ti)  =regval_wind(1);
 
-    st=st+1;
+    st=st+1; % comment out to follow david P's method
 end
 %for ti=1:tend;
 %  delT_per=delTs_am4(ti:ti+30);

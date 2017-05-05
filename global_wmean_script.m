@@ -17,8 +17,8 @@ longit=vlon;
 latit=vlat;
 %nlatit=size(latit,1);
 % compute the weights
-latitweight=cos(pi/180*latit);
-glblatweight=cos(pi/180*latit);
+latitweight=cos(double(pi)/180*latit);
+glblatweight=cos(double(pi)/180*latit);
 %latitweight=1.*latit;
 %glblatweight=1.*latit;
 nlongit=length(longit);

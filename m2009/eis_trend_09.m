@@ -2,16 +2,24 @@
 %
 % computes global or tropical and yearly mean values of incoming time series
 %
+% incoming time series: 
+%     temp_ts
+%     eis_ts
+%     lcloud_ts
+%
 % called by eis_reg_driver.m
 %
 %  global_wmean_script; % computes wgt_mean and wgt_var fields can I use wgt_var
 %                         to grab data from geographic regions and then perform 
 %                         a simple average that will be properly cosine weighted?
 %
+% also computes the relationship between the anomolous sst/tref and eis using
+% linear regression.
+%
 % levi silvers					jan 2017
 %----------------------------------------------------------------------------------
 
-tindex=1620;
+tindex=1608;
 %tindex=size(temp_ts,1);
 nyears=tindex/12;
 
@@ -123,7 +131,8 @@ lcloud_tr_ts=mean(lcloud_tr_yearlymean,2);
 lcloud_tryrmn_anom_ts=lcloud_tr_yearlymean-lcloud_tr_ts;
 
 % compute the running mean for anomaly time series
-tendindex=nyears-4; % why minus 4?
+%tendindex=nyears-4; % why minus 4?
+tendindex=nyears; % why minus 4?
 incoming_ts=lcloud_gyrmn_anom_ts;
 running_mean
 lcloud_gyrmn_anom_ts=output_ts;
@@ -149,6 +158,8 @@ running_mean
 tref_tryrmn_anom_ts=output_ts;
 
 % figures for anomalies
+% could the relationship between sst/tref, eis, and lcc be better
+% estimated with multiple linear regression? almost certainly
 jackhearts=3.7.*eis_tryrmn_anom_ts-0.9.*tref_tryrmn_anom_ts;
 figure
 plot(jackhearts,'g','LineWidth',2)
@@ -200,10 +211,15 @@ delEIS_tr=eis_tr_yearlymean-mn_init_eis_tr;
 
 window_yr=30;
 st=1;
-tend=nyears-window_yr-1;
+%tend=nyears-window_yr-1;
+tend=nyears-window_yr;
 eis_30y=zeros(tend,1);
 tr_eis_30y=zeros(tend,1);
 %wind_eis_30y=zeros(tend,1);
+%
+% what is the meaning of polyfit(delTrf_tr_30yr,delEIS_tr_30yr)?
+% is it somehow analogous to Rose's stability parameter?  
+%
 for ti=1:tend;
     endt=st+window_yr;
     %
