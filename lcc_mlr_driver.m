@@ -115,7 +115,7 @@ new_ts_am4_smooth=output_ts;
 % multi-model figure
 figure
 
-timearr=1876:2001;
+timearr=1875:2001;
 plot(timearr,lcc_am2_smooth,'b','LineWidth',2)
 hold on
 plot(timearr,new_ts_am2_smooth,'b')

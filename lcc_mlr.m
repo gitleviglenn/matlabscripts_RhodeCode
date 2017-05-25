@@ -42,7 +42,7 @@ eis_del=eis_tr_mn-eis_tmn;
 sst_del=sst_tr_mn-sst_tmn;
 lcc_del=lcc_tr_mn-lcc_tmn;
 
-tindex=size(temp_ll_ts,1);
+tindex=size(first_ts,1);
 nyears=tindex/12;
 clear monthsbyyears
 monthsbyyears=reshape(eis_del,[12 nyears]);
