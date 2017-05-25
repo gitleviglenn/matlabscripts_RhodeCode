@@ -31,15 +31,15 @@
 % first we need to get the ensemble mean time series
 
 pathbase='/net2/Levi.Silvers/data/amip_long/';
-timest=13;
+timest=1;
 timeend=1620;
 
 nmonths=360; % 30 years
 timearray=1:nmonths;
 %
 %
-%perend=1608; % for late period
-perend=1008; % for early period 
+perend=1620; % for late period
+%perend=1008; % for early period 
 perst=perend-nmonths+1;
 %
 %%-------------------------------------------------------------------------------------
@@ -625,7 +625,7 @@ level500=7; % for AM3, and AM4
 %---------------------------------------------------------------------------------
 %---------------------------------------------------------------------------------
 timest=1;
-timeend=1608;
+timeend=1620;
 modtitle='am4';
 %path='/c96L32_am4g10r8_longamip_1860rad/';
 %years2='atmos.187101-201512';

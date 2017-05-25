@@ -1,7 +1,6 @@
 %------------------------------------------------------------------------------------
-% this script uses amip data to compute eis and lts
-%
-% i believe this is the driver which was used to create the global trend plots
+% this script calls reg_trend.m to compute trends for many fields such as lcloud, 
+% hcloud, eis, and lts.  it then writes the trends out in a netcdf file.  
 %
 % used with: 
 % m2009/openncfile_new.m

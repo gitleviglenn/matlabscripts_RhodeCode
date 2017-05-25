@@ -11,7 +11,7 @@ plot(timearr(starti:endi),alpha_array_am3(starti:endi,3),'r')
 plot(timearr(starti:endi),alpha_array_am3(starti:endi,4),'r')
 plot(timearr(starti:endi),alpha_array_am3(starti:endi,5),'r')
 % ensemble mean
-plot(timearr(starti:endi),mean_alpha_am3(starti:endi),'r','Linewidth',2)
+plot(timearr(starti:endi),mean_alpha_am3(starti:endi),'r','Linewidth',3)
 
 % for am2
 plot(timearr(starti:endi),alpha_array(starti:endi,1),'b')
@@ -24,7 +24,14 @@ plot(timearr(starti:endi),alpha_array(starti:endi,6),'b')
 plot(timearr(starti:endi),mean_alpha(starti:endi),'b','Linewidth',3)
 
 % for am4
-plot(timearr(starti:endi),alpha_array_am4(starti:endi,1),'k','Linewidth',3)
+% am4g19r8
+plot(timearr(starti:endi),alpha_array_am4(starti:endi,1),'k')
+% AM4p0
+plot(timearr(starti:endi),alpha_array_am4(starti:endi,2),'k')
+plot(timearr(starti:endi),alpha_array_am4(starti:endi,3),'k')
+plot(timearr(starti:endi),alpha_array_am4(starti:endi,4),'k')
+% ensemble mean
+plot(timearr(starti:endi),mean_alpha_am4(starti:endi),'k','Linewidth',3)
 
 title('alpha: differential climate feedback parameter')
 
