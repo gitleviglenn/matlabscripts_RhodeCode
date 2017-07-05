@@ -39,7 +39,7 @@ rendtime=1140;
 %rstime=1261; 
 %rendtime=1620;  
 
-period='early'
+%period='early'
 
 % for AM2 and AM3
 % indices over which data will be read from files
@@ -294,7 +294,7 @@ lcloud_am2_mn  =mean(lcloud_array,4);
 hcloud_am2_mn  =mean(hcloud_array,4);
 sw_cre_am2_mn  =mean(toa_sw_cre_array,4);
 
-clear hcloud_array lcloud_array temp_sfc_array temp700_array omega500_array lts_array eis_array alpha_cre_array toa_sw_cre_array
+clear hcloud_array lcloud_array temp_sfc_array temp700_array omega500_array lts_array eis_array toa_sw_cre_array
 %-----------------------------------------------------------------------------------------
 % variables on which to compute trends
 einvs_ts=eis_ens_am2_mn;
@@ -523,7 +523,7 @@ lcloud_am3_mn  =mean(lcloud_array_am3,4);
 hcloud_am3_mn  =mean(hcloud_array_am3,4);
 sw_cre_am3_mn  =mean(toa_sw_cre_array_am3,4);
 
-clear hcloud_array_am3 lcloud_array_am3 temp_sfc_array_am3 temp700_array_am3 omega500_array_am3 lts_array_am3 eis_array_am3 alpha_cre_array_am3 toa_sw_cre_array_am3
+clear hcloud_array_am3 lcloud_array_am3 temp_sfc_array_am3 temp700_array_am3 omega500_array_am3 lts_array_am3 eis_array_am3 toa_sw_cre_array_am3
 
 % variables on which to compute trends
 einvs_ts=eis_ens_am3_mn;
@@ -569,18 +569,18 @@ level700=5; % for AM3, and AM4
 readvars 
 
 % create arrays to fill
-alpha_array_am4     =zeros(nyears_alpha,4);
-alpha_cre_array_am4 =zeros(nyears_alpha,4);
-eis_gmn_array_am4   =zeros(nmonths,4);
-lts_gmn_array_am4   =zeros(nmonths,4);
-eis_array_am4       =zeros(nmonths,nlat,nlon,4);
-lts_array_am4       =zeros(nmonths,nlat,nlon,4);
-omega500_array_am4  =zeros(nmonths,nlat,nlon,4);
-temp700_array_am4   =zeros(nmonths,nlat,nlon,4);
-temp_sfc_array_am4  =zeros(nmonths,nlat,nlon,4);
-lcloud_array_am4    =zeros(nmonths,nlat,nlon,4);
-hcloud_array_am4    =zeros(nmonths,nlat,nlon,4);
-toa_sw_cre_array_am4=zeros(nmonths,nlat,nlon,4);
+alpha_array_am4     =zeros(nyears_alpha,5);
+alpha_cre_array_am4 =zeros(nyears_alpha,5);
+eis_gmn_array_am4   =zeros(nmonths,5);
+lts_gmn_array_am4   =zeros(nmonths,5);
+eis_array_am4       =zeros(nmonths,nlat,nlon,5);
+lts_array_am4       =zeros(nmonths,nlat,nlon,5);
+omega500_array_am4  =zeros(nmonths,nlat,nlon,5);
+temp700_array_am4   =zeros(nmonths,nlat,nlon,5);
+temp_sfc_array_am4  =zeros(nmonths,nlat,nlon,5);
+lcloud_array_am4    =zeros(nmonths,nlat,nlon,5);
+hcloud_array_am4    =zeros(nmonths,nlat,nlon,5);
+toa_sw_cre_array_am4=zeros(nmonths,nlat,nlon,5);
 
 %
 
@@ -742,6 +742,50 @@ toa_sw_cre_array_am4(:,:,:,4)=swup_clr_ts-swup_ts;
 %
 % done with fourth ensemble member for AM4p0
 %----------------------------------------------------------------------------------
+% ensemble 5 
+%%/net2/Levi.Silvers/data/amip_long/c96L33_am4p0_longamip_1850rad/ts_all
+pathbase='/net2/Levi.Silvers/data/amip_long/';
+path='c96L33_am4p0_longamip_1850rad_c4_ens2/ts_all/';
+%years2='atmos.187001-201412'; 
+
+%%modtitle='AM4p0';
+%
+%%% for AM4
+%%timest=13;
+%timest=1;
+%%%timeend=1632;
+%timeend=1620;
+%%timeend=1608;
+%%
+%%level700=5; % for AM3, and AM4
+%
+readvars
+%
+alpha_09
+%
+alpha_array_am4(:,5)=alpha_30y;
+alpha_cre_array_am4(:,5)=alpha_cre_30y;
+%
+eis_lts_ts
+%
+%% save output to appropriate local vars:
+eis_gmn_array_am4(:,5)      =eis_gmn_ts; %=zeros(1620,6);
+lts_gmn_array_am4(:,5)      =lts_gmn_ts; %=zeros(1620,6);
+eis_array_am4(:,:,:,5)      =eis_ts;
+lts_array_am4(:,:,:,5)      =lts_ts;
+omega500_ens                =squeeze(omega_ts(:,level500,:,:));
+omega500_array_am4(:,:,:,5) =omega500_ens;
+temp700_ens                 =squeeze(temp3d(:,level700,:,:));
+temp700_array_am4(:,:,:,5)  =temp700_ens;
+%temp_sfc_ens=temp_sfc_ts; % it looks like there is something wrong 
+% with temp_sfc_ens from the 5th ensemble member...
+temp_sfc_array_am4(:,:,:,5) =temp_sfc_ts;
+lcloud_array_am4(:,:,:,5)   =lcloud_ts;
+hcloud_array_am4(:,:,:,5)   =hcloud_ts;
+toa_sw_cre_array_am4(:,:,:,5)=swup_clr_ts-swup_ts;
+%
+% done with fifth ensemble member for AM4p0
+%----------------------------------------------------------------------------------
 %
 %----------------------------------------------------------------
 % done with AM4 ensemble members
@@ -760,7 +804,7 @@ lcloud_am4_mn   =mean(lcloud_array_am4,4);
 hcloud_am4_mn   =mean(hcloud_array_am4,4);
 sw_cre_am4_mn   =mean(toa_sw_cre_array_am4,4);
 
-clear hcloud_array_am4 lcloud_array_am4 temp_sfc_array_am4 temp700_array_am4 omega500_array_am4 lts_array_am4 eis_array_am4 alpha_cre_array_am4 toa_sw_cre_array_am4
+clear hcloud_array_am4 lcloud_array_am4 temp_sfc_array_am4 temp700_array_am4 omega500_array_am4 lts_array_am4 eis_array_am4 toa_sw_cre_array_am4
 
 % variables on which to compute trends
 einvs_ts=eis_ens_am4_mn;

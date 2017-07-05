@@ -4,34 +4,41 @@ endi=104;
 firstyr=1886;
 timearr=firstyr:firstyr+103;
 % for am3
-plot(timearr(starti:endi),alpha_array_am3(starti:endi,1),'r')
+plot(timearr(starti:endi),-alpha_array_am3(starti:endi,1),'r')
 hold on
-plot(timearr(starti:endi),alpha_array_am3(starti:endi,2),'r')
-plot(timearr(starti:endi),alpha_array_am3(starti:endi,3),'r')
-plot(timearr(starti:endi),alpha_array_am3(starti:endi,4),'r')
-plot(timearr(starti:endi),alpha_array_am3(starti:endi,5),'r')
+plot(timearr(starti:endi),-alpha_array_am3(starti:endi,2),'r')
+plot(timearr(starti:endi),-alpha_array_am3(starti:endi,3),'r')
+plot(timearr(starti:endi),-alpha_array_am3(starti:endi,4),'r')
+plot(timearr(starti:endi),-alpha_array_am3(starti:endi,5),'r')
 % ensemble mean
-plot(timearr(starti:endi),mean_alpha_am3(starti:endi),'r','Linewidth',3)
+plot(timearr(starti:endi),-mean_alpha_am3(starti:endi),'r','Linewidth',3)
+
+mn_am3_alpha=mean(mean_alpha_am3)
 
 % for am2
-plot(timearr(starti:endi),alpha_array(starti:endi,1),'b')
-plot(timearr(starti:endi),alpha_array(starti:endi,2),'b')
-plot(timearr(starti:endi),alpha_array(starti:endi,3),'b')
-plot(timearr(starti:endi),alpha_array(starti:endi,4),'b')
-plot(timearr(starti:endi),alpha_array(starti:endi,5),'b')
-plot(timearr(starti:endi),alpha_array(starti:endi,6),'b') 
+plot(timearr(starti:endi),-alpha_array(starti:endi,1),'b')
+plot(timearr(starti:endi),-alpha_array(starti:endi,2),'b')
+plot(timearr(starti:endi),-alpha_array(starti:endi,3),'b')
+plot(timearr(starti:endi),-alpha_array(starti:endi,4),'b')
+plot(timearr(starti:endi),-alpha_array(starti:endi,5),'b')
+plot(timearr(starti:endi),-alpha_array(starti:endi,6),'b') 
 % ensemble mean
-plot(timearr(starti:endi),mean_alpha(starti:endi),'b','Linewidth',3)
+plot(timearr(starti:endi),-mean_alpha(starti:endi),'b','Linewidth',3)
+
+mn_am2_alpha=mean(mean_alpha)
 
 % for am4
 % am4g19r8
-plot(timearr(starti:endi),alpha_array_am4(starti:endi,1),'k')
+plot(timearr(starti:endi),-alpha_array_am4(starti:endi,1),'k')
 % AM4p0
-plot(timearr(starti:endi),alpha_array_am4(starti:endi,2),'k')
-plot(timearr(starti:endi),alpha_array_am4(starti:endi,3),'k')
-plot(timearr(starti:endi),alpha_array_am4(starti:endi,4),'k')
+plot(timearr(starti:endi),-alpha_array_am4(starti:endi,2),'k')
+plot(timearr(starti:endi),-alpha_array_am4(starti:endi,3),'k')
+plot(timearr(starti:endi),-alpha_array_am4(starti:endi,4),'k')
+plot(timearr(starti:endi),-alpha_array_am4(starti:endi,5),'k')
 % ensemble mean
-plot(timearr(starti:endi),mean_alpha_am4(starti:endi),'k','Linewidth',3)
+plot(timearr(starti:endi),-mean_alpha_am4(starti:endi),'k','Linewidth',3)
+
+mn_am4_alpha=mean(mean_alpha_am4)
 
 title('alpha: differential climate feedback parameter')
 

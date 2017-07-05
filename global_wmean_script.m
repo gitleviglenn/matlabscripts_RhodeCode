@@ -31,6 +31,8 @@ glbsumweight=nansum(glblatweight(:));
 %glbsumweight=nlongit*nlatit;
 
 %
+%siff=size(fullfield)
+%sigl=size(glblatweight)
 wgt_var       = fullfield.*glblatweight;
 
 %out_var = sum(wgt_var(:))/glbsumweight

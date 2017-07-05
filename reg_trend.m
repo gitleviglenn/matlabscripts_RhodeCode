@@ -11,14 +11,18 @@ time=1:ts_length;
 yvar_period=vartotrend(rstime:rendtime,:,:);
 
 regarray=zeros(nlat,nlon);
+errorarray=zeros(nlat,nlon,2);
 for ilon=1:1:nlon
   for ilat=1:1:nlat
     regval=polyfit(time',yvar_period(:,ilat,ilon),1);
+    [p,s,mu]=polyfit(time',yvar_period(:,ilat,ilon),1);
     regarray(ilat,ilon)=regval(1);
+    errorarray(ilat,ilon,1)=mu(1);
+    errorarray(ilat,ilon,2)=mu(2);
   end
 end
 
-trend_reg=ts_length.*regarray;
+trend_reg=(ts_length/360.)*ts_length*regarray;
 %regtrend_var_oo=trend_reg.*onlyocean;
 'ocean mask not applied in reg_trend.m!'
 regtrend_var_oo=trend_reg;

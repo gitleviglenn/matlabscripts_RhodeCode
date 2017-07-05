@@ -45,12 +45,18 @@ lcc_del=lcc_tr_mn-lcc_tmn;
 tindex=size(first_ts,1);
 nyears=tindex/12;
 clear monthsbyyears
+%% compute yearly mean values
 monthsbyyears=reshape(eis_del,[12 nyears]);
 first_del_ymn=mean(monthsbyyears,1);
 monthsbyyears=reshape(sst_del,[12 nyears]);
 second_del_ymn=mean(monthsbyyears,1);
 monthsbyyears=reshape(lcc_del,[12 nyears]);
 primary_del_ymn=mean(monthsbyyears,1);
+
+%% if the yearly mean is not computed, the results are garbage...
+%first_del_ymn=eis_del';
+%second_del_ymn=sst_del';
+%primary_del_ymn=lcc_del';
 
 %monthsbyyears=reshape(eis_tr_mn,[12 nyears]);
 %eis_tr_ymn=mean(monthsbyyears,1);

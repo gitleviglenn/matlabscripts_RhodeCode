@@ -31,21 +31,36 @@ source_hcloud_ts   = strcat(piece,'.high_cld_amt.nc')
 source_lwp_ts      = strcat(piece,'.LWP.nc')
 source_omega_ts    = strcat(piece,'.omega.nc')      
 
+filein=zeros(13);
 
 fin_tsurf     = netcdf(source_tsurf_ts,'nowrite');
+fileid(1)=fopen(source_tsurf_ts);
 fin_temp      = netcdf(source_temp_ts,'nowrite');
+fileid(2)=fopen(source_temp_ts);
 fin_tref      = netcdf(source_tref_ts,'nowrite');
+fileid(3)=fopen(source_tref_ts);
 fin_hght      = netcdf(source_hght_ts,'nowrite');
+fileid(4)=fopen(source_hght_ts);
 fin_rh        = netcdf(source_rh_ts,'nowrite');
+fileid(5)=fopen(source_rh_ts);
 fin_swdn      = netcdf(source_swdn_ts,'nowrite');
+fileid(6)=fopen(source_swdn_ts);
 fin_swup      = netcdf(source_swup_ts,'nowrite');
+fileid(7)=fopen(source_swup_ts);
 fin_swup_clr  = netcdf(source_swup_clr_ts,'nowrite');
+fileid(8)=fopen(source_swup_clr_ts);
 fin_olr       = netcdf(source_olr_ts,'nowrite');
+fileid(9)=fopen(source_olr_ts);
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
+fileid(10)=fopen(source_olr_clr_ts);
 fin_lcloud    = netcdf(source_lcloud_ts,'nowrite');
+fileid(11)=fopen(source_lcloud_ts);
 fin_hcloud    = netcdf(source_hcloud_ts,'nowrite');
-fin_lwp       = netcdf(source_lwp_ts,'nowrite');
+fileid(12)=fopen(source_hcloud_ts);
+%fin_lwp       = netcdf(source_lwp_ts,'nowrite');
+%fileid(13)=fopen(source_lwp_ts);
 fin_omega     = netcdf(source_omega_ts,'nowrite');
+fileid(13)=fopen(source_omega_ts);
 
 %% grab time series over a specified period:
 %timest=1;
@@ -61,7 +76,7 @@ hght               = fin_hght{'hght'}(timest:timeend,level700,:,:);
 hght               = squeeze(hght);
 %v.tsurf           = fin_tsurf{'t_surf'}(:,:,:); 
 %temp_sfc_ts        = fin_tsurf{'t_surf'}(timest:timeend,:,:); 
-temp_sfc_ts         = fin_tref{'t_ref'}(timest:timeend,:,:); 
+temp_sfc_ts       = fin_tref{'t_ref'}(timest:timeend,:,:); 
 %v.temp            = fin_temp{'temp'}(:,:,:,:); 
 temp3d             = fin_temp{'temp'}(timest:timeend,:,:,:); 
 %v.tref            = fin_tref{'t_ref'}(:,:,:); 
@@ -75,18 +90,26 @@ v.lat              = fin_tref{'lat'}(:);
 swdn_ts            = fin_swdn{'swdn_toa'}(timest:timeend,:,:,:);
 %v.swup_toa        = fin_swup{'swup_toa'}(:,:,:,:);
 swup_ts            = fin_swup{'swup_toa'}(timest:timeend,:,:,:);
+swup_ts            = -1.*swup_ts;
 %v.swup_toa_clr    = fin_swup_clr{'swup_toa_clr'}(:,:,:,:);
 swup_clr_ts        = fin_swup_clr{'swup_toa_clr'}(timest:timeend,:,:,:);
+swup_clr_ts        = -1.*swup_clr_ts;
 %v.olr_toa         = fin_olr{'olr'}(:,:,:,:);
 olr_ts             = fin_olr{'olr'}(timest:timeend,:,:,:);
+olr_ts             = -1.*olr_ts;
 %v.olr_toa_clr     = fin_olr_clr{'olr_clr'}(:,:,:,:);
 olr_clr_ts         = fin_olr_clr{'olr_clr'}(timest:timeend,:,:,:);
+olr_clr_ts         = -1.*olr_clr_ts;
 %
 %v.lcloud          = fin_lcloud{'low_cld_amt'}(:,:,:);
 lcloud_ts          = fin_lcloud{'low_cld_amt'}(timest:timeend,:,:);
 hcloud_ts          = fin_hcloud{'high_cld_amt'}(timest:timeend,:,:);
 omega_ts           = fin_omega{'omega'}(timest:timeend,:,:);
 %v.lwp             = fin_lwp{'LWP'}(:,:,:);
+
+for i=1:13
+  fclose(fileid(i));
+end
 
 nlat=size(vlat,1);
 nlon=size(vlon,1);
