@@ -16,20 +16,20 @@
 
 piece=strcat(pathbase,path,years2);
 
-source_tsurf_ts    = strcat(piece,'.t_surf.nc')
-source_temp_ts     = strcat(piece,'.temp.nc')
-source_tref_ts     = strcat(piece,'.t_ref.nc')
-source_rh_ts       = strcat(piece,'.rh.nc')
-source_swdn_ts     = strcat(piece,'.swdn_toa.nc')
-source_swup_ts     = strcat(piece,'.swup_toa.nc')
-source_swup_clr_ts = strcat(piece,'.swup_toa_clr.nc')
-source_olr_ts      = strcat(piece,'.olr.nc')
-source_olr_clr_ts  = strcat(piece,'.olr_clr.nc')
-source_hght_ts     = strcat(piece,'.hght.nc')
-source_lcloud_ts   = strcat(piece,'.low_cld_amt.nc')
-source_hcloud_ts   = strcat(piece,'.high_cld_amt.nc')
+source_tsurf_ts    = strcat(piece,'.t_surf.nc');
+source_temp_ts     = strcat(piece,'.temp.nc');
+source_tref_ts     = strcat(piece,'.t_ref.nc');
+source_rh_ts       = strcat(piece,'.rh.nc');
+source_swdn_ts     = strcat(piece,'.swdn_toa.nc');
+source_swup_ts     = strcat(piece,'.swup_toa.nc');
+source_swup_clr_ts = strcat(piece,'.swup_toa_clr.nc');
+source_olr_ts      = strcat(piece,'.olr.nc');
+source_olr_clr_ts  = strcat(piece,'.olr_clr.nc');
+source_hght_ts     = strcat(piece,'.hght.nc');
+source_lcloud_ts   = strcat(piece,'.low_cld_amt.nc');
+source_hcloud_ts   = strcat(piece,'.high_cld_amt.nc');
 source_lwp_ts      = strcat(piece,'.LWP.nc')
-source_omega_ts    = strcat(piece,'.omega.nc')      
+source_omega_ts    = strcat(piece,'.omega.nc');      
 
 filein=zeros(13);
 

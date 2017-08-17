@@ -14,10 +14,14 @@
 %incoming_lcc_ts=lcloud_am2_mn(:,30:60,:);
 
 % 45 is equator
-latso=30; % am2 and am3 extend from 0 to 90, so 30 to 60 is from -30S to +30N
-latno=60;
-%latso=15;
+%latso=30; % am2 and am3 extend from 0:90, 30:60 is from -30S to +30N
+%latno=60;
+%latso=15; % 15 to 75 corresponds to 60S to 60N
 %latno=75
+
+latso=1;
+latno=90;
+
 
 %am2
 second_ts=temp_sfc_am2_mn(:,latso:latno,:);
@@ -51,7 +55,7 @@ sst_scaled2=cc(2).*second_del_ymn;
 zhou_am2=corrcoef(primary_del_ymn,zhou_ts);
 new_am2=corrcoef(primary_del_ymn,new_ts);
 plot(new_ts,'r')
-title('lcc change for AM2')
+title('lcc anomaly for AM2')
 
 ccoefs=zeros(3,2);
 llccoefs=zeros(3,2);
@@ -98,7 +102,7 @@ sst_scaled3=cc(2).*second_del_ymn;
 plot(new_ts,'r')
 zhou_am3=corrcoef(primary_del_ymn,zhou_ts);
 new_am3=corrcoef(primary_del_ymn,new_ts);
-title('lcc change for AM3')
+title('lcc anomaly for AM3')
 
 ccoefs(2,1)=zhou_am3(2);
 ccoefs(2,2)=new_am3(2);
@@ -144,7 +148,7 @@ eis_scaled4=cc(1).*first_del_ymn;
 plot(new_ts,'r')
 zhou_am4=corrcoef(primary_del_ymn,zhou_ts);
 new_am4=corrcoef(primary_del_ymn,new_ts);
-title('lcc change for AM4')
+title('lcc anomaly for AM4')
 
 ccoefs(3,1)=zhou_am4(2);
 ccoefs(3,2)=new_am4(2);
@@ -167,14 +171,14 @@ incoming_ts=sst_scaled4;
 running_mean;
 new_sst4_scaled=output_ts;
 
-incoming_ts=eis_scaled;
+incoming_ts=eis_scaled4;
 running_mean;
 new_eis_scaled=output_ts;
 
 % multi-model figure
 figure
 
-timearr=1875:2000;
+timearr=1875:2001;
 plot(timearr,lcc_am2_smooth,'b','LineWidth',2)
 hold on
 plot(timearr,new_ts_am2_smooth,'b')
@@ -182,11 +186,11 @@ plot(timearr,lcc_am3_smooth,'r','LineWidth',2)
 plot(timearr,new_ts_am3_smooth,'r')
 plot(timearr,lcc_am4_smooth,'k','LineWidth',2)
 plot(timearr,new_ts_am4_smooth,'k')
-plot(timearr,new_sst2_scaled,'b')
-plot(timearr,new_sst3_scaled,'r')
-plot(timearr,new_sst4_scaled,'k')
+plot(timearr,new_sst2_scaled,'--b')
+plot(timearr,new_sst3_scaled,'--r')
+plot(timearr,new_sst4_scaled,'--k')
 plot(timearr,new_eis_scaled,'k')
-title('LCC change and Approximate LCC change')
+title('LCC anomaly and Approximate LCC anomaly')
 
 %%-------------------------------------------------------------
 %% can we similarly decompose high cloud changes?  

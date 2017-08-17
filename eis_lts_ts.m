@@ -14,7 +14,7 @@
 %
 %cont_wcolorbar_eisdiff(diff_term','EIS - LTS');
 
-boo='have you saved changes you numskull?'
+%boo='have you saved changes you numskull?'
 
 %% open netcdf files and load data
 %%
@@ -63,11 +63,13 @@ for ti=1:tindex;
   lts_ts(ti,:,:)=lts_f(:,:);
 
   fullfield=squeeze(eis_ts(ti,:,:));
-  global_wmean_script; 
+  %global_wmean_script; 
+  global_wmean_quick; 
   eis_gmn_ts(ti)=wgt_mean; 
 
   fullfield=squeeze(lts_ts(ti,:,:));
-  global_wmean_script; 
+  %global_wmean_script; 
+  global_wmean_quick; 
   lts_gmn_ts(ti)=wgt_mean; 
 
   timenow=timenow+1;
