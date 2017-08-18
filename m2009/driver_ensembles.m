@@ -1,10 +1,7 @@
 %-----------------------------------------------------------------------------------------
+% driver_ensembles.m
 %
-% test driver to try and systemetize the computation of alpha, cre, and eis/lts 
-% for various ensemble members from am2, am3, and am4.  
-%
-% some minor modifications are necessary to allow the scripts which have been developed in 
-% the past 3 months to work for individual ensemble members
+% this is one of the primary master scripts for the long amip analysis
 %
 % calls the following scripts:
 % readvars
@@ -13,6 +10,9 @@
 % compute_trends              
 % amip_eiscltrends_ncout
 % plot_alpha_3mods
+% plot_cre_3mods
+% plot_alpha_lcc_3mods
+% window_table
 %
 % to compute radiative flux trends and write them to an netcdf file use a similar method as for compute_trends and amip_eiscltrends_ncout:
 % compute_rad_trends.m
@@ -21,7 +21,7 @@
 % this was written to work with something like readvars.m to read in the data using the 
 % 'pathbase' variables.  
 %
-% march 20, 2017                                                           levi silvers
+% levi silvers                                                           aug 2017
 %-----------------------------------------------------------------------------------------
 %
 pathbase='/net2/Levi.Silvers/data/amip_long/';
@@ -39,6 +39,11 @@ rendtime=1140;
 %rstime=1261; 
 %rendtime=1620;  
 
+grid_conv_lon_am4=288.0/360.;
+grid_conv_lat_am4=180.0/180.;
+grid_conv_lat_am2=90.0/180.;
+grid_conv_lon_am2=144.0/360.;
+
 %period='early'
 
 % for AM2 and AM3
@@ -49,6 +54,7 @@ timest=1;
 timeend=1620;
 
 % define time array lengths
+nyears=timeend/12;
 nyears_alpha=105;
 %nyears_alpha=129; % for David P's method...
 nmonths=1620;
@@ -84,20 +90,30 @@ level500=6; % for AM2
 %pathbase='/net2/Levi.Silvers/data/amip_long/';
 readvars % openncfile_3mods
 %
-alpha_array=zeros(nyears_alpha,6);
-alpha_cre_array=zeros(nyears_alpha,6);
-eis_gmn_array=zeros(nmonths,6);
-lts_gmn_array=zeros(nmonths,6);
+global_weights % computes cosine weights used to compute the global mean for AM2 grid
+%
+alpha_array=zeros(nyears_alpha,5);
+alpha_cre_array=zeros(nyears_alpha,5);
+alpha_clr_array=zeros(nyears_alpha,5);
+alpha_lcc_array=zeros(nyears_alpha,5);
+glbmn_lcc=zeros(nyears,5);
+eis_gmn_array=zeros(nmonths,5);
+lts_gmn_array=zeros(nmonths,5);
 
-eis_array=zeros(nmonths,nlat,nlon,6);
-lts_array=zeros(nmonths,nlat,nlon,6);
-omega500_array=zeros(nmonths,nlat,nlon,6);
-temp700_array=zeros(nmonths,nlat,nlon,6);
-temp_sfc_array=zeros(nmonths,nlat,nlon,6);
-lcloud_array=zeros(nmonths,nlat,nlon,6);
-hcloud_array=zeros(nmonths,nlat,nlon,6);
-toa_sw_cre_array=zeros(nmonths,nlat,nlon,6);
+eis_array=zeros(nmonths,nlat,nlon,5);
+lts_array=zeros(nmonths,nlat,nlon,5);
+omega500_array=zeros(nmonths,nlat,nlon,5);
+temp700_array=zeros(nmonths,nlat,nlon,5);
+temp_sfc_array=zeros(nmonths,nlat,nlon,5);
+lcloud_array=zeros(nmonths,nlat,nlon,5);
+hcloud_array=zeros(nmonths,nlat,nlon,5);
+toa_sw_cre_array=zeros(nmonths,nlat,nlon,5);
 %-----------------------------------------------------------------------------------------
+
+% create arrays to hold information from select geographic windows
+alpha_wind=zeros(15,14,105); % ensnum,windownum,time
+alpha_lcc_wind=zeros(15,14,105); % ensnum,windownum,time
+
 %% variables on which to compute trends
 %% lcloud_ts --> readvars
 %% hcloud_ts --> readvars
@@ -121,12 +137,20 @@ toa_sw_cre_array=zeros(nmonths,nlat,nlon,6);
 %vlon   =v.lon_am2ts;
 %vlat   =v.lat_am2ts;
 
+conv_lat=grid_conv_lat_am2;
+conv_lon=grid_conv_lon_am2;
+
 alpha_09
+ensnum=1
+alpha_window_driver
 
 %alpha_tsam2=alpha_30y;
 %alpha_tsam2_cre=alpha_cre_30y;
 alpha_array(:,1)=alpha_30y;
 alpha_cre_array(:,1)=alpha_cre_30y;
+alpha_clr_array(:,1)=alpha_clr_30y;
+alpha_lcc_array(:,1)=alpha_lcc_30y;
+glbmn_lcc(:,1)=del_lcc;
 delTs_am2=delTs;
 delR_am2=delR;
 
@@ -163,8 +187,13 @@ toa_sw_cre_array(:,:,:,1)=swup_clr_ts-swup_ts;
 path='AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A2/';
 readvars % openncfile_3mods
 alpha_09
+ensnum=2
+alpha_window_driver
 alpha_array(:,2)=alpha_30y;
 alpha_cre_array(:,2)=alpha_cre_30y;
+alpha_clr_array(:,2)=alpha_clr_30y;
+alpha_lcc_array(:,2)=alpha_lcc_30y;
+glbmn_lcc(:,2)      =del_lcc;
 eis_lts_ts
 eis_gmn_array(:,2)=eis_gmn_ts; %=zeros(1620,6);
 eis_array(:,:,:,2)=eis_ts;
@@ -188,8 +217,13 @@ toa_sw_cre_array(:,:,:,2)=swup_clr_ts-swup_ts;
 path='AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A3/';
 readvars % openncfile_3mods
 alpha_09
+ensnum=3
+alpha_window_driver
 alpha_array(:,3)=alpha_30y;
 alpha_cre_array(:,3)=alpha_cre_30y;
+alpha_clr_array(:,3)=alpha_clr_30y;
+alpha_lcc_array(:,3)=alpha_lcc_30y;
+glbmn_lcc(:,3)      =del_lcc;
 eis_lts_ts
 eis_gmn_array(:,3)=eis_gmn_ts; %=zeros(1620,6);
 eis_array(:,:,:,3)=eis_ts;
@@ -213,8 +247,13 @@ toa_sw_cre_array(:,:,:,3)=swup_clr_ts-swup_ts;
 path='AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A4/';
 readvars % openncfile_3mods
 alpha_09
+ensnum=4
+alpha_window_driver
 alpha_array(:,4)=alpha_30y;
 alpha_cre_array(:,4)=alpha_cre_30y;
+alpha_clr_array(:,4)=alpha_clr_30y;
+alpha_lcc_array(:,4)=alpha_lcc_30y;
+glbmn_lcc(:,4)      =del_lcc;
 eis_lts_ts
 eis_gmn_array(:,4)=eis_gmn_ts; %=zeros(1620,6);
 eis_array(:,:,:,4)=eis_ts;
@@ -238,8 +277,13 @@ toa_sw_cre_array(:,:,:,4)=swup_clr_ts-swup_ts;
 path='AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A5/';
 readvars % openncfile_3mods
 alpha_09
+ensnum=5
+alpha_window_driver
 alpha_array(:,5)=alpha_30y;
 alpha_cre_array(:,5)=alpha_cre_30y;
+alpha_clr_array(:,5)=alpha_clr_30y;
+alpha_lcc_array(:,5)=alpha_lcc_30y;
+glbmn_lcc(:,5)      =del_lcc;
 eis_lts_ts
 eis_gmn_array(:,5)=eis_gmn_ts; %=zeros(1620,6);
 eis_array(:,:,:,5)=eis_ts;
@@ -256,35 +300,41 @@ lcloud_array(:,:,:,5)=lcloud_ens;
 hcloud_ens=hcloud_ts;
 hcloud_array(:,:,:,5)=hcloud_ens;
 toa_sw_cre_array(:,:,:,5)=swup_clr_ts-swup_ts; 
-%-----------------------------------------------------------------------------------------
-% ens 6
-%-----------------------------------------------------------------------------------------
-'beginning work on ens 6'
-path='AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/';
-readvars % openncfile_3mods
-alpha_09
-alpha_array(:,6)=alpha_30y;
-alpha_cre_array(:,6)=alpha_cre_30y;
-eis_lts_ts
-eis_gmn_array(:,6)=eis_gmn_ts; %=zeros(1620,6);
-eis_array(:,:,:,6)=eis_ts;
-lts_gmn_array(:,6)=lts_gmn_ts; %=zeros(1620,6);
-lts_array(:,:,:,6)=lts_ts;
-omega500_ens=squeeze(omega_ts(:,level500,:,:));
-omega500_array(:,:,:,6)=omega500_ens;
-temp700_ens=squeeze(temp3d(:,level700,:,:));
-temp700_array(:,:,:,6)=temp700_ens;
-temp_sfc_ens=temp_sfc_ts;
-temp_sfc_array(:,:,:,6)=temp_sfc_ens;
-lcloud_ens=lcloud_ts;
-lcloud_array(:,:,:,6)=lcloud_ens;
-hcloud_ens=hcloud_ts;
-hcloud_array(:,:,:,6)=hcloud_ens;
-toa_sw_cre_array(:,:,:,6)=swup_clr_ts-swup_ts; 
-%-----------------------------------------------------------------------------------------
+%%-----------------------------------------------------------------------------------------
+%% ens 6
+%%-----------------------------------------------------------------------------------------
+%'beginning work on ens 6'
+%path='AM2.1_1870-2004/AM2.1_1870-2004-HGlob-SST-ICE-1860RAD_A10/';
+%readvars % openncfile_3mods
+%alpha_09
+%alpha_array(:,6)=alpha_30y;
+%alpha_cre_array(:,6)=alpha_cre_30y;
+%alpha_clr_array(:,6)=alpha_clr_30y;
+%alpha_lcc_array(:,6)=alpha_lcc_30y;
+%glbmn_lcc(:,6)      =del_lcc;
+%eis_lts_ts
+%eis_gmn_array(:,6)=eis_gmn_ts; %=zeros(1620,6);
+%eis_array(:,:,:,6)=eis_ts;
+%lts_gmn_array(:,6)=lts_gmn_ts; %=zeros(1620,6);
+%lts_array(:,:,:,6)=lts_ts;
+%omega500_ens=squeeze(omega_ts(:,level500,:,:));
+%omega500_array(:,:,:,6)=omega500_ens;
+%temp700_ens=squeeze(temp3d(:,level700,:,:));
+%temp700_array(:,:,:,6)=temp700_ens;
+%temp_sfc_ens=temp_sfc_ts;
+%temp_sfc_array(:,:,:,6)=temp_sfc_ens;
+%lcloud_ens=lcloud_ts;
+%lcloud_array(:,:,:,6)=lcloud_ens;
+%hcloud_ens=hcloud_ts;
+%hcloud_array(:,:,:,6)=hcloud_ens;
+%toa_sw_cre_array(:,:,:,6)=swup_clr_ts-swup_ts; 
+%%-----------------------------------------------------------------------------------------
 % compute the ensemble means 
 mean_alpha=mean(alpha_array,2);
 mean_alpha_cre=mean(alpha_cre_array,2);
+mean_alpha_clr=mean(alpha_clr_array,2);
+mean_alpha_lcc=mean(alpha_lcc_array,2);
+mean_glb_lcc  =mean(glbmn_lcc,2);
 eis_ens_am2_mn =mean(eis_array,4);
 lts_ens_am2_mn =mean(lts_array,4);
 omega500_am2_mn=mean(omega500_array,4);
@@ -331,8 +381,13 @@ level500=7; % for AM3 and AM4
 %pathbase='/net2/Levi.Silvers/data/amip_long/';
 readvars % openncfile_3mods
 
+global_weights % computes cosine weights used to compute the global mean for AM3 grid
+
 alpha_array_am3     =zeros(nyears_alpha,5);
 alpha_cre_array_am3 =zeros(nyears_alpha,5);
+alpha_clr_array_am3 =zeros(nyears_alpha,5);
+alpha_lcc_array_am3 =zeros(nyears_alpha,5);
+glbmn_lcc_am3       =zeros(nyears,5);
 eis_gmn_array_am3   =zeros(nmonths,5);
 lts_gmn_array_am3   =zeros(nmonths,5);
 eis_array_am3       =zeros(nmonths,nlat,nlon,5);
@@ -345,9 +400,14 @@ hcloud_array_am3    =zeros(nmonths,nlat,nlon,5);
 toa_sw_cre_array_am4=zeros(nmonths,nlat,nlon,5); 
 
 alpha_09
+ensnum=6
+alpha_window_driver
 
 alpha_array_am3(:,1)=alpha_30y;
 alpha_cre_array_am3(:,1)=alpha_cre_30y;
+alpha_clr_array_am3(:,1)=alpha_clr_30y;
+alpha_lcc_array_am3(:,1)=alpha_lcc_30y;
+glbmn_lcc_am3(:,1)      =del_lcc;
 
 eis_lts_ts
 
@@ -381,9 +441,14 @@ years2='atmos.187001-200512'; % 1620 months
 readvars % openncfile_3mods
 %
 alpha_09
+ensnum=7
+alpha_window_driver
 
 alpha_array_am3(:,2)=alpha_30y;
 alpha_cre_array_am3(:,2)=alpha_cre_30y;
+alpha_clr_array_am3(:,2)=alpha_clr_30y;
+alpha_lcc_array_am3(:,2)=alpha_lcc_30y;
+glbmn_lcc_am3(:,2)      =del_lcc;
 
 eis_lts_ts
 
@@ -416,9 +481,14 @@ years2='atmos.187001-200512'; % 1620 months
 readvars % openncfile_3mods
 %
 alpha_09
+ensnum=8
+alpha_window_driver
 
 alpha_array_am3(:,3)=alpha_30y;
 alpha_cre_array_am3(:,3)=alpha_cre_30y;
+alpha_clr_array_am3(:,3)=alpha_clr_30y;
+alpha_lcc_array_am3(:,3)=alpha_lcc_30y;
+glbmn_lcc_am3(:,3)      =del_lcc;
 
 eis_lts_ts
 
@@ -452,9 +522,14 @@ years2='atmos.187001-200512'; % 1620 months
 readvars % openncfile_3mods
 %
 alpha_09
+ensnum=9
+alpha_window_driver
 
 alpha_array_am3(:,4)=alpha_30y;
 alpha_cre_array_am3(:,4)=alpha_cre_30y;
+alpha_clr_array_am3(:,4)=alpha_clr_30y;
+alpha_lcc_array_am3(:,4)=alpha_lcc_30y;
+glbmn_lcc_am3(:,4)      =del_lcc;
 
 eis_lts_ts
 
@@ -486,9 +561,14 @@ years2='atmos.187001-200512'; % 1620 months
 readvars % openncfile_3mods
 %
 alpha_09
+ensnum=10
+alpha_window_driver
 
 alpha_array_am3(:,5)=alpha_30y;
 alpha_cre_array_am3(:,5)=alpha_cre_30y;
+alpha_clr_array_am3(:,5)=alpha_clr_30y;
+alpha_lcc_array_am3(:,5)=alpha_lcc_30y;
+glbmn_lcc_am3(:,5)      =del_lcc;
 
 eis_lts_ts
 
@@ -514,6 +594,9 @@ toa_sw_cre_array_am3(:,:,:,5)=swup_clr_ts-swup_ts;
 %% compute the ensemble means 
 mean_alpha_am3=mean(alpha_array_am3,2);
 mean_alpha_cre_am3=mean(alpha_cre_array_am3,2);
+mean_alpha_clr_am3=mean(alpha_clr_array_am3,2);
+mean_alpha_lcc_am3=mean(alpha_lcc_array_am3,2);
+mean_glb_lcc_am3  =mean(glbmn_lcc_am3,2);
 eis_ens_am3_mn=mean(eis_array_am3,4);
 lts_ens_am3_mn=mean(lts_array_am3,4);
 omega500_am3_mn=mean(omega500_array_am3,4);
@@ -564,13 +647,20 @@ timest=1;
 timeend=1620;
 
 level700=5; % for AM3, and AM4
+conv_lat=grid_conv_lat_am4;
+conv_lon=grid_conv_lon_am4;
 
 %-----------------------------------------------------------------------------------------
 readvars 
 
+global_weights % computes cosine weights used to compute the global mean for AM4 grid
+
 % create arrays to fill
 alpha_array_am4     =zeros(nyears_alpha,5);
 alpha_cre_array_am4 =zeros(nyears_alpha,5);
+alpha_clr_array_am4 =zeros(nyears_alpha,5);
+alpha_lcc_array_am4 =zeros(nyears_alpha,5);
+glbmn_lcc_am4       =zeros(nyears,5);
 eis_gmn_array_am4   =zeros(nmonths,5);
 lts_gmn_array_am4   =zeros(nmonths,5);
 eis_array_am4       =zeros(nmonths,nlat,nlon,5);
@@ -585,10 +675,15 @@ toa_sw_cre_array_am4=zeros(nmonths,nlat,nlon,5);
 %
 
 alpha_09
+ensnum=11
+alpha_window_driver
+
 
 alpha_array_am4(:,1)=alpha_30y;
 alpha_cre_array_am4(:,1)=alpha_cre_30y;
-
+alpha_clr_array_am4(:,1)=alpha_clr_30y;
+alpha_lcc_array_am4(:,1)=alpha_lcc_30y;
+glbmn_lcc_am4(:,1)      =del_lcc;
 eis_lts_ts % compute time series of eis and lts.  both gmn and full fields are computed.
 
 % save output to appropriate local vars:
@@ -630,9 +725,14 @@ modtitle='AM4p0';
 readvars
 %
 alpha_09
+ensnum=12
+alpha_window_driver
 %
 alpha_array_am4(:,2)=alpha_30y;
 alpha_cre_array_am4(:,2)=alpha_cre_30y;
+alpha_clr_array_am4(:,2)=alpha_clr_30y;
+alpha_lcc_array_am4(:,2)=alpha_lcc_30y;
+glbmn_lcc_am4(:,2)      =del_lcc;
 %
 eis_lts_ts
 %
@@ -674,9 +774,14 @@ path='c96L33_am4p0_longamip_1850rad_ens3/ts_all/';
 readvars
 %
 alpha_09
+ensnum=13
+alpha_window_driver
 %
 alpha_array_am4(:,3)=alpha_30y;
 alpha_cre_array_am4(:,3)=alpha_cre_30y;
+alpha_clr_array_am4(:,3)=alpha_clr_30y;
+alpha_lcc_array_am4(:,3)=alpha_lcc_30y;
+glbmn_lcc_am4(:,3)      =del_lcc;
 %
 eis_lts_ts
 %
@@ -718,9 +823,14 @@ path='c96L33_am4p0_longamip_1850rad_ens4/ts_all/';
 readvars
 %
 alpha_09
+ensnum=14
+alpha_window_driver
 %
 alpha_array_am4(:,4)=alpha_30y;
 alpha_cre_array_am4(:,4)=alpha_cre_30y;
+alpha_clr_array_am4(:,4)=alpha_clr_30y;
+alpha_lcc_array_am4(:,4)=alpha_lcc_30y;
+glbmn_lcc_am4(:,4)      =del_lcc;
 %
 eis_lts_ts
 %
@@ -762,9 +872,14 @@ path='c96L33_am4p0_longamip_1850rad_c4_ens2/ts_all/';
 readvars
 %
 alpha_09
+ensnum=15
+alpha_window_driver
 %
 alpha_array_am4(:,5)=alpha_30y;
 alpha_cre_array_am4(:,5)=alpha_cre_30y;
+alpha_clr_array_am4(:,5)=alpha_clr_30y;
+alpha_lcc_array_am4(:,5)=alpha_lcc_30y;
+glbmn_lcc_am4(:,5)      =del_lcc;
 %
 eis_lts_ts
 %
@@ -793,6 +908,9 @@ toa_sw_cre_array_am4(:,:,:,5)=swup_clr_ts-swup_ts;
 
 mean_alpha_am4=mean(alpha_array_am4,2);
 mean_alpha_cre_am4=mean(alpha_cre_array_am4,2);
+mean_alpha_clr_am4=mean(alpha_clr_array_am4,2);
+mean_alpha_lcc_am4=mean(alpha_lcc_array_am4,2);
+mean_glb_lcc_am4  =mean(glbmn_lcc_am4);
 
 %%% compute the ensemble means 
 eis_ens_am4_mn  =mean(eis_array_am4,4);
@@ -821,8 +939,15 @@ compute_trends
 %file_out=ncfilename;   
 %amip_eiscltrends_ncout
 
-% create a figure of alpha for 3 different models: 
+% create a figure of alpha for 3 different models(create figures for Figure 1 of paper): 
 plot_alpha_3mods
+
+plot_cre_3mods
+
+plot_alpha_lcc_3mods
+
+% compute values over select windows from AM4 (to create Table 1 in paper):
+window_table
 
 eis_gmn_ensmn_am2=mean(eis_gmn_array,2);
 eis_gmn_ensmn_am3=mean(eis_gmn_array_am3,2);
@@ -835,6 +960,27 @@ eis_gmn_am3_re=reshape(eis_gmn_ensmn_am3,[12,135]);
 eis_gymn_am3=mean(eis_gmn_am3_re,1);
 eis_gmn_am2_re=reshape(eis_gmn_ensmn_am2,[12,135]);
 eis_gymn_am2=mean(eis_gmn_am2_re,1);
+
+% do a few things with the window arrays so they can be written out to netcdf easier....
+
+alpha_wind_am2=alpha_wind(1:5,:,:);
+alpha_wind_am3=alpha_wind(6:10,:,:);
+alpha_wind_am4=alpha_wind(11:15,:,:);
+
+alpha_lcc_wind_am2=alpha_lcc_wind(1:5,:,:);
+alpha_lcc_wind_am3=alpha_lcc_wind(6:10,:,:);
+alpha_lcc_wind_am4=alpha_lcc_wind(11:15,:,:);
+
+alpha_wind_am2_newd=shiftdim(alpha_wind_am2,2);
+alpha_wind_am3_newd=shiftdim(alpha_wind_am3,2);
+alpha_wind_am4_newd=shiftdim(alpha_wind_am4,2);
+
+alpha_lcc_wind_am2_newd=shiftdim(alpha_lcc_wind_am2,2);
+alpha_lcc_wind_am3_newd=shiftdim(alpha_lcc_wind_am3,2);
+alpha_lcc_wind_am4_newd=shiftdim(alpha_lcc_wind_am4,2);
+
+file_out='whatisyourdamage.nc'
+wind_ensmem_write_ncout.m
 
 %%-----------------------------------------------------------------------------------------
 %%contsin=[-1.25,-1.0,-0.75,-0.5,-0.25,0,0.25,0.5,0.75,1.0,1.25];
