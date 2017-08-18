@@ -1,6 +1,10 @@
 %------------------------------------------------------------------------------------
 % window_table.m
 %
+% used to compute values used in table 1 for paper
+%
+% calls:      window_wmean_fun function
+%
 % levi silvers                                                     june 2017
 %------------------------------------------------------------------------------------
 
