@@ -178,7 +178,7 @@ new_eis_scaled=output_ts;
 % multi-model figure
 figure
 
-timearr=1875:2001;
+timearr=1875:2000;
 plot(timearr,lcc_am2_smooth,'b','LineWidth',2)
 hold on
 plot(timearr,new_ts_am2_smooth,'b')
