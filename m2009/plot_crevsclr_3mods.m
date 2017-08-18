@@ -4,35 +4,18 @@ endi=104;
 firstyr=1886;
 timearr=firstyr:firstyr+103;
 % for am3
-plot(timearr(starti:endi),alpha_cre_array_am3(starti:endi,1),'r')
+plot(timearr(starti:endi),mean_alpha_clr_am3(starti:endi),'r','Linewidth',2)
 hold on
-plot(timearr(starti:endi),alpha_cre_array_am3(starti:endi,2),'r')
-plot(timearr(starti:endi),alpha_cre_array_am3(starti:endi,3),'r')
-plot(timearr(starti:endi),alpha_cre_array_am3(starti:endi,4),'r')
-plot(timearr(starti:endi),alpha_cre_array_am3(starti:endi,5),'r')
-% ensemble mean
 plot(timearr(starti:endi),mean_alpha_cre_am3(starti:endi),'r','Linewidth',3)
-
-% for am2
-plot(timearr(starti:endi),alpha_cre_array(starti:endi,1),'b')
-plot(timearr(starti:endi),alpha_cre_array(starti:endi,2),'b')
-plot(timearr(starti:endi),alpha_cre_array(starti:endi,3),'b')
-plot(timearr(starti:endi),alpha_cre_array(starti:endi,4),'b')
-plot(timearr(starti:endi),alpha_cre_array(starti:endi,5),'b')
-%plot(timearr(starti:endi),alpha_cre_array(starti:endi,6),'b') 
-% ensemble mean
+plot(timearr(starti:endi),mean_alpha_clr(starti:endi),'b','Linewidth',2)
 plot(timearr(starti:endi),mean_alpha_cre(starti:endi),'b','Linewidth',3)
 
-% for am4
-plot(timearr(starti:endi),alpha_cre_array_am4(starti:endi,1),'k')
-plot(timearr(starti:endi),alpha_cre_array_am4(starti:endi,2),'k')
-plot(timearr(starti:endi),alpha_cre_array_am4(starti:endi,3),'k')
-plot(timearr(starti:endi),alpha_cre_array_am4(starti:endi,4),'k')
-plot(timearr(starti:endi),alpha_cre_array_am4(starti:endi,5),'k')
-% ensemble mean
+%% for am4
+plot(timearr(starti:endi),mean_alpha_clr_am4(starti:endi),'k','Linewidth',2)
 plot(timearr(starti:endi),mean_alpha_cre_am4(starti:endi),'k','Linewidth',3)
 
-title('Cloud Radiative Effect')
+%title('Cloud Radiative Effect')
+title('alpha Clear Sky vs alpha CRE')
 
 % the commands below eventually became alpha_simplemn.m and as of yet do not help much...
 %

@@ -3,6 +3,7 @@ starti=1;
 endi=104;
 firstyr=1886;
 timearr=firstyr:firstyr+103;
+%timearr=firstyr:firstyr+104;
 % for am3
 plot(timearr(starti:endi),-alpha_array_am3(starti:endi,1),'r')
 hold on
@@ -21,7 +22,7 @@ plot(timearr(starti:endi),-alpha_array(starti:endi,2),'b')
 plot(timearr(starti:endi),-alpha_array(starti:endi,3),'b')
 plot(timearr(starti:endi),-alpha_array(starti:endi,4),'b')
 plot(timearr(starti:endi),-alpha_array(starti:endi,5),'b')
-plot(timearr(starti:endi),-alpha_array(starti:endi,6),'b') 
+%plot(timearr(starti:endi),-alpha_array(starti:endi,6),'b') 
 % ensemble mean
 plot(timearr(starti:endi),-mean_alpha(starti:endi),'b','Linewidth',3)
 
@@ -30,7 +31,7 @@ mn_am2_alpha=mean(mean_alpha)
 % for am4
 % am4g19r8
 plot(timearr(starti:endi),-alpha_array_am4(starti:endi,1),'k')
-% AM4p0
+% AM4p
 plot(timearr(starti:endi),-alpha_array_am4(starti:endi,2),'k')
 plot(timearr(starti:endi),-alpha_array_am4(starti:endi,3),'k')
 plot(timearr(starti:endi),-alpha_array_am4(starti:endi,4),'k')
@@ -40,7 +41,7 @@ plot(timearr(starti:endi),-mean_alpha_am4(starti:endi),'k','Linewidth',3)
 
 mn_am4_alpha=mean(mean_alpha_am4)
 
-title('alpha: differential climate feedback parameter')
+title('Climate Feedback Parameter')
 
 % the commands below eventually became alpha_simplemn.m and as of yet do not help much...
 %
@@ -76,3 +77,16 @@ den=delTs_smooth(periodend)-delTs_smooth(periodst);
 alpha_reg=num/den;
 %
 %
+figure
+plot(timearr(starti:endi),-mean_alpha(starti:endi),'b','Linewidth',3)
+hold on
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop1_am2(starti:endi)),'b','Linewidth',1)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop2_am2(starti:endi)),'b','Linewidth',1)
+
+plot(timearr(starti:endi),-mean_alpha_am4(starti:endi),'k','Linewidth',3)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop1_am4(starti:endi)),'k','Linewidth',1)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop2_am4(starti:endi)),'k','Linewidth',1)
+
+plot(timearr(starti:endi),-mean_alpha_am3(starti:endi),'r','Linewidth',3)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop1_am3(starti:endi)),'r','Linewidth',1)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop2_am3(starti:endi)),'r','Linewidth',1)
