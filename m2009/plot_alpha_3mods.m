@@ -1,3 +1,13 @@
+%---------------------------------------------------------------------------
+% plot_alpha_3mods.m
+%
+% alpha_plot_windows.m needs to have already been run
+%
+% used in driver_ensembles.m
+%
+% levi silvers                                               aug 2017
+%---------------------------------------------------------------------------
+
 figure
 starti=1;
 endi=104;
@@ -90,3 +100,22 @@ plot(timearr(starti:endi),-squeeze(alpha_wind_trop2_am4(starti:endi)),'k','Linew
 plot(timearr(starti:endi),-mean_alpha_am3(starti:endi),'r','Linewidth',3)
 plot(timearr(starti:endi),-squeeze(alpha_wind_trop1_am3(starti:endi)),'r','Linewidth',1)
 plot(timearr(starti:endi),-squeeze(alpha_wind_trop2_am3(starti:endi)),'r','Linewidth',1)
+
+title('alpha windows')
+%
+figure
+plot(timearr(starti:endi),-mean_alpha_lcc(starti:endi),'b','Linewidth',3)
+hold on
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop1_am2(starti:endi)),'b','Linewidth',1)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop2_am2(starti:endi)),'b','Linewidth',1)
+
+plot(timearr(starti:endi),-mean_alpha_am4(starti:endi),'k','Linewidth',3)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop1_am4(starti:endi)),'k','Linewidth',1)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop2_am4(starti:endi)),'k','Linewidth',1)
+
+plot(timearr(starti:endi),-mean_alpha_am3(starti:endi),'r','Linewidth',3)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop1_am3(starti:endi)),'r','Linewidth',1)
+plot(timearr(starti:endi),-squeeze(alpha_wind_trop2_am3(starti:endi)),'r','Linewidth',1)
+
+title('alpha_{lcc} windows')
+

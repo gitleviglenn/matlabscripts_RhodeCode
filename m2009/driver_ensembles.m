@@ -940,7 +940,7 @@ compute_trends
 %amip_eiscltrends_ncout
 
 % create a figure of alpha for 3 different models(create figures for Figure 1 of paper): 
-plot_alpha_3mods
+plot_alpha_3mods % alpha_plot_windows.m needs to be run before plot_alpha_3mods...
 
 plot_cre_3mods
 

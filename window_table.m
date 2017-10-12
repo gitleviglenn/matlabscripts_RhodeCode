@@ -161,22 +161,22 @@ kh_wind_wgt_mean_wind=cal_wind_wgt_mean_wind+peru_wind_wgt_mean_wind+nam_wind_wg
 kh_wind_reg_mean_wind=(cal_wind_reg_mean_wind+peru_wind_reg_mean_wind+nam_wind_reg_mean_wind+aus_wind_reg_mean_wind+can_wind_reg_mean_wind)/5;
 kh_wind_relarea_wind=cal_wind_relarea_wind+peru_wind_relarea_wind+nam_wind_relarea_wind+aus_wind_relarea_wind+can_wind_relarea_wind;
 
-windows=zeros(5,1);
-
-windows(1)=cal_wind;
-windows(2)=peru_wind;
-windows(3)=nam_wind;
-windows(4)=aus_wind;
-windows(5)=can_wind;
+%windows=zeros(5,1);
+%
+%windows(1)=cal_wind;
+%windows(2)=peru_wind;
+%windows(3)=nam_wind;
+%windows(4)=aus_wind;
+%windows(5)=can_wind;
 
 
 %% southern ocean window -------------------------------------
 wlon1=conv_am4*1;
 wlon2=conv_am4*360; 
-%wlat1=25; Klein and Hartmann 1993 use latitudes between 50-65 S
-%wlat2=40;
-wlat1=40; % 40-50S as in Grise and Medeiros 2016
-wlat2=50;
+wlat1=25; % Klein and Hartmann 1993 use latitudes between 50-65 S
+wlat2=40;
+%wlat1=40; % 40-50S as in Grise and Medeiros 2016
+%wlat2=50;
 plotfield(wlat1:wlat2,wlon1:wlon2)=5;
 plot_newwind(wlat1:wlat2,wlon1:wlon2)=5;
 [wgt_mean,wgt_mean_wind,wind_mean,relarea_wind]=window_wmean_fun(fieldin,vlon,vlat,wlat1,wlat2,wlon1,wlon2);

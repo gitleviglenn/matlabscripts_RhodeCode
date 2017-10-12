@@ -1,3 +1,15 @@
+%--------------------------------------------------------------------------------------------------
+% alpha_plot_windows.m
+%
+% script used to add the values from particular windows in the tropics and plot the comparison 
+% of alpha from those windows with alpha from the rest of the tropics. 
+%
+% use with: 
+%	driver_ensembles
+%
+% levi silvers                                                                          Aug 2017
+%--------------------------------------------------------------------------------------------------
+
 % Windows
 % 1: s atlantic; 2: s indian; 3: e pacific; 4: s ocean; 5: tropics
 % 6: n tropics;  7: s tropics
@@ -7,7 +19,7 @@ endi=105;
 firstyr=1886;
 timearr=firstyr:firstyr+104;
 
-alpha_wind_am2=alpha_wind(1:5,:,:);
+alpha_wind_am2=alpha_wind(1:5,:,:); % dimensions: (ensnum,windownum,time)
 alpha_wind_am3=alpha_wind(6:10,:,:);
 alpha_wind_am4=alpha_wind(11:15,:,:);
 
@@ -18,11 +30,8 @@ hold on
 plot(timearr(starti:endi),mean_alpha_am3(starti:endi),'r','Linewidth',3)
 plot(timearr(starti:endi),mean_alpha_am4(starti:endi),'k','Linewidth',3)
 
-alpha_wind_am2=alpha_wind(1:5,:,:);
-alpha_wind_am3=alpha_wind(6:10,:,:);
-alpha_wind_am4=alpha_wind(11:15,:,:);
-
-alpha_wind_am2_mn=mean(alpha_wind_am2,1);
+% compute ensemble mean
+alpha_wind_am2_mn=mean(alpha_wind_am2,1); % dimensions: (windownum,time)
 alpha_wind_am3_mn=mean(alpha_wind_am3,1);
 alpha_wind_am4_mn=mean(alpha_wind_am4,1);
 

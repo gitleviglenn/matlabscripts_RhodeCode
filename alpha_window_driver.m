@@ -1,7 +1,11 @@
 %------------------------------------------------------------------------------------
 % alpha_window_driver.m
 %
-% is called by: 
+% Purpose: stores data from particular windows in arrays for future use. this is 
+%          where the 14 windows are defined.  this is called for each ensemble 
+%          member after alpha_09.m is called.  
+%
+% is called by:   driver_ensembles
 %
 % calls:          alpha_window.m
 %

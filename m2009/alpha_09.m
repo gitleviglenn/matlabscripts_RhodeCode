@@ -78,6 +78,9 @@ olr_clr_wind_ts  =zeros(tindex,1);
 %reg_area_sum=sum(temp_glblatweight(:)); % # of grid points in window
 
 % create time series of the global mean fields
+% 
+% wgt_mean is a cosine weighted global mean value
+% wgt_var is a cosine weighted full field, the mean has not been taken yet
 for ti=1:tindex;
  
   fullfield=squeeze(temp_ll_ts(ti,:,:));
