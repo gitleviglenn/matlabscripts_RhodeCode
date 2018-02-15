@@ -26,7 +26,7 @@ nc('TIME')  = 0; nc('nv')  = 2; nc('idim') = nyearsalpha;
 nc{'TIME'}  = ncdouble('TIME'); nc{'TIME'} (1:nyearsalpha) = timearr(:); 
 nc('lat') = nlat;          nc('lon')     = nlon;
 nc('ensnum') = 5;
-nc('wnum') = 14;
+nc('wnum') = 37;
 nc{'lat'} = ncfloat('lat');  nc{'lat'} (:) = vlat; 
 nc{'lon'} = ncfloat('lon');  nc{'lon'} (:) = vlon; 
 

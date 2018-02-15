@@ -182,6 +182,10 @@ toa_R_wind=swdn_wind_yearlymean-swup_wind_yearlymean-olr_wind_yearlymean;
 toa_clr_R=swdn_yearlymean-swup_clr_yearlymean-olr_clr_yearlymean;
 toa_clr_R_wind=swdn_wind_yearlymean-swup_clr_wind_yearlymean-olr_clr_wind_yearlymean;
 toa_cre_R=toa_clr_R-toa_R;
+toa_lwcre=-olr_clr_yearlymean+olr_yearlymean; % lw clr sky - lw all sky
+toa_lwcre_wind=-olr_clr_wind_yearlymean+olr_wind_yearlymean; % lw clr sky - lw all sky
+toa_swcre=-swup_clr_yearlymean+swup_yearlymean; % sw clr sky - lw all sky
+toa_swcre_wind=-swup_clr_wind_yearlymean+swup_wind_yearlymean; % sw clr sky - lw all sky
 toa_cre_R_wind=toa_clr_R_wind-toa_R_wind;
 
 % in Gregory and Andrews 2016, the time series are expressed as 
@@ -197,16 +201,21 @@ toa_cre_R_wind=toa_clr_R_wind-toa_R_wind;
 mn30yr_tref=mean(tref_yearlymean(nyears-30:nyears));
 mn30yr_wind_tref=mean(tref_wind_yearlymean(nyears-30:nyears));
 mn30yr_R=mean(toa_R(nyears-30:nyears));
-mn30yr_R_wind=mean(toa_R_wind(nyears-30:nyears));
+%mn30yr_R_wind=mean(toa_R_wind(nyears-30:nyears));
+%mn30yr_cre_R_wind=mean(toa_cre_R_wind(nyears-30:nyears));
 mn30yr_lcc=mean(lcloud_yearlymean(nyears-30:nyears));
 
 mn30yr_clr_R=mean(toa_clr_R(nyears-30:nyears));
 mn30yr_cre_R=mean(toa_cre_R(nyears-30:nyears));
+mn30yr_lwcre=mean(toa_lwcre(nyears-30:nyears));
+mn30yr_swcre=mean(toa_swcre(nyears-30:nyears));
+
 %mn30yr_R_lw=mean(toa_R_lw(nyears-36:nyears));
 %mn30yr_R_sw=mean(toa_R_sw(nyears-36:nyears));
 
+% compute anamoly time series
 delTs=tref_yearlymean-mn30yr_tref;
-delTs_wind=tref_wind_yearlymean-mn30yr_tref;
+%delTs_wind=tref_wind_yearlymean-mn30yr_tref;
 %delTs_wind=tref_wind_yearlymean-mn30yr_wind_tref;
 delR=toa_R-mn30yr_R;
 delR_wind=toa_R_wind-mn30yr_R;
@@ -215,6 +224,11 @@ delR_wind=toa_R_wind-mn30yr_R;
 %delR_sw=toa_R_sw-mn30yr_R_sw;
 delR_clr=toa_clr_R-mn30yr_clr_R;
 delR_cre=toa_cre_R-mn30yr_cre_R;
+delR_cre_wind=toa_cre_R_wind-mn30yr_cre_R;
+delR_lwcre=toa_lwcre-mn30yr_lwcre;
+delR_lwcre_wind=toa_lwcre_wind-mn30yr_lwcre;
+delR_swcre=toa_swcre-mn30yr_swcre;
+delR_swcre_wind=toa_swcre_wind-mn30yr_swcre;
 del_lcc=lcloud_yearlymean-mn30yr_lcc;
 del_lcc_wind=lcloud_wind_yearlymean-mn30yr_lcc;
 
@@ -223,14 +237,20 @@ st=1;
 endt=0;
 tend=nyears-window_yr;
 %tend=nyears-5; % to follow david P's method
+
 alpha_30y=zeros(tend,1);
 alpha_lcc_30y=zeros(tend,1);
 alpha_30y_wind=zeros(tend,1);
+alpha_cre_30y_wind=zeros(tend,1);
+alpha_lwcre_30y_wind=zeros(tend,1);
+alpha_swcre_30y_wind=zeros(tend,1);
+alpha_lcc_30y_wind=zeros(tend,1);
 %alpha_lw_30y=zeros(tend,1);
 %alpha_sw_30y=zeros(tend,1);
 alpha_cre_30y=zeros(tend,1);
+alpha_lwcre_30y=zeros(tend,1);
+alpha_swcre_30y=zeros(tend,1);
 alpha_clr_30y=zeros(tend,1);
-%delT_run=zeros(tend,1);
 
 %% compute the linear regressino over 30 yr windows
 %% slope can also be computed using endpoints of 30 yr window.
@@ -244,25 +264,31 @@ for ti=1:tend;
     delR30yr        =delR(st:endt);
     del_lcc_30yr    =del_lcc(st:endt);
     delR_cre_30yr   =delR_cre(st:endt);
+    delR_lwcre_30yr =delR_lwcre(st:endt);
+    delR_swcre_30yr =delR_swcre(st:endt);
     delR_clr_30yr   =delR_clr(st:endt);
 
     regval       =polyfit(delTs30yr,delR30yr,1);
     regval_lcc   =polyfit(delTs30yr,del_lcc_30yr,1);
-    denom=delTs(endt)-delTs(st);
-    %denom(abs(denom)<denlimit)=denlimit;
-    %%regval=(delR(endt)-delR(st))/(delTs(endt)-delTs(st));
-    %regval_ep=(delR(endt)-delR(st))/denom;
-    %%regval(abs(regval)<denlimit)=denlimit;
+    %denom=delTs(endt)-delTs(st);
+    %%denom(abs(denom)<denlimit)=denlimit;
+    %%%regval=(delR(endt)-delR(st))/(delTs(endt)-delTs(st));
+    %%regval_ep=(delR(endt)-delR(st))/denom;
+    %%%regval(abs(regval)<denlimit)=denlimit;
 
     regval_cre   =polyfit(delTs30yr,delR_cre_30yr,1);
-    %regval_cre_ep=(delR_cre(endt)-delR_cre(st))/denom;
-    %%regval_cre(abs(regval_cre)<denlimit)=denlimit;
+    regval_lwcre =polyfit(delTs30yr,delR_lwcre_30yr,1);
+    regval_swcre =polyfit(delTs30yr,delR_swcre_30yr,1);
+    %%regval_cre_ep=(delR_cre(endt)-delR_cre(st))/denom;
+    %%%regval_cre(abs(regval_cre)<denlimit)=denlimit;
     regval_clr   =polyfit(delTs30yr,delR_clr_30yr,1);
-    %regval_clr_ep=(delR_clr(endt)-delR_clr(st))/denom;
-    %%regval_clr(abs(regval_clr)<denlimit)=denlimit;
+    %%regval_clr_ep=(delR_clr(endt)-delR_clr(st))/denom;
+    %%%regval_clr(abs(regval_clr)<denlimit)=denlimit;
 
     alpha_30y(ti)       =regval(1);
     alpha_cre_30y(ti)   =regval_cre(1);
+    alpha_lwcre_30y(ti) =regval_lwcre(1);
+    alpha_swcre_30y(ti) =regval_swcre(1);
     alpha_clr_30y(ti)   =regval_clr(1);
     alpha_lcc_30y(ti)   =regval_lcc(1);
 
@@ -271,12 +297,21 @@ for ti=1:tend;
     delTs30yr_wind      =delTs(st:endt); % should I use delTs30yr instead?
     delR30yr_wind       =delR_wind(st:endt);
     del_lcc_30yr_wind   =del_lcc_wind(st:endt);
+    delR_cre_30yr_wind   =delR_cre_wind(st:endt);
+    delR_lwcre_30yr_wind =delR_lwcre_wind(st:endt);
+    delR_swcre_30yr_wind =delR_swcre_wind(st:endt);
     regval_wind         =polyfit(delTs30yr_wind,delR30yr_wind,1);
+    regval_cre_wind     =polyfit(delTs30yr_wind,delR_cre_30yr_wind,1);
+    regval_lwcre_wind   =polyfit(delTs30yr_wind,delR_lwcre_30yr_wind,1);
+    regval_swcre_wind   =polyfit(delTs30yr_wind,delR_swcre_30yr_wind,1);
     regval_lcc_wind     =polyfit(delTs30yr_wind,del_lcc_30yr_wind,1);
 
     alpha_30y_wind(ti)      =regval_wind(1);
+    alpha_cre_30y_wind(ti)  =regval_cre_wind(1);
+    alpha_lwcre_30y_wind(ti) =regval_lwcre_wind(1);
+    alpha_swcre_30y_wind(ti) =regval_swcre_wind(1);
     alpha_lcc_30y_wind(ti)  =regval_lcc_wind(1);
-
+%
     st=st+1; % comment out to follow david P's method
 end
 

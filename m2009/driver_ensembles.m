@@ -94,6 +94,8 @@ global_weights % computes cosine weights used to compute the global mean for AM2
 %
 alpha_array=zeros(nyears_alpha,5);
 alpha_cre_array=zeros(nyears_alpha,5);
+alpha_lwcre_array=zeros(nyears_alpha,5);
+alpha_swcre_array=zeros(nyears_alpha,5);
 alpha_clr_array=zeros(nyears_alpha,5);
 alpha_lcc_array=zeros(nyears_alpha,5);
 glbmn_lcc=zeros(nyears,5);
@@ -111,8 +113,8 @@ toa_sw_cre_array=zeros(nmonths,nlat,nlon,5);
 %-----------------------------------------------------------------------------------------
 
 % create arrays to hold information from select geographic windows
-alpha_wind=zeros(15,14,105); % ensnum,windownum,time
-alpha_lcc_wind=zeros(15,14,105); % ensnum,windownum,time
+alpha_wind=zeros(15,37,105); % ensnum,windownum,time
+alpha_lcc_wind=zeros(15,37,105); % ensnum,windownum,time
 
 %% variables on which to compute trends
 %% lcloud_ts --> readvars
@@ -142,12 +144,14 @@ conv_lon=grid_conv_lon_am2;
 
 alpha_09
 ensnum=1
-alpha_window_driver
+alpha_window_driver % calls alpha_09 about 25x
 
 %alpha_tsam2=alpha_30y;
 %alpha_tsam2_cre=alpha_cre_30y;
 alpha_array(:,1)=alpha_30y;
 alpha_cre_array(:,1)=alpha_cre_30y;
+alpha_lwcre_array(:,1)=alpha_lwcre_30y;
+alpha_swcre_array(:,1)=alpha_swcre_30y;
 alpha_clr_array(:,1)=alpha_clr_30y;
 alpha_lcc_array(:,1)=alpha_lcc_30y;
 glbmn_lcc(:,1)=del_lcc;
@@ -191,6 +195,8 @@ ensnum=2
 alpha_window_driver
 alpha_array(:,2)=alpha_30y;
 alpha_cre_array(:,2)=alpha_cre_30y;
+alpha_lwcre_array(:,2)=alpha_lwcre_30y;
+alpha_swcre_array(:,2)=alpha_swcre_30y;
 alpha_clr_array(:,2)=alpha_clr_30y;
 alpha_lcc_array(:,2)=alpha_lcc_30y;
 glbmn_lcc(:,2)      =del_lcc;
@@ -221,6 +227,8 @@ ensnum=3
 alpha_window_driver
 alpha_array(:,3)=alpha_30y;
 alpha_cre_array(:,3)=alpha_cre_30y;
+alpha_lwcre_array(:,3)=alpha_lwcre_30y;
+alpha_swcre_array(:,3)=alpha_swcre_30y;
 alpha_clr_array(:,3)=alpha_clr_30y;
 alpha_lcc_array(:,3)=alpha_lcc_30y;
 glbmn_lcc(:,3)      =del_lcc;
@@ -251,6 +259,8 @@ ensnum=4
 alpha_window_driver
 alpha_array(:,4)=alpha_30y;
 alpha_cre_array(:,4)=alpha_cre_30y;
+alpha_lwcre_array(:,4)=alpha_lwcre_30y;
+alpha_swcre_array(:,4)=alpha_swcre_30y;
 alpha_clr_array(:,4)=alpha_clr_30y;
 alpha_lcc_array(:,4)=alpha_lcc_30y;
 glbmn_lcc(:,4)      =del_lcc;
@@ -281,6 +291,8 @@ ensnum=5
 alpha_window_driver
 alpha_array(:,5)=alpha_30y;
 alpha_cre_array(:,5)=alpha_cre_30y;
+alpha_lwcre_array(:,5)=alpha_lwcre_30y;
+alpha_swcre_array(:,5)=alpha_swcre_30y;
 alpha_clr_array(:,5)=alpha_clr_30y;
 alpha_lcc_array(:,5)=alpha_lcc_30y;
 glbmn_lcc(:,5)      =del_lcc;
@@ -332,6 +344,8 @@ toa_sw_cre_array(:,:,:,5)=swup_clr_ts-swup_ts;
 % compute the ensemble means 
 mean_alpha=mean(alpha_array,2);
 mean_alpha_cre=mean(alpha_cre_array,2);
+mean_alpha_lwcre=mean(alpha_lwcre_array,2); 
+mean_alpha_swcre=mean(alpha_swcre_array,2); 
 mean_alpha_clr=mean(alpha_clr_array,2);
 mean_alpha_lcc=mean(alpha_lcc_array,2);
 mean_glb_lcc  =mean(glbmn_lcc,2);
@@ -385,6 +399,8 @@ global_weights % computes cosine weights used to compute the global mean for AM3
 
 alpha_array_am3     =zeros(nyears_alpha,5);
 alpha_cre_array_am3 =zeros(nyears_alpha,5);
+alpha_lwcre_array_am3 =zeros(nyears_alpha,5);
+alpha_swcre_array_am3 =zeros(nyears_alpha,5);
 alpha_clr_array_am3 =zeros(nyears_alpha,5);
 alpha_lcc_array_am3 =zeros(nyears_alpha,5);
 glbmn_lcc_am3       =zeros(nyears,5);
@@ -405,6 +421,8 @@ alpha_window_driver
 
 alpha_array_am3(:,1)=alpha_30y;
 alpha_cre_array_am3(:,1)=alpha_cre_30y;
+alpha_lwcre_array_am3(:,1)=alpha_lwcre_30y;
+alpha_swcre_array_am3(:,1)=alpha_swcre_30y;
 alpha_clr_array_am3(:,1)=alpha_clr_30y;
 alpha_lcc_array_am3(:,1)=alpha_lcc_30y;
 glbmn_lcc_am3(:,1)      =del_lcc;
@@ -446,6 +464,8 @@ alpha_window_driver
 
 alpha_array_am3(:,2)=alpha_30y;
 alpha_cre_array_am3(:,2)=alpha_cre_30y;
+alpha_lwcre_array_am3(:,2)=alpha_lwcre_30y;
+alpha_swcre_array_am3(:,2)=alpha_swcre_30y;
 alpha_clr_array_am3(:,2)=alpha_clr_30y;
 alpha_lcc_array_am3(:,2)=alpha_lcc_30y;
 glbmn_lcc_am3(:,2)      =del_lcc;
@@ -486,6 +506,8 @@ alpha_window_driver
 
 alpha_array_am3(:,3)=alpha_30y;
 alpha_cre_array_am3(:,3)=alpha_cre_30y;
+alpha_lwcre_array_am3(:,3)=alpha_lwcre_30y;
+alpha_swcre_array_am3(:,3)=alpha_swcre_30y;
 alpha_clr_array_am3(:,3)=alpha_clr_30y;
 alpha_lcc_array_am3(:,3)=alpha_lcc_30y;
 glbmn_lcc_am3(:,3)      =del_lcc;
@@ -527,6 +549,8 @@ alpha_window_driver
 
 alpha_array_am3(:,4)=alpha_30y;
 alpha_cre_array_am3(:,4)=alpha_cre_30y;
+alpha_lwcre_array_am3(:,4)=alpha_lwcre_30y;
+alpha_swcre_array_am3(:,4)=alpha_swcre_30y;
 alpha_clr_array_am3(:,4)=alpha_clr_30y;
 alpha_lcc_array_am3(:,4)=alpha_lcc_30y;
 glbmn_lcc_am3(:,4)      =del_lcc;
@@ -566,6 +590,8 @@ alpha_window_driver
 
 alpha_array_am3(:,5)=alpha_30y;
 alpha_cre_array_am3(:,5)=alpha_cre_30y;
+alpha_lwcre_array_am3(:,5)=alpha_lwcre_30y;
+alpha_swcre_array_am3(:,5)=alpha_swcre_30y;
 alpha_clr_array_am3(:,5)=alpha_clr_30y;
 alpha_lcc_array_am3(:,5)=alpha_lcc_30y;
 glbmn_lcc_am3(:,5)      =del_lcc;
@@ -592,19 +618,21 @@ toa_sw_cre_array_am3(:,:,:,5)=swup_clr_ts-swup_ts;
 %-----------------------------------------------------------------------------------------
 %
 %% compute the ensemble means 
-mean_alpha_am3=mean(alpha_array_am3,2);
-mean_alpha_cre_am3=mean(alpha_cre_array_am3,2);
-mean_alpha_clr_am3=mean(alpha_clr_array_am3,2);
-mean_alpha_lcc_am3=mean(alpha_lcc_array_am3,2);
-mean_glb_lcc_am3  =mean(glbmn_lcc_am3,2);
-eis_ens_am3_mn=mean(eis_array_am3,4);
-lts_ens_am3_mn=mean(lts_array_am3,4);
-omega500_am3_mn=mean(omega500_array_am3,4);
-temp700_am3_mn =mean(temp700_array_am3,4);
-temp_sfc_am3_mn=mean(temp_sfc_array_am3,4);
-lcloud_am3_mn  =mean(lcloud_array_am3,4);
-hcloud_am3_mn  =mean(hcloud_array_am3,4);
-sw_cre_am3_mn  =mean(toa_sw_cre_array_am3,4);
+mean_alpha_am3       =mean(alpha_array_am3,2);
+mean_alpha_cre_am3   =mean(alpha_cre_array_am3,2);
+mean_alpha_lwcre_am3 =mean(alpha_lwcre_array_am3,2);
+mean_alpha_swcre_am3 =mean(alpha_swcre_array_am3,2);
+mean_alpha_clr_am3   =mean(alpha_clr_array_am3,2);
+mean_alpha_lcc_am3   =mean(alpha_lcc_array_am3,2);
+mean_glb_lcc_am3     =mean(glbmn_lcc_am3,2);
+eis_ens_am3_mn       =mean(eis_array_am3,4);
+lts_ens_am3_mn       =mean(lts_array_am3,4);
+omega500_am3_mn      =mean(omega500_array_am3,4);
+temp700_am3_mn       =mean(temp700_array_am3,4);
+temp_sfc_am3_mn      =mean(temp_sfc_array_am3,4);
+lcloud_am3_mn        =mean(lcloud_array_am3,4);
+hcloud_am3_mn        =mean(hcloud_array_am3,4);
+sw_cre_am3_mn        =mean(toa_sw_cre_array_am3,4);
 
 clear hcloud_array_am3 lcloud_array_am3 temp_sfc_array_am3 temp700_array_am3 omega500_array_am3 lts_array_am3 eis_array_am3 toa_sw_cre_array_am3
 
@@ -656,21 +684,23 @@ readvars
 global_weights % computes cosine weights used to compute the global mean for AM4 grid
 
 % create arrays to fill
-alpha_array_am4     =zeros(nyears_alpha,5);
-alpha_cre_array_am4 =zeros(nyears_alpha,5);
-alpha_clr_array_am4 =zeros(nyears_alpha,5);
-alpha_lcc_array_am4 =zeros(nyears_alpha,5);
-glbmn_lcc_am4       =zeros(nyears,5);
-eis_gmn_array_am4   =zeros(nmonths,5);
-lts_gmn_array_am4   =zeros(nmonths,5);
-eis_array_am4       =zeros(nmonths,nlat,nlon,5);
-lts_array_am4       =zeros(nmonths,nlat,nlon,5);
-omega500_array_am4  =zeros(nmonths,nlat,nlon,5);
-temp700_array_am4   =zeros(nmonths,nlat,nlon,5);
-temp_sfc_array_am4  =zeros(nmonths,nlat,nlon,5);
-lcloud_array_am4    =zeros(nmonths,nlat,nlon,5);
-hcloud_array_am4    =zeros(nmonths,nlat,nlon,5);
-toa_sw_cre_array_am4=zeros(nmonths,nlat,nlon,5);
+alpha_array_am4       =zeros(nyears_alpha,5);
+alpha_cre_array_am4   =zeros(nyears_alpha,5);
+alpha_lwcre_array_am4 =zeros(nyears_alpha,5);
+alpha_swcre_array_am4 =zeros(nyears_alpha,5);
+alpha_clr_array_am4   =zeros(nyears_alpha,5);
+alpha_lcc_array_am4   =zeros(nyears_alpha,5);
+glbmn_lcc_am4         =zeros(nyears,5);
+eis_gmn_array_am4     =zeros(nmonths,5);
+lts_gmn_array_am4     =zeros(nmonths,5);
+eis_array_am4         =zeros(nmonths,nlat,nlon,5);
+lts_array_am4         =zeros(nmonths,nlat,nlon,5);
+omega500_array_am4    =zeros(nmonths,nlat,nlon,5);
+temp700_array_am4     =zeros(nmonths,nlat,nlon,5);
+temp_sfc_array_am4    =zeros(nmonths,nlat,nlon,5);
+lcloud_array_am4      =zeros(nmonths,nlat,nlon,5);
+hcloud_array_am4      =zeros(nmonths,nlat,nlon,5);
+toa_sw_cre_array_am4  =zeros(nmonths,nlat,nlon,5);
 
 %
 
@@ -681,6 +711,8 @@ alpha_window_driver
 
 alpha_array_am4(:,1)=alpha_30y;
 alpha_cre_array_am4(:,1)=alpha_cre_30y;
+alpha_lwcre_array_am4(:,1)=alpha_lwcre_30y;
+alpha_swcre_array_am4(:,1)=alpha_swcre_30y;
 alpha_clr_array_am4(:,1)=alpha_clr_30y;
 alpha_lcc_array_am4(:,1)=alpha_lcc_30y;
 glbmn_lcc_am4(:,1)      =del_lcc;
@@ -730,6 +762,8 @@ alpha_window_driver
 %
 alpha_array_am4(:,2)=alpha_30y;
 alpha_cre_array_am4(:,2)=alpha_cre_30y;
+alpha_lwcre_array_am4(:,2)=alpha_lwcre_30y;
+alpha_swcre_array_am4(:,2)=alpha_swcre_30y;
 alpha_clr_array_am4(:,2)=alpha_clr_30y;
 alpha_lcc_array_am4(:,2)=alpha_lcc_30y;
 glbmn_lcc_am4(:,2)      =del_lcc;
@@ -779,6 +813,8 @@ alpha_window_driver
 %
 alpha_array_am4(:,3)=alpha_30y;
 alpha_cre_array_am4(:,3)=alpha_cre_30y;
+alpha_lwcre_array_am4(:,3)=alpha_lwcre_30y;
+alpha_swcre_array_am4(:,3)=alpha_swcre_30y;
 alpha_clr_array_am4(:,3)=alpha_clr_30y;
 alpha_lcc_array_am4(:,3)=alpha_lcc_30y;
 glbmn_lcc_am4(:,3)      =del_lcc;
@@ -828,6 +864,8 @@ alpha_window_driver
 %
 alpha_array_am4(:,4)=alpha_30y;
 alpha_cre_array_am4(:,4)=alpha_cre_30y;
+alpha_lwcre_array_am4(:,4)=alpha_lwcre_30y;
+alpha_swcre_array_am4(:,4)=alpha_swcre_30y;
 alpha_clr_array_am4(:,4)=alpha_clr_30y;
 alpha_lcc_array_am4(:,4)=alpha_lcc_30y;
 glbmn_lcc_am4(:,4)      =del_lcc;
@@ -877,6 +915,8 @@ alpha_window_driver
 %
 alpha_array_am4(:,5)=alpha_30y;
 alpha_cre_array_am4(:,5)=alpha_cre_30y;
+alpha_lwcre_array_am4(:,5)=alpha_lwcre_30y;
+alpha_swcre_array_am4(:,5)=alpha_swcre_30y;
 alpha_clr_array_am4(:,5)=alpha_clr_30y;
 alpha_lcc_array_am4(:,5)=alpha_lcc_30y;
 glbmn_lcc_am4(:,5)      =del_lcc;
@@ -908,6 +948,8 @@ toa_sw_cre_array_am4(:,:,:,5)=swup_clr_ts-swup_ts;
 
 mean_alpha_am4=mean(alpha_array_am4,2);
 mean_alpha_cre_am4=mean(alpha_cre_array_am4,2);
+mean_alpha_lwcre_am4=mean(alpha_lwcre_array_am4,2);
+mean_alpha_swcre_am4=mean(alpha_swcre_array_am4,2);
 mean_alpha_clr_am4=mean(alpha_clr_array_am4,2);
 mean_alpha_lcc_am4=mean(alpha_lcc_array_am4,2);
 mean_glb_lcc_am4  =mean(glbmn_lcc_am4);
@@ -979,7 +1021,8 @@ alpha_lcc_wind_am2_newd=shiftdim(alpha_lcc_wind_am2,2);
 alpha_lcc_wind_am3_newd=shiftdim(alpha_lcc_wind_am3,2);
 alpha_lcc_wind_am4_newd=shiftdim(alpha_lcc_wind_am4,2);
 
-file_out='whatisyourdamage.nc'
+%file_out='whatisyourdamage.nc'
+file_out='quwindows.nc'
 wind_ensmem_write_ncout.m
 
 %%-----------------------------------------------------------------------------------------
