@@ -66,6 +66,7 @@ fieldin_eis_late=eis_late;
 % these two fields are only for plotting purposes
 plotfield=fieldin;
 plot_newwind=fieldin;
+plot_quwind=fieldin;
 
 % conversion factors for lat/lon
 conv_am4=288.0/360.;
@@ -265,6 +266,47 @@ nepac_reg_mean_sw_late=wind_mean;
 nepac_reg_mean_eis_early=wind_mean;
 [wgt_mean,wgt_mean_wind,wind_mean,relarea_wind]=window_wmean_fun(eis_late,vlon,vlat,wlat1,wlat2,wlon1,wlon2);
 nepac_reg_mean_eis_late=wind_mean;
+
+% Qu et al 2014 windows (guessing here)
+% cal 20x40 degrees
+wlon1=conv_am4*205;
+wlon2=conv_am4*245;
+wlat1=105;
+wlat2=125;
+plot_quwind(wlat1:wlat2,wlon1:wlon2)=5;
+% per 20x40 degrees
+wlon1=conv_am4*250;
+wlon2=conv_am4*290; 
+wlat1=60;
+wlat2=80;
+plot_quwind(wlat1:wlat2,wlon1:wlon2)=5;
+
+% aus 20x40 degrees
+wlon1=conv_am4*75;
+wlon2=conv_am4*115; 
+wlat1=55;
+wlat2=75;
+plot_quwind(wlat1:wlat2,wlon1:wlon2)=5;
+
+% nam 20x40 degrees
+wlon1=1;
+wlon2=conv_am4*15;
+wlat1=62;
+wlat2=82;
+plot_quwind(wlat1:wlat2,wlon1:wlon2)=5;
+wlon1=conv_am4*335;
+wlon2=conv_am4*360;
+wlat1=62;
+wlat2=82;
+plot_quwind(wlat1:wlat2,wlon1:wlon2)=5;
+
+% can 
+wlon1=conv_am4*305;
+wlon2=conv_am4*345;
+wlat1=100;
+wlat2=120;
+plot_quwind(wlat1:wlat2,wlon1:wlon2)=5;
+
 %% peruvian window -------------------------------------
 wlon1=conv_am4*250;
 wlon2=conv_am4*280; 
@@ -424,6 +466,11 @@ caxisin=([-5 5]);
 cont_map_modis(plot_newwind,vlat,vlon,conts,caxisin)
 colorbar
 
+% below plots the KH windows
+cont_map_modis(plotfield,vlat,vlon,conts,caxisin)
+colorbar
 
+cont_map_modis(plot_quwind,vlat,vlon,conts,caxisin)
+colorbar
 
 %% end
