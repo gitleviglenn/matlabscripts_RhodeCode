@@ -57,25 +57,97 @@ nc{'alpha_cre_ensmbr_am2'}            =ncfloat('TIME','ensnum');
 nc{'alpha_cre_ensmbr_am2'}(:,:)       =alpha_cre_array(:,:);
 nc{'alpha_cre_ensmbr_am2'}.long_name  ='alpha ensembles';
 
-nc{'alpha_cre_ensmn_am2'}            =ncfloat('TIME'); 
-nc{'alpha_cre_ensmn_am2'}(:)         =mean_alpha_cre(:);
-nc{'alpha_cre_ensmn_am2'}.long_name  ='alpha ensemble mn';
+nc{'alpha_clr_ensmbr_am2'}            =ncfloat('TIME','ensnum'); 
+nc{'alpha_clr_ensmbr_am2'}(:,:)       =alpha_clr_array(:,:);
+nc{'alpha_clr_ensmbr_am2'}.long_name  ='alpha clr ensembles';
+
+nc{'alpha_cre_ensmn_am2'}              =ncfloat('TIME'); 
+nc{'alpha_cre_ensmn_am2'}(:)           =mean_alpha_cre(:);
+nc{'alpha_cre_ensmn_am2'}.long_name    ='alpha ensemble mn';
+
+nc{'alpha_clr_ensmn_am2'}              =ncfloat('TIME'); 
+nc{'alpha_clr_ensmn_am2'}(:)           =mean_alpha_clr(:);
+nc{'alpha_clr_ensmn_am2'}.long_name    ='alpha ensemble mn';
+
+nc{'alpha_lwcre_ensmbr_am2'}           =ncfloat('TIME','ensnum'); 
+nc{'alpha_lwcre_ensmbr_am2'}(:,:)      =alpha_lwcre_array(:,:);
+nc{'alpha_lwcre_ensmbr_am2'}.long_name ='alpha lwcre ensembles';
+
+nc{'alpha_lwcre_ensmn_am2'}            =ncfloat('TIME'); 
+nc{'alpha_lwcre_ensmn_am2'}(:)         =mean_alpha_lwcre(:);
+nc{'alpha_lwcre_ensmn_am2'}.long_name  ='alpha lwcre ensemble mn';
+
+nc{'alpha_swcre_ensmbr_am2'}            =ncfloat('TIME','ensnum'); 
+nc{'alpha_swcre_ensmbr_am2'}(:,:)       =alpha_swcre_array(:,:);
+nc{'alpha_swcre_ensmbr_am2'}.long_name  ='alpha swcre ensembles';
+
+nc{'alpha_swcre_ensmn_am2'}            =ncfloat('TIME'); 
+nc{'alpha_swcre_ensmn_am2'}(:)         =mean_alpha_swcre(:);
+nc{'alpha_swcre_ensmn_am2'}.long_name  ='alpha swcre ensemble mn';
 
 nc{'alpha_cre_ensmbr_am3'}            =ncfloat('TIME','ensnum'); 
 nc{'alpha_cre_ensmbr_am3'}(:,:)       =alpha_cre_array_am3(:,:);
-nc{'alpha_cre_ensmbr_am3'}.long_name  ='alpha ensembles';
+nc{'alpha_cre_ensmbr_am3'}.long_name  ='alpha cre ensembles';
+
+nc{'alpha_clr_ensmbr_am3'}            =ncfloat('TIME','ensnum'); 
+nc{'alpha_clr_ensmbr_am3'}(:,:)       =alpha_clr_array_am3(:,:);
+nc{'alpha_clr_ensmbr_am3'}.long_name  ='alpha ensembles';
+
+nc{'alpha_clr_ensmn_am3'}            =ncfloat('TIME'); 
+nc{'alpha_clr_ensmn_am3'}(:)         =mean_alpha_clr_am3(:);
+nc{'alpha_clr_ensmn_am3'}.long_name  ='alpha clr ensemble mn';
 
 nc{'alpha_cre_ensmn_am3'}            =ncfloat('TIME'); 
 nc{'alpha_cre_ensmn_am3'}(:)         =mean_alpha_cre_am3(:);
 nc{'alpha_cre_ensmn_am3'}.long_name  ='alpha ensemble mn';
 
+nc{'alpha_lwcre_ensmbr_am3'}            =ncfloat('TIME','ensnum'); 
+nc{'alpha_lwcre_ensmbr_am3'}(:,:)       =alpha_lwcre_array_am3(:,:);
+nc{'alpha_lwcre_ensmbr_am3'}.long_name  ='alpha lwcre ensembles';
+
+nc{'alpha_lwcre_ensmn_am3'}            =ncfloat('TIME'); 
+nc{'alpha_lwcre_ensmn_am3'}(:)         =mean_alpha_lwcre_am3(:);
+nc{'alpha_lwcre_ensmn_am3'}.long_name  ='alpha lwcre ensemble mn';
+
+nc{'alpha_swcre_ensmbr_am3'}            =ncfloat('TIME','ensnum'); 
+nc{'alpha_swcre_ensmbr_am3'}(:,:)       =alpha_swcre_array_am3(:,:);
+nc{'alpha_swcre_ensmbr_am3'}.long_name  ='alpha swcre ensembles';
+
+nc{'alpha_swcre_ensmn_am3'}            =ncfloat('TIME'); 
+nc{'alpha_swcre_ensmn_am3'}(:)         =mean_alpha_swcre_am3(:);
+nc{'alpha_swcre_ensmn_am3'}.long_name  ='alpha swcre ensemble mn';
+
 nc{'alpha_cre_ensmbr_am4'}            =ncfloat('TIME','ensnum'); 
 nc{'alpha_cre_ensmbr_am4'}(:,:)       =alpha_cre_array_am4(:,:);
 nc{'alpha_cre_ensmbr_am4'}.long_name  ='alpha ensembles';
 
+nc{'alpha_clr_ensmbr_am4'}            =ncfloat('TIME','ensnum'); 
+nc{'alpha_clr_ensmbr_am4'}(:,:)       =alpha_clr_array_am4(:,:);
+nc{'alpha_clr_ensmbr_am4'}.long_name  ='alpha clr ensembles';
+
 nc{'alpha_cre_ensmn_am4'}            =ncfloat('TIME'); 
 nc{'alpha_cre_ensmn_am4'}(:)         =mean_alpha_cre_am4(:);
 nc{'alpha_cre_ensmn_am4'}.long_name  ='alpha ensemble mn';
+
+nc{'alpha_clr_ensmn_am4'}            =ncfloat('TIME'); 
+nc{'alpha_clr_ensmn_am4'}(:)         =mean_alpha_clr_am4(:);
+nc{'alpha_clr_ensmn_am4'}.long_name  ='alpha clr ensemble mn';
+
+nc{'alpha_lwcre_ensmbr_am4'}            =ncfloat('TIME','ensnum'); 
+nc{'alpha_lwcre_ensmbr_am4'}(:,:)       =alpha_lwcre_array_am4(:,:);
+nc{'alpha_lwcre_ensmbr_am4'}.long_name  ='alpha lwcre ensembles';
+
+nc{'alpha_lwcre_ensmn_am4'}            =ncfloat('TIME'); 
+nc{'alpha_lwcre_ensmn_am4'}(:)         =mean_alpha_lwcre_am4(:);
+nc{'alpha_lwcre_ensmn_am4'}.long_name  ='alpha lwcre ensemble mn';
+
+nc{'alpha_swcre_ensmbr_am4'}            =ncfloat('TIME','ensnum'); 
+nc{'alpha_swcre_ensmbr_am4'}(:,:)       =alpha_swcre_array_am4(:,:);
+nc{'alpha_swcre_ensmbr_am4'}.long_name  ='alpha swcre ensembles';
+
+nc{'alpha_swcre_ensmn_am4'}            =ncfloat('TIME'); 
+nc{'alpha_swcre_ensmn_am4'}(:)         =mean_alpha_swcre_am4(:);
+nc{'alpha_swcre_ensmn_am4'}.long_name  ='alpha swcre ensemble mn';
 
 nc{'alpha_lcc_ensmbr_am2'}            =ncfloat('TIME','ensnum'); 
 nc{'alpha_lcc_ensmbr_am2'}(:,:)       =alpha_lcc_array(:,:);
