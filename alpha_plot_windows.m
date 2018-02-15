@@ -143,18 +143,18 @@ plot(timearr(starti:endi),squeeze(alpha_lcc_wind_am4_mn(1,6,starti:endi)),'-*k')
 plot(timearr(starti:endi),squeeze(alpha_lcc_wind_am4_mn(1,7,starti:endi)),'-*k')
 
 title('alpha lcc by region: am4')
-
-%figure
-%plot(timearr(starti:endi),mean_alpha_am4(starti:endi),'k','Linewidth',3)
-%hold on
-%plot(timearr(starti:endi),squeeze(alpha_poleward30_am4(starti:endi)),'-.b','Linewidth',2)
-%plot(timearr(starti:endi),squeeze(alpha_pm30_am4(starti:endi)),'b','Linewidth',2)
-%% tropical windows: s atlantic, s east pacific, s indian
-%%alpha_wind_trop1_am4=alpha_wind_am4_mn(1,1,:)+alpha_wind_am4_mn(1,2,:)+alpha_wind_am4_mn(1,3,:);
-%plot(timearr(starti:endi),squeeze(alpha_wind_trop1_am4(starti:endi)),'-.r','Linewidth',1)
-%% the rest of the tropics: 
-%%alpha_wind_trop2_am4=alpha_wind_am4_mn(1,9,:)+alpha_wind_am4_mn(1,10,:)+alpha_wind_am4_mn(1,11,:)+alpha_wind_am4_mn(1,12,:)+alpha_wind_am4_mn(1,13,:)+alpha_wind_am4_mn(1,14,:);
-%plot(timearr(starti:endi),squeeze(alpha_wind_trop2_am4(starti:endi)),'r','Linewidth',1)
-%plot(timearr(starti:endi),squeeze(alpha_pm10_am4(starti:endi)),'g','Linewidth',1)
 %
-%title('watch it you schmuck')
+%%figure
+%%plot(timearr(starti:endi),mean_alpha_am4(starti:endi),'k','Linewidth',3)
+%%hold on
+%%plot(timearr(starti:endi),squeeze(alpha_poleward30_am4(starti:endi)),'-.b','Linewidth',2)
+%%plot(timearr(starti:endi),squeeze(alpha_pm30_am4(starti:endi)),'b','Linewidth',2)
+%%% tropical windows: s atlantic, s east pacific, s indian
+%%%alpha_wind_trop1_am4=alpha_wind_am4_mn(1,1,:)+alpha_wind_am4_mn(1,2,:)+alpha_wind_am4_mn(1,3,:);
+%%plot(timearr(starti:endi),squeeze(alpha_wind_trop1_am4(starti:endi)),'-.r','Linewidth',1)
+%%% the rest of the tropics: 
+%%%alpha_wind_trop2_am4=alpha_wind_am4_mn(1,9,:)+alpha_wind_am4_mn(1,10,:)+alpha_wind_am4_mn(1,11,:)+alpha_wind_am4_mn(1,12,:)+alpha_wind_am4_mn(1,13,:)+alpha_wind_am4_mn(1,14,:);
+%%plot(timearr(starti:endi),squeeze(alpha_wind_trop2_am4(starti:endi)),'r','Linewidth',1)
+%%plot(timearr(starti:endi),squeeze(alpha_pm10_am4(starti:endi)),'g','Linewidth',1)
+%%
+%%title('watch it you schmuck')
