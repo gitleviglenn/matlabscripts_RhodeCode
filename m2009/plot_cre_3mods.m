@@ -68,3 +68,22 @@ den=delTs_smooth(periodend)-delTs_smooth(periodst);
 alpha_reg=num/den;
 %
 %
+figure
+% am4
+plot(timearr(starti:endi),mean_alpha_cre_am4(starti:endi),'k','Linewidth',3)
+hold on
+plot(timearr(starti:endi),mean_alpha_lwcre_am4(starti:endi),'-.k','Linewidth',2)
+plot(timearr(starti:endi),mean_alpha_swcre_am4(starti:endi),'k','Linewidth',2)
+% am3
+plot(timearr(starti:endi),mean_alpha_cre_am3(starti:endi),'r','Linewidth',3)
+plot(timearr(starti:endi),mean_alpha_lwcre_am3(starti:endi),'-.r','Linewidth',2)
+plot(timearr(starti:endi),mean_alpha_swcre_am3(starti:endi),'r','Linewidth',2)
+% am2
+plot(timearr(starti:endi),mean_alpha_cre(starti:endi),'b','Linewidth',3)
+plot(timearr(starti:endi),mean_alpha_lwcre(starti:endi),'-.b','Linewidth',2)
+plot(timearr(starti:endi),mean_alpha_swcre(starti:endi),'b','Linewidth',2)
+title('Net LW SW Cloud Radiative Effect')
+
+
+
+
