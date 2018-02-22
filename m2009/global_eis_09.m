@@ -45,14 +45,14 @@ kappa=Ra/cp;
 % reduced.  we don't use most of the space they take up...
 
 %% the idea is to specify 'modelnum' in the calling script/driver
-%modelnum='_am3ts';
+%modelnum='_am4ts';
 %
-v.level=squeeze(v.level_am3ts(:));
-v.lat=squeeze(v.lat_am3ts(:));
-v.lon=squeeze(v.lon_am3ts(:));
+v.level=squeeze(v.level_am4ts(:));
+v.lat=squeeze(v.lat_am4ts(:));
+v.lon=squeeze(v.lon_am4ts(:));
 
-nlat=size(v.lat_am3ts,1);
-nlon=size(v.lon_am3ts,1);
+nlat=size(v.lat_am4ts,1);
+nlon=size(v.lon_am4ts,1);
 
 v.level=100.*v.level;
 nlev=size(v.level,1);
@@ -65,13 +65,13 @@ theta_temp1 = zeros(nlat,nlon);
 
 %should I use tsurf or tref?
 %theta_temp1=v.tsurf.*((p0/v.level(1))^kappa);
-%theta_temp1=squeeze(v.tref_am3ts(timenow,:,:)).*((p0/v.level(1))^kappa);
-theta_temp1=squeeze(v.tsurf_am3ts(timenow,:,:)).*((p0/v.level(1))^kappa);
+%theta_temp1=squeeze(v.tref_am4ts(timenow,:,:)).*((p0/v.level(1))^kappa);
+theta_temp1=squeeze(v.tsurf_am4ts(timenow,:,:)).*((p0/v.level(1))^kappa);
 theta_f(1,:,:)=theta_temp1(:,:);
 for lev=2:nlev;
   p_lev=v.level(lev);
-  temptemp=squeeze(v.temp_am3ts(timenow,lev,:,:));
-%v.temp=squeeze(v.temp_am3ts(timenow,:,:,:));
+  temptemp=squeeze(v.temp_am4ts(timenow,lev,:,:));
+%v.temp=squeeze(v.temp_am4ts(timenow,:,:,:));
   temp3=temptemp;
   temp3(temptemp<240)=240.;
   theta_temp=temp3.*((p0/p_lev)^kappa);
@@ -89,8 +89,8 @@ lts_f=squeeze(lts_f);
 
 % compute gamma_m_850 (level 3 for AM2,AM3, and AM4)
 %t_850=(v.temp(1,:,:)+v.temp(5,:,:))/2.;
-t_850=v.temp_am3ts(timenow,3,:,:);
-%v.temp=squeeze(v.temp_am3ts(timenow,:,:,:));
+t_850=v.temp_am4ts(timenow,3,:,:);
+%v.temp=squeeze(v.temp_am4ts(timenow,:,:,:));
 t_850(t_850<0)=50.;
 es_850=610.8*exp(17.27.*(t_850-273.15)./(t_850-35.85)); % [Pa] sat vapor press on 850 hPa level
 pp=es_850.*0;
@@ -101,13 +101,13 @@ gamma_m_850=(g/cp)*(1-(1+Lv*qs_850./(Ra*t_850))./(1+Lv*Lv*qs_850./(cp*Rv*t_850.*
 % compute an approximate lifting condensation level (lcl)
 % i thnk that Espy's lcl formula is intended for RH>50% and temp>0 C.  
 %rh_sfc=squeeze(v.rh(1,:,:))./100.;
-rh_sfc=squeeze(v.rh_am3ts(timenow,1,:,:))./100.;
+rh_sfc=squeeze(v.rh_am4ts(timenow,1,:,:))./100.;
 rh_sfc(isnan(rh_sfc))=rh0;
 % using only surface values
 %lcl=(20.+(v.tsurf-273.15)/5.).*(1.-rh_sfc)*100.;
-temp_llev=squeeze(v.temp_am3ts(timenow,1,:,:));
+temp_llev=squeeze(v.temp_am4ts(timenow,1,:,:));
 %rh_llev=v.rh(:,:)./100;
-rh_llev=squeeze(v.rh_am3ts(timenow,1,:,:))./100;
+rh_llev=squeeze(v.rh_am4ts(timenow,1,:,:))./100;
 %temp_llev(temp_llev<0)=NaN;
 %rh_llev(rh_llev<0)=NaN;
 temp_llev(temp_llev<200)=200;
@@ -116,7 +116,7 @@ lcl=(20.+(temp_llev-273.15)/5.).*(1.-rh_llev)*100.;
 %
 %estinvs=lts_f-gamma_m_850.*(squeeze(v.hght(5,:,:))-lcl);
 % hght(5,:,:) = corresponds to the height at the 700hPa level
-estinvs=squeeze(lts_f)-squeeze(gamma_m_850).*(squeeze(v.hght_am3ts(timenow,1,:,:))-lcl);
+estinvs=squeeze(lts_f)-squeeze(gamma_m_850).*(squeeze(v.hght_am4ts(timenow,1,:,:))-lcl);
 %
 %%onlyocean=make_onlyocean;
 %%%

@@ -117,4 +117,3 @@ nc{'average_DT'}.units     ='days';
 close(nc); 
 
 'finished first nc file'
-% create a new netcdf file

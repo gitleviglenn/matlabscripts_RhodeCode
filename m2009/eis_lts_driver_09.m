@@ -1,7 +1,6 @@
 %------------------------------------------------------------------------------------
-% this script uses amip data to compute eis and lts
-%
-% i believe this is the driver which was used to create the global trend plots
+% this script calls reg_trend.m to compute trends for many fields such as lcloud, 
+% hcloud, eis, and lts.  it then writes the trends out in a netcdf file.  
 %
 % used with: 
 % m2009/openncfile_new.m
@@ -33,33 +32,35 @@ onlyocean=make_onlyocean;
 %% compute the weighted global mean values of the 2m temperature
 % careful with the size of v.tref_full... it may not be full!
 %clear tindex;
-%tindex=size(v.tref_am3ts,1);
+%tindex=size(v.tref_am4ts,1);
 %tref_gmn_ts=zeros(tindex,1);
 %for ti=1:tindex;
-%  fullfield=squeeze(v.tref_am3ts(ti,:,:));
+%  fullfield=squeeze(v.tref_am4ts(ti,:,:));
 %  global_wmean_script;
-%  tref_gmn_am3ts(ti)=wgt_mean;
-%  fullfield=squeeze(v.tsurf_am3ts(ti,:,:));
+%  tref_gmn_am4ts(ti)=wgt_mean;
+%  fullfield=squeeze(v.tsurf_am4ts(ti,:,:));
 %  global_wmean_script;
-%  tsurf_gmn_am3ts(ti)=wgt_mean;
+%  tsurf_gmn_am4ts(ti)=wgt_mean;
 %end
 
 %clear tindex;
-%tindex=size(v.tref_am3ts,1);
-%eis_am3ts=zeros(tindex,nlat,nlon);
-%lts_am3ts=zeros(tindex,nlat,nlon);
+%tindex=size(v.tref_am4ts,1);
+%eis_am4ts=zeros(tindex,nlat,nlon);
+%lts_am4ts=zeros(tindex,nlat,nlon);
 %%%
 %timenow=1;
 %for ti=1:tindex;
 %  %comp_eis_lts_09;
 %  global_eis_09;
-%  eis_am3ts(ti,:,:)=estinvs(:,:);
-%  lts_am3ts(ti,:,:)=lts_f(:,:);
+%  eis_am4ts(ti,:,:)=estinvs(:,:);
+%  lts_am4ts(ti,:,:)=lts_f(:,:);
 %  timenow=timenow+1;
 %end
 %fintimeindex=timenow
 %stop
-%%eis_ts=eis_am3ts(1260:1620,:,:);
+
+
+%%eis_ts=eis_am4ts(1260:1620,:,:);
 %%%% this can be done with:
 %%%%alpha_3mod_driver.m  or 
 %%%%alpha_09.m
@@ -219,7 +220,7 @@ lwp_trend=0;
 %rendtime=ts_length;
 contsin=[-2.5,-2.0,-1.5,-1,-0.5,0,0.5,1,1.5,2.0,2.5]; 
 caxisin=[-2.5 2.5];   
-eis_ts=eis_am3ts(stime:endtime,:,:);
+eis_ts=eis_am4ts(stime:endtime,:,:);
 vartotrend=eis_ts;
 reg_trend
 eis_trend=regtrend_var_oo;
@@ -229,7 +230,7 @@ eis_trend_znm=nanmean(eis_trend,2);
 figure;
 plot(eis_trend_znm',v.lat)
 % lts
-lts_ts=lts_am3ts(stime:endtime,:,:);
+lts_ts=lts_am4ts(stime:endtime,:,:);
 vartotrend=lts_ts;
 reg_trend
 lts_trend=regtrend_var_oo;
@@ -264,7 +265,7 @@ lts_trend=regtrend_var_oo;
 %% first run openncfile_3mods.m to get all three runs loaded
 %boohiss_am2p1000=squeeze(v.tsurf_am2ts(1000,:,:));
 %boohiss_am3p1000=squeeze(v.tsurf_am3ts(1000,:,:));
-%boohiss_am3p1000=squeeze(v.tsurf_am3ts(1000,:,:));
+%boohiss_am3p1000=squeeze(v.tsurf_am4ts(1000,:,:));
 %
 %vlat=v.lat_am2;
 %vlon=v.lon_am2;
@@ -281,12 +282,13 @@ lts_trend=regtrend_var_oo;
 %cont_map_modis(boohiss_am4p1000,vlat4,vlon4,contsin,caxisin)
 %title('am4 time1000')
 %
+%% write out netcdf files
 %
-ncfilename=strcat(modtitle,'_rad_trends_am3_1620_tsurf.nc')
+ncfilename=strcat(modtitle,'_rad_trends_1620_tsurf_b.nc')
 file_out=ncfilename;
 amip_trends_ncout
 %
-ncfilename=strcat(modtitle,'_eiscl_trends_am3_1620_tsurf.nc')
+ncfilename=strcat(modtitle,'_eiscl_trends_1620_tsurf_b.nc')
 file_out=ncfilename;
 amip_eiscltrends_ncout
 

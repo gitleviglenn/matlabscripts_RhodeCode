@@ -5,7 +5,7 @@ function [scycle_stmn_wind,mamavg,jjaavg,sonavg,djfavg] = scycle_windows(field_i
 % pulls out the seasonal cycle of field_in within the 7 windows
 % see Wood and Bretherton 2006 for the windows
 %
-% output is: 
+% output is:  scycle_stmn_wind(season,window)
 %
 % levi silvers                                     jan 2017
 %------------------------------------------------------------------------------------------

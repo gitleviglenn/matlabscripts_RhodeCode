@@ -1,0 +1,99 @@
+%---------------------------------------------------------------------------------
+% yearlym_30runm_ts.m
+%---------------------------------------------------------------------------------
+%
+%    - computes gobal mean time series as well as over a specified window
+%    - compute anomalous time series
+%    - compute yearly mean values from monthly values
+%    - runn the yearly mean time series through a 30yr running mean
+%
+% used by: global_swcre_corr.m
+%
+% levi silvers                                                       aug 2017
+%---------------------------------------------------------------------------------
+
+%primary_ts=sw_cre_am4_mn;
+
+time1=1;
+time2=1620;
+
+[wgt_mean,wgt_mean_wind,reg_mean_wind,relarea_wind]=window_wmean_fun(fieldin,vlon,vlat,wlat1,wlat2,wlon1,wlon2);
+
+gmn_ts=zeros(1,tindex);
+windmn_ts=zeros(1,tindex);
+
+for ti=1:tindex;
+ 
+  fullfield=squeeze(primary_ts(ti,:,:));
+  global_wmean_quick;
+  gmn_ts(ti)=wgt_mean;
+  wgt_wind=wgt_var(wlat1:wlat2,wlon1:wlon2);
+  windmn_ts(ti)=nansum(wgt_wind(:))./(glbsumweight*relarea_wind);
+
+end
+
+gmn_ts_tmn=mean(gmn_ts,2);
+windmn_ts_tmn=mean(windmn_ts,2);
+
+% compute anomalies
+gmn_del=gmn_ts-gmn_ts_tmn;
+windmn_del=windmn_ts-windmn_ts_tmn;
+
+tindex=time2-time1+1;
+nyears=tindex/12;
+clear monthsbyyears
+
+monthsbyyears=reshape(gmn_del,[12 nyears]);
+primary_del_ymn=mean(monthsbyyears,1);
+
+monthsbyyears=reshape(windmn_del,[12 nyears]);
+wind_del_ymn=mean(monthsbyyears,1);
+
+tendindex=nyears;
+rough_ts=primary_del_ymn;
+%running_mean
+clear ts_smooth;
+clear idiotbox;
+for ti=16:tendindex-15
+  ts_smooth(ti-15)=(rough_ts(ti-15)+rough_ts(ti-14)+...
+                    rough_ts(ti-13)+rough_ts(ti-12)+...
+		    rough_ts(ti-11)+rough_ts(ti-10)+...
+		    rough_ts(ti-9)+rough_ts(ti-8)+...
+		    rough_ts(ti-7)+rough_ts(ti-6)+...
+		    rough_ts(ti-5)+rough_ts(ti-4)+...
+		    rough_ts(ti-3)+rough_ts(ti-2)+rough_ts(ti-1)+...
+		    rough_ts(ti)+...
+		    rough_ts(ti+1)+rough_ts(ti+2)+...
+		    rough_ts(ti+3)+rough_ts(ti+4)+...
+		    rough_ts(ti+5)+rough_ts(ti+6)+...
+		    rough_ts(ti+7)+rough_ts(ti+8)+...
+		    rough_ts(ti+9)+rough_ts(ti+10)+...
+		    rough_ts(ti+11)+rough_ts(ti+12)+...
+		    rough_ts(ti+13)+rough_ts(ti+14)+...
+		    rough_ts(ti+15))/31.;
+end
+idiotbox=ts_smooth;
+
+rough_ts=wind_del_ymn;
+%running_mean
+clear ts_smooth;
+for ti=16:tendindex-15
+  ts_smooth(ti-15)=(rough_ts(ti-15)+rough_ts(ti-14)+...
+                    rough_ts(ti-13)+rough_ts(ti-12)+...
+		    rough_ts(ti-11)+rough_ts(ti-10)+...
+		    rough_ts(ti-9)+rough_ts(ti-8)+...
+		    rough_ts(ti-7)+rough_ts(ti-6)+...
+		    rough_ts(ti-5)+rough_ts(ti-4)+...
+		    rough_ts(ti-3)+rough_ts(ti-2)+rough_ts(ti-1)+...
+		    rough_ts(ti)+...
+		    rough_ts(ti+1)+rough_ts(ti+2)+...
+		    rough_ts(ti+3)+rough_ts(ti+4)+...
+		    rough_ts(ti+5)+rough_ts(ti+6)+...
+		    rough_ts(ti+7)+rough_ts(ti+8)+...
+		    rough_ts(ti+9)+rough_ts(ti+10)+...
+		    rough_ts(ti+11)+rough_ts(ti+12)+...
+		    rough_ts(ti+13)+rough_ts(ti+14)+...
+		    rough_ts(ti+15))/31.;
+end
+wind_idiotbox=ts_smooth;
+'one more idiotbox computed'

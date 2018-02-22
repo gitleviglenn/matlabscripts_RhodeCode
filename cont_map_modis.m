@@ -1,12 +1,20 @@
 %------------------------------------------------------------
 % levi silvers                            dec 2016
+%
+% field_in should be lat x lon, second incoming var lat and third lon
+%
+% the colormaps have been taken from
+% http://jdherman.github.io/colormap/
+% which is a great resource to create others
+%
 %------------------------------------------------------------
 function cont_map_modis(field_in,vlat,vlon,contsin,caxisin)
 % first get the continental outlines
 load coast
 figure; 
 %axesm('MapProjection','ortho','origin',[90,180])
-axesm('MapProjection','hammer','origin',[0,-180])
+%axesm('MapProjection','hammer','origin',[0,-180])
+axesm('MapProjection','hammer','origin',[0,0])
 framem
 plotm(lat,long,'k')
 gridm

@@ -8,6 +8,7 @@
 % this should work after calling openncfile_3mods.m
 %
 % m2009/eis_lts_driver_09.m is one of the scripts that calls this one
+% this is called by driver_test.m and eis_lts_ts.m
 %
 % do I want to make this into a function that outputs LTS and EIS?
 % if so it could work nicely to have the input from the function be the 
@@ -21,13 +22,13 @@
 % this matters! 
 %
 % variables used in computations below:
-% v.level
-% v.tsurf or v.tref
-% v.temp
-% v.rh
-% v.hght
+% level
+% tsurf or tref
+% temp
+% rh
+% hght
 %
-% levi silvers                                 mar 2017
+% levi silvers                                 march 2017
 %---------------------------------------------------------------------------------------
 %
 Lv=2.500*10^6; % J/kg
@@ -40,38 +41,49 @@ p0=100000.; % Pa
 rh0=0.8;
 kappa=Ra/cp;
 
-% used for generating a time series.... when called from eis_lts_driver_09
-% if time and memory become a problem, the rh, and hght can all be 
-% reduced.  we don't use most of the space they take up...
-
-%% the idea is to specify 'modelnum' in the calling script/driver
-%modelnum='_am3ts';
+%% used for generating a time series.... when called from eis_lts_driver_09
+%% if time and memory become a problem, the rh, and hght can all be reduced 
 %
-%v.level=squeeze(v.level_am3ts(:));
-%v.lat=squeeze(v.lat_am3ts(:));
-%v.lon=squeeze(v.lon_am3ts(:));
+%nlat=size(v.lat,1);
+%nlon=size(v.lon,1);
+%
+%v.level=100.*v.level;
+%nlev=size(v.level,1);
+%
+%theta_f     = zeros(nlev,nlat,nlon);
+%temp3       = zeros(nlat,nlon);
+%lts_f       = zeros(nlat,nlon);
+%rh_sfc      = zeros(nlat,nlon);
+%theta_temp1 = zeros(nlat,nlon);
+%
+%%should I use tsurf or tref?
+%%theta_temp1=v.tsurf.*((p0/v.level(1))^kappa);
+%%theta_temp1=squeeze(v.tref_am3ts(timenow,:,:)).*((p0/v.level(1))^kappa);
+%theta_temp1=squeeze(v.tsurf(timenow,:,:)).*((p0/v.level(1))^kappa);
+%theta_f(1,:,:)=theta_temp1(:,:);
+%for lev=2:nlev;
+%  p_lev=v.level(lev);
+%  temptemp=squeeze(v.temp(timenow,lev,:,:));
+%v.temp=squeeze(v.temp_am3ts(timenow,:,:,:));
+%================
+%vlevel=squeeze(vlevel(:));
 
-nlat=size(v.lat,1);
-nlon=size(v.lon,1);
+%vlevel=100.*vlevel;
+%nlev=size(vlevel,1);
 
-v.level=100.*v.level;
-nlev=size(v.level,1);
-
-theta_f     = zeros(nlev,nlat,nlon);
+theta_f     = zeros(nlev,nlat,nlon); % potential temp
 temp3       = zeros(nlat,nlon);
 lts_f       = zeros(nlat,nlon);
-rh_sfc      = zeros(nlat,nlon);
+%rh_sfc      = zeros(nlat,nlon);
 theta_temp1 = zeros(nlat,nlon);
 
-%should I use tsurf or tref?
-%theta_temp1=v.tsurf.*((p0/v.level(1))^kappa);
-%theta_temp1=squeeze(v.tref_am3ts(timenow,:,:)).*((p0/v.level(1))^kappa);
-theta_temp1=squeeze(v.tsurf(timenow,:,:)).*((p0/v.level(1))^kappa);
+%theta_temp1=squeeze(v.tref_am4ts(timenow,:,:)).*((p0/v.level(1))^kappa);
+%theta_temp1=squeeze(v.tsurf_am4ts(timenow,:,:)).*((p0/v.level(1))^kappa);
+theta_temp1=squeeze(temp_ll_ts(timenow,:,:)).*((p0/vlevel(1))^kappa);
 theta_f(1,:,:)=theta_temp1(:,:);
 for lev=2:nlev;
-  p_lev=v.level(lev);
-  temptemp=squeeze(v.temp(timenow,lev,:,:));
-%v.temp=squeeze(v.temp_am3ts(timenow,:,:,:));
+  p_lev=vlevel(lev);
+  temptemp=squeeze(temp3d(timenow,lev,:,:));
   temp3=temptemp;
   temp3(temptemp<240)=240.;
   theta_temp=temp3.*((p0/p_lev)^kappa);
@@ -81,16 +93,18 @@ end
 %theta0_f=v.tsurf.*(1.0)^kappa;
 %lts_f=theta_f(5,:,:)-theta_f(1,:,:);
 %lts = theta_700 - theta_sfc
+
+%level700=4; % AM3 and AM4, level700=4 for AM2
 % for AM3, and AM4 this corresponds to theta_f(5,:,:-theta_f(1,:,:));
-lts_f=theta_f(5,:,:)-theta_f(1,:,:);
+lts_f=theta_f(level700,:,:)-theta_f(1,:,:);
 % when computing eis, lts for AM2: 
 %lts_f=theta_f(4,:,:)-theta_f(1,:,:);
 lts_f=squeeze(lts_f);
 
 % compute gamma_m_850 (level 3 for AM2,AM3, and AM4)
 %t_850=(v.temp(1,:,:)+v.temp(5,:,:))/2.;
-t_850=v.temp(timenow,3,:,:);
-%v.temp=squeeze(v.temp_am3ts(timenow,:,:,:));
+t_850=temp3d(timenow,3,:,:);
+%v.temp=squeeze(temp3d(timenow,:,:,:));
 t_850(t_850<0)=50.;
 es_850=610.8*exp(17.27.*(t_850-273.15)./(t_850-35.85)); % [Pa] sat vapor press on 850 hPa level
 pp=es_850.*0;
@@ -101,13 +115,13 @@ gamma_m_850=(g/cp)*(1-(1+Lv*qs_850./(Ra*t_850))./(1+Lv*Lv*qs_850./(cp*Rv*t_850.*
 % compute an approximate lifting condensation level (lcl)
 % i thnk that Espy's lcl formula is intended for RH>50% and temp>0 C.  
 %rh_sfc=squeeze(v.rh(1,:,:))./100.;
-rh_sfc=squeeze(v.rh(timenow,1,:,:))./100.;
-rh_sfc(isnan(rh_sfc))=rh0;
+%rh_sfc=rh_ll(timenow,:,:)./100.;
+%rh_sfc(isnan(rh_sfc))=rh0;
 % using only surface values
 %lcl=(20.+(v.tsurf-273.15)/5.).*(1.-rh_sfc)*100.;
-temp_llev=squeeze(v.temp(timenow,1,:,:));
+temp_llev=squeeze(temp3d(timenow,1,:,:));
 %rh_llev=v.rh(:,:)./100;
-rh_llev=squeeze(v.rh(timenow,1,:,:))./100;
+rh_llev=squeeze(rh_ll(timenow,:,:)./100);
 %temp_llev(temp_llev<0)=NaN;
 %rh_llev(rh_llev<0)=NaN;
 temp_llev(temp_llev<200)=200;
@@ -116,15 +130,5 @@ lcl=(20.+(temp_llev-273.15)/5.).*(1.-rh_llev)*100.;
 %
 %estinvs=lts_f-gamma_m_850.*(squeeze(v.hght(5,:,:))-lcl);
 % hght(5,:,:) = corresponds to the height at the 700hPa level
-estinvs=squeeze(lts_f)-squeeze(gamma_m_850).*(squeeze(v.hght(timenow,1,:,:))-lcl);
+estinvs=squeeze(lts_f)-squeeze(gamma_m_850).*(squeeze(hght(timenow,:,:))-lcl);
 %
-%%onlyocean=make_onlyocean;
-%%%
-%%lts_f=lts_f.*onlyocean;
-%%estinvs=estinvs.*onlyocean;
-%%
-%contsin=[-5,-4,-3,-2,-1,0,1,2,3,4,5];
-%caxisin=[-5 5];
-%cont_map_modis(estinvs,v.lat,v.lon,contsin,caxisin)
-%%
-%%
