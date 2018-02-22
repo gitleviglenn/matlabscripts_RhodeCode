@@ -12,7 +12,7 @@
 %---------------------------------------------------------------------------------------
 
 % results from 1 year piControl test with Chris Blanton's refine diag script are here:
-/archive/oar.gfdl.cmip6/h1g/testing_20171006_mom6_2017.10.05/CM4B_1850_Control_am4p0c96L33_OM4p25_30d15_tlt_bling8_F_806_from450_cmip6Diag_Test9/gfdl.ncrc4-intel16-prod-openmp/history_refineDiag/tmp/06310101.atmos_station.nc
+%/archive/oar.gfdl.cmip6/h1g/testing_20171006_mom6_2017.10.05/CM4B_1850_Control_am4p0c96L33_OM4p25_30d15_tlt_bling8_F_806_from450_cmip6Diag_Test9/gfdl.ncrc4-intel16-prod-openmp/history_refineDiag/tmp/06310101.atmos_station.nc
 
 %path='/archive/Levi.Silvers/awg/verona/c96L32_am4g11r11_2010climo_CF_Master_psite/gfdl.ncrc3-intel-prod-openmp/history/'
 %path='/archive/Levi.Silvers/awg/verona/c96L32_am4g11r11_2010climo_CF_Master_psite_001/gfdl.ncrc3-intel-prod-openmp/history/'
@@ -36,6 +36,8 @@ fileincming='19830101.atmos_station_120.tile5.nc'
 
 source_file=strcat(path,fileincming);
 statstring='Station 120';
+
+source_file='c96L33_am4p0_cmip6_cfsites_test/gfdl.ncrc3-intel-prod-openmp/history_refineDiag/19800101.atmos_station.nc'
 
 fin_total=netcdf(source_file,'nowrite');
 
