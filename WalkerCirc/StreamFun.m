@@ -32,10 +32,11 @@
 w_25km=ncread(source_25km,'w');
 u_25km=ncread(source_25km_month,'ucomp');
 sphum_25km=ncread(source_25km_month,'sphum');
-v_25km=ncread(source_25km_month,'vcomp');
+%v_25km=ncread(source_25km_month,'vcomp');
 temp_25km=ncread(source_25km_month,'temp');
 zfull_25km=ncread(source_25km_month,'z_full');
 pfull_25km=ncread(source_25km_month,'pfull');
+
 w_2km=ncread(source_2km,'w');
 u_2km=ncread(source_2km_month,'ucomp');
 sphum_2km=ncread(source_2km_month,'sphum');
@@ -63,7 +64,7 @@ grav=9.8; % m/s2
 
 dx=25000.; % m
 dx_crm=2000.;
-dz=zeros(33);
+%dz=zeros(33);
 
 % compute the time and zonal mean of temp
 temp_25km_zmn=squeeze(mean(temp_25km,2));
