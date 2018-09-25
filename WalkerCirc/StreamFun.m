@@ -37,7 +37,7 @@ temp_25km=ncread(source_25km_month,'temp');
 zfull_25km=ncread(source_25km_month,'z_full');
 pfull_25km=ncread(source_25km_month,'pfull');
 
-w_2km=ncread(source_2km,'w');
+w_2km=ncread(source_2km_month,'w');
 u_2km=ncread(source_2km_month,'ucomp');
 sphum_2km=ncread(source_2km_month,'sphum');
 temp_2km=ncread(source_2km_month,'temp');
@@ -73,7 +73,7 @@ temp_25km_ztmn=squeeze(mean(temp_25km_zmn_eq,3));
 temp_25km_ztzmn=squeeze(mean(temp_25km_ztmn,1));
 
 temp_crm_zmn=squeeze(mean(temp_2km,2));
-temp_crm_zmn=temp_crm_zmn(:,:,4:6);
+temp_crm_zmn=temp_crm_zmn(:,:,3:6);
 temp_crm_ztmn=squeeze(mean(temp_crm_zmn,3));
 temp_crm_ztzmn=squeeze(mean(temp_crm_ztmn,1));
 
@@ -83,7 +83,7 @@ u_25km_zmn_eq=u_25km_zmn(:,:,an_t1:an_t2);
 u_25km_ztmn=squeeze(mean(u_25km_zmn_eq,3));
 
 u_2km_zmn=squeeze(mean(u_2km,2));
-u_2km_zmn=u_2km_zmn(:,:,4:6);
+u_2km_zmn=u_2km_zmn(:,:,3:6);
 u_2km_ztmn=squeeze(mean(u_2km_zmn,3));
 
 % compute the time and zonal mean of w
@@ -93,7 +93,9 @@ w_25km_zmn_eq=w_25km_zmn(:,:,an_t1_d:an_t2_d);
 w_25km_ztmn=squeeze(mean(w_25km_zmn_eq,3));
 
 w_2km_zmn=squeeze(mean(w_2km,2));
-w_2km_zmn=w_2km_zmn(:,:,t_mid:t_end);
+%w_2km_zmn=w_2km_zmn(:,:,t_mid:t_end);
+%w_2km_zmn=w_2km_zmn(:,:,61:t_end);
+w_2km_zmn=w_2km_zmn(:,:,3:6);
 w_2km_ztmn=squeeze(mean(w_2km_zmn,3));
 
 sphum_25km_zmn=squeeze(mean(sphum_25km,2));
@@ -102,7 +104,7 @@ sphum_25km_zmn_eq=sphum_25km_zmn(:,:,an_t1:an_t2);
 sphum_25km_ztmn=squeeze(mean(sphum_25km_zmn_eq,3));
 
 sphum_2km_zmn=squeeze(mean(sphum_2km,2));
-sphum_2km_zmn=sphum_2km_zmn(:,:,4:6);
+sphum_2km_zmn=sphum_2km_zmn(:,:,3:6);
 sphum_2km_ztmn=squeeze(mean(sphum_2km_zmn,3));
 
 % compute virtual temperature for use in the density computation
