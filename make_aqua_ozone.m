@@ -41,16 +41,31 @@ lon = ncread(fin_cfmip_o3,'lon');
 % 30 in 'time' is about a month.
 time(1)=0;
 %time(2)=16;
-for itime=2:133
+for itime=2:241
   time(itime)=time(itime-1)+30;
 end
 
- for itime=1:1:132
-     aqua_o3(:,:,:,itime)=o3_climo(:,:,:,1);
+% introduce a scale factor.  I think that the incoming file apeozone_cam3_5_54.nc
+% is the mixing ratio of ozone, or the mole fraction.  It is not well documented but
+% I think this because the units in the file are 'Fraction' and the magnitude of 
+% the values are suspiciuos.  So to convert to a mass fraction of kg/kg we need
+% to multiply the mixing ratio of ozone by the molecular weight of ozone and divide
+% by the molecular weight of dry air
+
+M_o3=48e-3% kg/mole of ozone
+M_a =28.96e-3% kg/mole of dry air
+
+scale=M_o3/M_a% kg of ozone per kg of dry air
+
+ for itime=1:1:240
+     aqua_o3(:,:,:,itime)=scale*o3_climo(:,:,:,1);
  end
+
+ aqua_o3_a=squeeze(mean(aqua_o3,1));
+ aqua_o3_b=squeeze(mean(aqua_o3_a,1));
 % 
 % output file name
-o3f = 'aquaplanet_ozone_cfmip3.nc';
+o3f = 'ape_ozone_cfmip3_scaled.nc';
 system(['rm -f ',o3f]);
 % 
 % 
@@ -109,4 +124,4 @@ ncwriteatt(o3f,'phalf','units','hPa');
 ncwriteatt(o3f,'phalf','positive','down');
 ncwriteatt(o3f,'phalf','cartesian_axis','Z');
 
-ncdisp('aquaplanet_ozone_cfmip3.nc')
+ncdisp('ape_ozone_cfmip3_scaled.nc')
