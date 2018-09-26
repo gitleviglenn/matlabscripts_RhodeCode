@@ -16,10 +16,20 @@ del_lwcre=[0,0,0,0,0];
 atm_enimb=zeros(2,5);
 
 grid_spac='25km';
+wkstn='true';  % true if running scripts on my gfdl workstation
 
 entval='0p5';
 
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+% for files on macbook
+%experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+% for files on archive
+if (cmip_format=='true')
+ experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+ experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/3/history/');
+else 
+  experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+end
+
 toa_rad
 toa_R_ctl     = toa_R;
 toa_Rsw_ctl   = toa_Rsw;
@@ -28,6 +38,8 @@ sw_cre_ctl    = sw_cre;
 lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
+
+stop
 
 experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
 toa_rad

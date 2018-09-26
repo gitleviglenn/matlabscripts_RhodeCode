@@ -37,7 +37,13 @@
 
 %experimentn='/c8x160L33_am4p0_25km_wlkr_ent0p9'
 
-open_radflux % call script that opens data file and reads variables
+% call script that opens data file and reads variables
+% open_radflux % if using Matlab 2015 or later
+if (cmip_format=='true')
+  open_radflux_m2009 % if using Matlab 2009
+else
+  open_radflux % if using Matlab 2015 or later
+end
 
 olr_dmn=domaintime_mn(olr);
 olr_clr_dmn=domaintime_mn(olr_clr);
