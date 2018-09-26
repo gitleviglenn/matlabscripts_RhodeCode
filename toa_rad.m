@@ -39,9 +39,12 @@
 
 % call script that opens data file and reads variables
 % open_radflux % if using Matlab 2015 or later
-if (cmip_format=='true')
+%if (wkstn=='true')
+switch wkstn_loc
+  case 'wkstn'
   open_radflux_m2009 % if using Matlab 2009
-else
+%else
+  case 'macbook'
   open_radflux % if using Matlab 2015 or later
 end
 
