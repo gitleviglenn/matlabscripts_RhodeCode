@@ -5,6 +5,9 @@
 % it is assumed that the necessary variables have already been loaded
 % e.g. v.tsurf --> use something like openncfile_new.m
 %
+% this should work after calling openncfile_3mods.m
+%
+% m2009/eis_lts_driver_09.m is one of the scripts that calls this one
 % this is called by driver_test.m and eis_lts_ts.m
 %
 % do I want to make this into a function that outputs LTS and EIS?
@@ -38,6 +41,31 @@ p0=100000.; % Pa
 rh0=0.8;
 kappa=Ra/cp;
 
+%% used for generating a time series.... when called from eis_lts_driver_09
+%% if time and memory become a problem, the rh, and hght can all be reduced 
+%
+%nlat=size(v.lat,1);
+%nlon=size(v.lon,1);
+%
+%v.level=100.*v.level;
+%nlev=size(v.level,1);
+%
+%theta_f     = zeros(nlev,nlat,nlon);
+%temp3       = zeros(nlat,nlon);
+%lts_f       = zeros(nlat,nlon);
+%rh_sfc      = zeros(nlat,nlon);
+%theta_temp1 = zeros(nlat,nlon);
+%
+%%should I use tsurf or tref?
+%%theta_temp1=v.tsurf.*((p0/v.level(1))^kappa);
+%%theta_temp1=squeeze(v.tref_am3ts(timenow,:,:)).*((p0/v.level(1))^kappa);
+%theta_temp1=squeeze(v.tsurf(timenow,:,:)).*((p0/v.level(1))^kappa);
+%theta_f(1,:,:)=theta_temp1(:,:);
+%for lev=2:nlev;
+%  p_lev=v.level(lev);
+%  temptemp=squeeze(v.temp(timenow,lev,:,:));
+%v.temp=squeeze(v.temp_am3ts(timenow,:,:,:));
+%================
 %vlevel=squeeze(vlevel(:));
 
 %vlevel=100.*vlevel;
