@@ -1,10 +1,22 @@
-%---------------------------------------
+%----------------------------------------------------------------------
 % toa_rad.m
 %
 % compute the net radiative flux at toa
 %
+% for the record(as of sep 24, 2018, the atmospheric energy lack 
+% of conservation is: 
+%    atm_enimb_100km =
+%
+%    1.3216    1.5953    1.9002    2.1304    2.4228
+%    3.2217    3.2727    3.2264    3.3200    3.1769
+%
+%    atm_enimb_25km =
+%
+%    2.2413    2.3575    2.3785    2.7769    2.2740
+%    2.9332    2.7004    3.0250    3.0396    2.8745
+%
 % levi silvers                sep 2018
-%---------------------------------------
+%----------------------------------------------------------------------
 
 % if these variables haven't already been set by a calling 
 % script then use below:
