@@ -4,9 +4,10 @@
 % this is one of the primary master scripts for the long amip analysis
 %
 % calls the following scripts:
-% readvars
-% alpha_09
-% eis_lts_ts
+% readvars --> reads variables from data files
+% alpha_09 --> computes the feedback parameter using linear regression
+% eis_lts_ts --> computes estimated inversion strength (eis) and lower trop. stab. (lts)
+% alpha_window_driver --> calls alpha_window(window definitions), which calls alpha_09
 % compute_trends              
 % amip_eiscltrends_ncout
 % plot_alpha_3mods
@@ -62,7 +63,7 @@ tendindex=nmonths/12;
 
 % alpha_09 now requires wlat1,wlat2,wlon1, and wlon2 to be defined
 % when alpha_09 is called but a speicific window of interest is not defined 
-% wlat1,wlat2,wlon1,wlon2 need to be defined:
+% so wlat1,wlat2,wlon1,wlon2 need to be initialized:
 wlat1=10;
 wlat2=20;
 wlon1=10;

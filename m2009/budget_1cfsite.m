@@ -13,12 +13,15 @@
 % levi silvers                                                    sep 2017
 %---------------------------------------------------------------------------------------
 
-path='/archive/Levi.Silvers/awg/warsaw/c96L33_am4p0_cmip6Diag_oldcfsite_nocosp_2sites/gfdl.ncrc3-intel-prod-openmp/history/'
+%path='/archive/Levi.Silvers/awg/warsaw/c96L33_am4p0_cmip6Diag_oldcfsite_nocosp_2sites/gfdl.ncrc3-intel-prod-openmp/history/'
+path='/net2/Levi.Silvers/data/cfamip_testdiag/'
 %%fileincming='19840101.atmos_station_001.tile5.nc'
 %
-fileincming='19800101.atmos_station_001.tile5.nc'
+%fileincming='19800101.atmos_station_001.tile5.nc'
 %fileincming='19800101.atmos_station_120.tile5.nc'
 %fileincming='19830101.atmos_station_120.tile5.nc'
+
+fileincming='cfsites/18700101.CFsite.nc'
 
 statstring='Station 001';
 
@@ -28,23 +31,39 @@ fin_total=netcdf(source_file,'nowrite');
 
 pfull=fin_total{'pfull'};
 phalf=fin_total{'phalf'};
-ta=fin_total{'temp'}; % temperature
-hus=fin_total{'sphum'}; % specific humidity 
-hur=fin_total{'rh_cmip'}; % relative humidity 
+%ta=fin_total{'temp'}; % temperature
+ta=fin_total{'ta'}; % temperature
+%hus=fin_total{'sphum'}; % specific humidity 
+hus=fin_total{'hus'}; % specific humidity 
+%hur=fin_total{'rh_cmip'}; % relative humidity 
+hur=fin_total{'hur'}; % relative humidity 
 % temp tends
-tnt_dyn=fin_total{'tdt_dyn'}; % K/s from dynamics?  does this include advection or dissipation?
-tnt_vdif=fin_total{'tdt_vdif'}; % K/s temp tend from vert diff 
-tntc=fin_total{'tdt_conv'}; % temp tend from conv deg/s
-tntls=fin_total{'tdt_ls'}; % K/s temp tend from strat cloud deg/s
-tnt_topo=fin_total{'tdt_diss_topo'};
-tnt_rad=fin_total{'allradp'}; % K/s temp tend from sw+lw radiation
-tnt_phy=fin_total{'tdt_phys'}; % K/s temp tend from physics deg/s
+%tnt_dyn=fin_total{'tdt_dyn'}; % K/s from dynamics?  does this include advection or dissipation?
+%tnt_vdif=fin_total{'tdt_vdif'}; % K/s temp tend from vert diff 
+%tntc=fin_total{'tdt_conv'}; % temp tend from conv deg/s
+%tntls=fin_total{'tdt_ls'}; % K/s temp tend from strat cloud deg/s
+%tnt_topo=fin_total{'tdt_diss_topo'};
+%tnt_rad=fin_total{'allradp'}; % K/s temp tend from sw+lw radiation
+%tnt_phy=fin_total{'tdt_phys'}; % K/s temp tend from physics deg/s
+tnt_phy=fin_total{'tntmp'}; % K/s temp tend from physics deg/s
+tnt_dyn=fin_total{'tnta'}; % K/s from dynamics?  does this include advection or dissipation?
+tnt_rad=fin_total{'tntr'}; % K/s temp tend from sw+lw radiation
+tnt_radl=fin_total{'tntrl'}; % K/s temp tend from lw radiation
+tnt_rads=fin_total{'tntrs'}; % K/s temp tend from sw radiation
+tntc=fin_total{'tntc'}; % temp tend from conv deg/s
+%tnt_vdif=fin_total{'tdt_vdif'}; % K/s temp tend from vert diff 
+tntpbl=fin_total{'tntpbl'}; % K/s temp tend from vert diff 
+tnt_vdif=tntpbl; % is this so?
+%tntls=fin_total{'tdt_ls'}; % K/s temp tend from strat cloud deg/s
+tntls=fin_total{'tntscp'}; % K/s temp tend from strat cloud deg/s
 
 % specific hum tends
 qdt_vdif=fin_total{'qdt_vdif'}; % kg/kg/s spec hum from vert diff
+tnhuspbl=fin_total{'tnhuspbl'}; % kg/kg/s spec hum from vert diff
 qdt_ls=fin_total{'qdt_ls'}; % kg/kg/s  spec hum tend from strat clouds
 qdt_dyn=fin_total{'qdt_dyn'}; % kg/kg/s spec hum tend from 
 qdt_conv=fin_total{'qdt_conv'}; % kg/kg/s spec hum tend from convection
+tnhusc=fin_total{'tnhusc'}; % kg/kg/s spec hum tend from convection
 
 
 % tendencies are in units of blah blah per second.  Output is every halfhour
