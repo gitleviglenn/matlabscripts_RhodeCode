@@ -49,6 +49,10 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
+figure
+plot(precip_ts-evap_ts);
+hold on
+
 switch wkstn_loc
   case 'wkstn'
     experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
@@ -70,6 +74,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 del_R(1)=toa_R_ctl-toa_R_p4K;
 del_cre(1)=net_cre_ctl-net_cre_p4K;
@@ -103,6 +109,8 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
+plot(precip_ts-evap_ts);
+
 switch wkstn_loc
   case 'wkstn'
     experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
@@ -123,6 +131,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 del_R(2)=toa_R_ctl-toa_R_p4K;
 del_cre(2)=net_cre_ctl-net_cre_p4K;
@@ -158,6 +168,8 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
+plot(precip_ts-evap_ts);
+
 swup_toa_ts_ctl=swup_toa_ts;
 evap_ts_ctl=evap_ts;
 lhflux_sfc_ts_ctl=lhflux_sfc_ts;
@@ -191,6 +203,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 swup_toa_ts_p4K=swup_toa_ts;
 evap_ts_p4K=evap_ts;
@@ -235,6 +249,8 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
+plot(precip_ts-evap_ts);
+
 switch wkstn_loc
   case 'wkstn'
     experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
@@ -255,6 +271,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 del_R(4)=toa_R_ctl-toa_R_p4K;
 del_cre(4)=net_cre_ctl-net_cre_p4K;
@@ -288,6 +306,8 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
+plot(precip_ts-evap_ts);
+
 switch wkstn_loc
   case 'wkstn'
     experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
@@ -309,6 +329,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 del_R(5)=toa_R_ctl-toa_R_p4K;
 del_cre(5)=net_cre_ctl-net_cre_p4K;
