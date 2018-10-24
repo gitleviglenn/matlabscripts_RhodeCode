@@ -60,9 +60,14 @@ swdn_s_dmn  = domaintime_mn(swdn_sfc);
 lwup_s_dmn  = domaintime_mn(lwup_sfc);
 swup_s_dmn  = domaintime_mn(swup_sfc);
 shflx_s_dmn = domaintime_mn(shflx);
-evap_s_dmn  = domaintime_mn(evap);
+evap_s_dmn  = domaintime_mn(evap);  % kg/m2/s
 
 lat_evap=2.5e6; % joules/kg
+
+% precip
+precip_dmn  = domaintime_mn(precip); % kg/m2/s
+prec_conv_dmn  = domaintime_mn(prec_conv);
+
 
 %% delR=incoming-outgoing=v.swdn_toa-v.olr_toa-v.swup_toa;
 
@@ -108,7 +113,10 @@ switch comp_ts
   evap_ts=glb_mon_mn_ts(evap,length);
   lhflux_sfc_ts=lat_evap.*evap_ts;
 
-  % compute budget time series
+  precip_ts=glb_mon_mn_ts(precip,length);%  = domaintime_mn(precip); % kg/m2/s
+  precip_conv_ts=glb_mon_mn_ts(prec_conv,length);%  = domaintime_mn(prec_conv);
+
+% compute budget time series
   toa_R_ts=swdn_toa_ts-swup_toa_ts-lwup_toa_ts;
   sfc_R_ts=-lhflux_sfc_ts-shflx_sfc_ts+lwdn_sfc_ts-lwup_sfc_ts+swdn_sfc_ts-swup_sfc_ts;
   atm_imb_ts=toa_R_ts-sfc_R_ts;
