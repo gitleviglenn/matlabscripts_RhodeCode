@@ -76,8 +76,8 @@ if gridspac < 10
 % else if using a 25km resolution...
   'grid spacing is less than 10km '
 else % grid spacing is greater than 10 km 
-  an_t1=3;
-  an_t2=12;
+  an_t1=1;
+  an_t2=4
   w_25km=ncread(source_psi,'w');
   u_25km=ncread(source_psi,'ucomp');
   sphum_25km=ncread(source_psi,'sphum');
@@ -118,10 +118,11 @@ w_gen_ztmn=squeeze(mean(w_gen,2));
 %pfull_25km=100.*pfull_25km; % convert to Pa
 %pfull_2km=100.*pfull_2km; % convert to Pa
 
-r_dry=287.; % J/kg K
-epsilon=0.622;
-grav=9.81; % m/s2
-a_earth=6350000; % m   lower bound on Earth's radius
+% these should be defined in compTheta.m
+%r_dry=287.; % J/kg K
+%epsilon=0.622;
+%grav=9.81; % m/s2
+%a_earth=6350000; % m   lower bound on Earth's radius
 
 clear rho_gen
 Tv_gen=temp_gen_ztmn.*(1+sphum_gen_ztmn./epsilon)./(1+sphum_gen_ztmn);
@@ -192,20 +193,43 @@ end
 
 figure
 %scale2m2=625e6;
-scale2mass=a_earth*grav;
-psi_gen=scale2mass.*psi_gen;
-scale_cons=1e11;
-%stream_cons=[-6000.,-5000.,-4000.,-3000.,-2000.,-1000.,0.0,1000.,2000.,3000.,4000.,5000.,6000.];
-%stream_cons=[-6.,-5.,-4.,-3.,-2.,-1.,0.0,1.,2.,3.,4.,5.,6.];
-%stream_cons=[-30.,-25.,-20.,-15.,-10.,-5.,0.0,5.,10.,15.,20.,25.,-30.];
-stream_cons=[-50.,-45.,-40.,-35.,-30.,-25.,-20.,-15.,-10.,-5.,0.0,5.,10.,15.,20.,25.,30.,35.,40.,45.,50.];
-%stream_cons=[-3.,-2.5,-2.,-1.5,-1.,-0.5,0.0,0.5,1.,1.5,2.,2.5,3.];
-stream_cons=scale_cons.*stream_cons;
+%scale2mass=a_earth*grav;
+scale_cons=1; % this worked well with 25km grid spacing
+normscale=1e11; % this worked well with 25km grid spacing
+scale2mass=a_earth/grav;
+normfac=1/normscale;
+psi_gen=normfac.*scale2mass.*psi_gen;
+stream_convals=[-.5,-.45,-.4,-.35,-.3,-.25,-.2,-.15,-.1,-.05,0.0,.05,.1,.15,.20,.25,.3,.35,.4,.45,.5];
+%stream_convals=[-.05,-.045,-.04,-.035,-.03,-.025,-.02,-.015,-.01,-.005,0.0,.005,.01,.015,.020,.025,.03,.035,.04,.045,.05];
+%stream_convals=[-5,-4.5,-4,-3.5,-3,-2.5,-2.,-1.5,-1,-.5,0.0,.5,1,1.5,2.,2.5,3,3.5,4,4.5,5];
+stream_cons=scale_cons.*stream_convals;
 [C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen',stream_cons);
 %v=[-3000,-2000,-1000,0,1000,2000,3000]; % if labels are desired on contours
-v=stream_cons;
+%v=stream_cons;
+v=scale_cons*stream_convals;
 clabel(C,h,v);
 tit_str=strcat('mass Streamfunction: ',tit_id);
 title(tit_str)
 set(gca,'Ydir','reverse')
+
+figure2=figure
+tit_str=strcat('mass Streamfunction: ',tit_id);     
+title(tit_str)    
+axes2 = axes('Parent',figure2,'BoxStyle','full','YMinorTick','on',...
+    'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
+    'YScale','log',...
+    'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
+    'Layer','top',...
+    'YDir','reverse',...
+    'FontWeight','bold',...
+    'FontSize',14);%,...
+    %'Position',[0.0415407854984894 0.10385253115539 0.86345921450151 0.753622122086883]);
+%% Uncomment the following line to preserve the Y-limits of the axes
+ylim(axes2,[10000 100000]);
+box(axes2,'on');
+hold(axes2,'on');
+
+[C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen',stream_cons);
+clabel(C,h,v);               
+
 

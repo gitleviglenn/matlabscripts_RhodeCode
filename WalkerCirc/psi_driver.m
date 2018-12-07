@@ -4,9 +4,13 @@ con_stream_arr=[0,0,0,0,0,0,0];
 %con_stream_arr=[2000.,-3000.,-14000.,-16000.,20000.,0.,5000.];
 %con_stream_arr=[0.,0.,-14000.,-16000.,20000.,0.,5000.];
 
-%exp_n=''  % control
+exp_n=''  % control
 %exp_n='_p4K'
-exp_n='_lwoff'
+%exp_n='_lwoff'
+%filen='/19790101.atmos_month.nc'
+filen='/1980th1983.atmos_month_tmn.nc'
+res='_100km_'
+
 
 % constant added to the streamfunction
 %con_stream=2000.;
@@ -35,34 +39,59 @@ tit_id=' 1 km'
 StreamFunNew
 psi_gen_1km=psi_gen;
 
+figure
+subplot(1,2,1)
+[C,h]=contourf(1:4000,pfull_gen,psi_gen_1km',stream_cons);
+clabel(C,h,v);
+tit_str=strcat('mass Streamfunction: 1km');
+title(tit_str)
+set(gca,'Ydir','reverse')
+
+subplot(1,2,2)
+[C,h]=contourf(1:2000,pfull_gen,psi_gen_2km',stream_cons);
+clabel(C,h,v);
+tit_str=strcat('mass Streamfunction: 2km');
+title(tit_str)
+set(gca,'Ydir','reverse')
+
 % hopefully all the incoming data will be in atmos_month...
 %con_stream=-3000.; % how should this be deterimined?
 %con_stream=-14000.; % how should this be deterimined?
 con_stream=con_stream_arr(3);
 gridspac=25
-%scale2m2=625e6;
 %source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p5/19790101.atmos_month.nc';
 %source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p5_lwoff/19790101.atmos_month.nc';
 %source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p5_p4K/19790101.atmos_month.nc';
-source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p5',exp_n,'/19790101.atmos_month.nc');
+
+source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent0p5',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 0p5'
+tit_id=' 25 km 0p5';
+tit_id_0p5=tit_id;
 StreamFunNew
 psi_gen_0p5=psi_gen;
 mmax=max(max(psi_gen_0p5))
 mmin=min(min(psi_gen_0p5))
 offset1=(mmax-mmin)/2.;
 
+%figure
+%subplot(5,2,1)
+%[C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen_0p5',stream_cons);
+%clabel(C,h,v);
+%tit_str=strcat('mass Streamfunction: ',tit_id);
+%title(tit_str)
+%set(gca,'Ydir','reverse')
+
 %con_stream=-16000.; % how should this be deterimined?
 con_stream=con_stream_arr(4);
 gridspac=25
 %source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p7/19790101.atmos_month.nc';
 %source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p7_lwoff/19790101.atmos_month.nc';
-source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p7',exp_n,'/19790101.atmos_month.nc');
+source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent0p7',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 0p7'
+tit_id=' 25 km 0p7';
+tit_id_0p7=tit_id;
 StreamFunNew
 psi_gen_0p7=psi_gen;
 mmax=max(max(psi_gen_0p7))
@@ -74,11 +103,11 @@ con_stream=con_stream_arr(5);
 gridspac=25
 %scale2m2=625e6;
 %source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p9/19790101.atmos_month.nc';
-%source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p9_lwoff/19790101.atmos_month.nc';
-source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent0p9',exp_n,'/19790101.atmos_month.nc');
+source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent0p9',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 0p9'
+tit_id=' 25 km 0p9';
+tit_id_0p9=tit_id;
 StreamFunNew
 psi_gen_0p9=psi_gen;
 mmax=max(max(psi_gen_0p9))
@@ -89,11 +118,11 @@ offset3=(mmax-mmin)/2.;
 con_stream=con_stream_arr(6);
 gridspac=25
 %source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent1p1/19790101.atmos_month.nc';
-%source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent1p1_lwoff/19790101.atmos_month.nc';
-source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent1p1',exp_n,'/19790101.atmos_month.nc');
+source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent1p1',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 1p1'
+tit_id=' 25 km 1p1';
+tit_id_1p1=tit_id;
 StreamFunNew
 psi_gen_1p1=psi_gen;
 mmax=max(max(psi_gen_1p1))
@@ -105,16 +134,52 @@ con_stream=con_stream_arr(7);
 gridspac=25
 %scale2m2=625e6;
 %source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent1p3/19790101.atmos_month.nc';
-%source_psi='/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent1p3_lwoff/19790101.atmos_month.nc';
-source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0_25km_wlkr_ent1p3',exp_n,'/19790101.atmos_month.nc');
+source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent1p3',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 1p3'
+tit_id=' 25 km 1p3';
+tit_id_1p3=tit_id;
 StreamFunNew
 psi_gen_1p3=psi_gen;
 mmax=max(max(psi_gen_1p3))
 mmin=min(min(psi_gen_1p3))
 offset5=(mmax-mmin)/2.;
+
+figure
+subplot(1,5,1)
+[C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen_0p5',stream_cons);
+clabel(C,h,v);
+tit_str=strcat('mass Streamfunction: ',tit_id_0p5);
+title(tit_str)
+set(gca,'Ydir','reverse')
+
+subplot(1,5,2)
+[C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen_0p7',stream_cons);
+clabel(C,h,v);
+tit_str=strcat('mass Streamfunction: ',tit_id_0p7);
+title(tit_str)
+set(gca,'Ydir','reverse')
+
+subplot(1,5,3)
+[C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen_0p9',stream_cons);
+clabel(C,h,v);
+tit_str=strcat('mass Streamfunction: ',tit_id_0p9);
+title(tit_str)
+set(gca,'Ydir','reverse')
+
+subplot(1,5,4)
+[C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen_1p1',stream_cons);
+clabel(C,h,v);
+tit_str=strcat('mass Streamfunction: ',tit_id_1p1);
+title(tit_str)
+set(gca,'Ydir','reverse')
+
+subplot(1,5,5)
+[C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen_1p3',stream_cons);
+clabel(C,h,v);
+tit_str=strcat('mass Streamfunction: ',tit_id_1p3);
+title(tit_str)
+set(gca,'Ydir','reverse')
 
 psi_mat       = zeros(5,160,33);
 psi_mat(1,:,:)=psi_gen_0p5(:,:);
