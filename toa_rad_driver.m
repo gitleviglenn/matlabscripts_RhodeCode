@@ -15,8 +15,12 @@ del_swcre=[0,0,0,0,0];
 del_lwcre=[0,0,0,0,0];
 atm_enimb=zeros(2,5);
 
-grid_spac='25km';
-wkstn_loc='macbook';  % true if running scripts on my gfdl workstation
+grid_spac='100km';
+%grid_spac='25km';
+
+%wkstn_loc='macbook';  % true if running scripts on my gfdl workstation
+wkstn_loc='wkstn';  % true if running scripts on my gfdl workstation
+comp_ts  ='getts';  % switch for computing time series of fluxes, getts corresponds to yes
 
 entval='0p5';
 
@@ -24,13 +28,16 @@ entval='0p5';
 %experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
 % for files on archive
 switch wkstn_loc
-%if (wkstn=='true')
   case 'wkstn'
-experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
- experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/3/history/');
-%elseif (wkstn=='false') 
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/3/history/');
+      end
   case 'macbook'
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+    experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
 end
 
 toa_rad
@@ -42,7 +49,23 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
+figure
+plot(precip_ts-evap_ts);
+hold on
+
+switch wkstn_loc
+  case 'wkstn'
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/2/history/');
+    end
+  case 'macbook'
 experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+end
+
 toa_rad
 toa_R_p4K     = toa_R;
 toa_Rsw_p4K   = toa_Rsw;
@@ -51,6 +74,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 del_R(1)=toa_R_ctl-toa_R_p4K;
 del_cre(1)=net_cre_ctl-net_cre_p4K;
@@ -63,7 +88,18 @@ atm_enimb(2,1)=atm_enimb_p4K;
 %
 entval='0p7';
 
+switch wkstn_loc
+  case 'wkstn'
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/1/history/');
+    end
+  case 'macbook'
 experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+end
 toa_rad
 toa_R_ctl     = toa_R;
 toa_Rsw_ctl   = toa_Rsw;
@@ -73,7 +109,20 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
+plot(precip_ts-evap_ts);
+
+switch wkstn_loc
+  case 'wkstn'
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/1/history/');
+    end
+  case 'macbook'
 experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+end
 toa_rad
 toa_R_p4K     = toa_R;
 toa_Rsw_p4K   = toa_Rsw;
@@ -82,6 +131,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 del_R(2)=toa_R_ctl-toa_R_p4K;
 del_cre(2)=net_cre_ctl-net_cre_p4K;
@@ -93,9 +144,21 @@ atm_enimb(1,2)=atm_enimb_ctl;
 atm_enimb(2,2)=atm_enimb_p4K;
 
 %
-entval='0p9';
+entval='0p9_1consv';
+%entval='0p9';
 
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+switch wkstn_loc
+  case 'wkstn'
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/1/history/');
+    end
+  case 'macbook'
+    experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+end
 toa_rad
 toa_R_ctl     = toa_R;
 toa_Rsw_ctl   = toa_Rsw;
@@ -105,14 +168,33 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
-lhflux_dmn
-shflx_s_dmn
-lwdn_s_dmn
-lwup_s_dmn
-swdn_s_dmn
-swup_s_dmn
+plot(precip_ts-evap_ts);
 
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+swup_toa_ts_ctl=swup_toa_ts;
+evap_ts_ctl=evap_ts;
+lhflux_sfc_ts_ctl=lhflux_sfc_ts;
+atm_imb_ts_ctl=atm_imb_ts;
+
+%lhflux_dmn
+%shflx_s_dmn
+%lwdn_s_dmn
+%lwup_s_dmn
+%swdn_s_dmn
+%swup_s_dmn
+
+switch wkstn_loc
+  case 'wkstn'
+    %experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent','0p9_p4K_1consv');
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/1/history/');
+    end
+  case 'macbook'
+    experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+end
 toa_rad
 toa_R_p4K     = toa_R;
 toa_Rsw_p4K   = toa_Rsw;
@@ -122,12 +204,18 @@ lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
 
-lhflux_dmn
-shflx_s_dmn
-lwdn_s_dmn
-lwup_s_dmn
-swdn_s_dmn
-swup_s_dmn
+plot(precip_ts-evap_ts,'r');
+
+swup_toa_ts_p4K=swup_toa_ts;
+evap_ts_p4K=evap_ts;
+lhflux_sfc_ts_p4K=lhflux_sfc_ts;
+atm_imb_ts_p4K=atm_imb_ts;
+%lhflux_dmn
+%shflx_s_dmn
+%lwdn_s_dmn
+%lwup_s_dmn
+%swdn_s_dmn
+%swup_s_dmn
 
 del_R(3)=toa_R_ctl-toa_R_p4K;
 del_cre(3)=net_cre_ctl-net_cre_p4K;
@@ -140,7 +228,18 @@ atm_enimb(2,3)=atm_enimb_p4K;
 %
 entval='1p1';
 
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+switch wkstn_loc
+  case 'wkstn'
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/1/history/');
+    end
+  case 'macbook'
+    experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+end
 toa_rad
 toa_R_ctl     = toa_R;
 toa_Rsw_ctl   = toa_Rsw;
@@ -150,7 +249,20 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+plot(precip_ts-evap_ts);
+
+switch wkstn_loc
+  case 'wkstn'
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/1/history/');
+    end
+  case 'macbook'
+    experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+end
 toa_rad
 toa_R_p4K     = toa_R;
 toa_Rsw_p4K   = toa_Rsw;
@@ -159,6 +271,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 del_R(4)=toa_R_ctl-toa_R_p4K;
 del_cre(4)=net_cre_ctl-net_cre_p4K;
@@ -171,7 +285,18 @@ atm_enimb(2,4)=atm_enimb_p4K;
 %
 entval='1p3';
 
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+switch wkstn_loc
+  case 'wkstn'
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/1/history/');
+    end
+  case 'macbook'
+    experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval);
+end
 toa_rad
 toa_R_ctl     = toa_R;
 toa_Rsw_ctl   = toa_Rsw;
@@ -181,7 +306,21 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+plot(precip_ts-evap_ts);
+
+switch wkstn_loc
+  case 'wkstn'
+    experimentn_a=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+    switch grid_spac
+      case '100km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/history/');
+      case '25km'
+        experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/1/history/');
+    end
+  case 'macbook'
+    experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+end
+
 toa_rad
 toa_R_p4K     = toa_R;
 toa_Rsw_p4K   = toa_Rsw;
@@ -190,6 +329,8 @@ sw_cre_p4K    = sw_cre;
 lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
+
+plot(precip_ts-evap_ts,'r');
 
 del_R(5)=toa_R_ctl-toa_R_p4K;
 del_cre(5)=net_cre_ctl-net_cre_p4K;
