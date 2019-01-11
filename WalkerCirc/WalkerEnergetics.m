@@ -1,5 +1,7 @@
 %WalkerEnergetics.m
 
+% calls the function rho_2d_gen()
+
 % run this within WalkerCell.m
 
 conv=60*60*24; % convert to Kelvin per day
@@ -145,8 +147,15 @@ swup_t_zxmn=squeeze(mean(swup_t_zmn,1));
 
 rad_net_toa=-olr_zxmn+swdn_t_zxmn-swup_t_zxmn;
 
+precip_100km=ncread(source_100km_month,'precip');
 precip_25km=ncread(source_gcm_month,'precip');
 precip_2km=ncread(source_2km_month,'precip');
+precip_1km=ncread(source_1km_month,'precip');
+
+precip_100_zmn=squeeze(mean(precip_100km,2));
+precip_100_zxmn=squeeze(mean(precip_100_zmn,1));
+precip_100_tmn=squeeze(mean(precip_100_zxmn,2));
+precip_100km_en=scale2*precip_100_tmn
 
 precip_25_zmn=squeeze(mean(precip_25km,2));
 precip_25_zxmn=squeeze(mean(precip_25_zmn,1));
@@ -157,6 +166,11 @@ precip_2_zmn=squeeze(mean(precip_2km,2));
 precip_2_zxmn=squeeze(mean(precip_2_zmn,1));
 precip_2_tmn=squeeze(mean(precip_2_zxmn,2));
 precip_2km_en=scale2*precip_2_tmn
+
+precip_1_zmn=squeeze(mean(precip_1km,2));
+precip_1_zxmn=squeeze(mean(precip_1_zmn,1));
+precip_1_tmn=squeeze(mean(precip_1_zxmn,2));
+precip_1km_en=scale2*precip_1_tmn
 
 %precip_ts=latheat.*precip_zxmn;
 
@@ -189,7 +203,10 @@ MeanRadH_2km=heatr_2km_dmn
 heatr_1km_1=squeeze(mean(heatrad_1km,1));
 heatr_1km_2=squeeze(mean(heatr_1km_1,1));
 heatr_1km_dmn=squeeze(mean(heatr_1km_2,2));
+
 MeanRadH_1km=heatr_1km_dmn
+
+MeanRadPrec=[MeanRadH_1km MeanRadH_2km MeanRadH_25km MeanRadH_100km; precip_1km_en precip_2km_en precip_25km_en precip_100km_en]
 %MeanPrecip_25km=mean(p_25km_tmean,1)
 %MeanPrecip_2km=mean(p_2km_tmean,1)
 
@@ -206,17 +223,20 @@ Tv_2km=temp_crm_ztmn.*(1+q_2km_ztmn./epsilon)./(1+q_2km_ztmn);
 clear rho_25km;
 clear rho_2km;
 
-for j=33:-1:1
-    for i=1:160
-        rho_25km(i,j)=pfull_25km(j)/(r_dry*Tv_25km(i,j));
-        %rho_25km(i,j)=pfull_25km(j)./(r_dry*temp_25km_ztmn(i,j));
-    end
-end
-for j=33:-1:1
-    for i=1:2000
-        rho_2km(i,j)=pfull_2km(j)/(r_dry*Tv_2km(i,j));
-    end
-end
+rho_25km=rho_2d_gen(temp_25km_ztmn,q_25km_ztmn,pfull_25km,160);
+rho_2km=rho_2d_gen(temp_crm_ztmn,q_2km_ztmn,pfull_2km,2000);
+
+%for j=33:-1:1
+%    for i=1:160
+%        rho_25km(i,j)=pfull_25km(j)/(r_dry*Tv_25km(i,j));
+%        %rho_25km(i,j)=pfull_25km(j)./(r_dry*temp_25km_ztmn(i,j));
+%    end
+%end
+%for j=33:-1:1
+%    for i=1:2000
+%        rho_2km(i,j)=pfull_2km(j)/(r_dry*Tv_2km(i,j));
+%    end
+%end
 
 for j=2:32
     for i=1:160

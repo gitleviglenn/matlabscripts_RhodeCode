@@ -232,4 +232,73 @@ hold(axes2,'on');
 [C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen',stream_cons);
 clabel(C,h,v);               
 
+figure3=figure
+tit_str=strcat('Vertical Velocity: ');     
+title(tit_str)    
+axes3 = axes('Parent',figure3,'BoxStyle','full','YMinorTick','on',...
+    'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
+    'YScale','log',...
+    'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
+    'Layer','top',...
+    'YDir','reverse',...
+    'FontWeight','bold',...
+    'FontSize',14);%,...
+    %'Position',[0.0415407854984894 0.10385253115539 0.86345921450151 0.753622122086883]);
+%% Uncomment the following line to preserve the Y-limits of the axes
+ylim(axes3,[10000 100000]);
+box(axes3,'on');
+hold(axes3,'on');
+
+vvel_convals=[-0.1,-0.05,-0.04,-0.03,-0.02,-0.01,0.0,.01,.02,.03,.04,.05,.1];
+vvel_cons=scale_cons.*vvel_convals;
+
+[C,h]=contourf(1:160,pfull_gen,w_25km_ztmn',vvel_cons);
+clabel(C,h,v);               
+colorbar
+
+% take the average of the center half of the domain
+w_25km_center=w_25km_ztmn(40:120,:); % 80
+w_25km_center_mn=mean(w_25km_center,1);
+w_2km_center=w_2km_ztmn(500:1500,:); % 1000
+w_2km_center_mn=mean(w_2km_center,1);
+w_1km_center=w_1km_ztmn(1000:3000,:); % 2000
+w_1km_center_mn=mean(w_1km_center,1);
+
+% take the average of the center fourth of the domain
+w_25km_center=w_25km_ztmn(80:120,:); % dependent on experiment!!
+w_25km_center_mn=mean(w_25km_center,1);
+w_2km_center=w_2km_ztmn(750:1250,:);
+w_2km_center_mn=mean(w_2km_center,1);
+w_1km_center=w_1km_ztmn(1500:2500,:); % 1000
+w_1km_center_mn=mean(w_1km_center,1);
+
+% take the average of the center fourth of the domain
+w_25km_center=w_25km_ztmn(80:120,:); % dependent on experiment!!
+w_25km_center_mn=mean(w_25km_center,1);
+w_2km_center=w_2km_ztmn(900:1100,:);
+w_2km_center_mn=mean(w_2km_center,1);
+w_1km_center=w_1km_ztmn(1800:2200,:); % 1000
+w_1km_center_mn=mean(w_1km_center,1);
+
+% take the average of subsiding region of the domain
+w_25km_sub=w_25km_ztmn(1:40,:); % dependent on experiment!!
+w_25km_sub_mn=mean(w_25km_sub,1);
+w_2km_sub=w_2km_ztmn(1:500,:);
+w_2km_sub_mn=mean(w_2km_sub,1);
+w_1km_sub=w_1km_ztmn(1:1000,:); 
+w_1km_sub_mn=mean(w_1km_sub,1);
+
+figure
+plot(w_25km_center_mn,pfull_gen,'b')
+set(gca,'Ydir','reverse')
+hold on
+plot(w_25km_sub_mn,pfull_gen,'--b')
+plot(w_2km_center_mn,pfull_gen,'r')
+plot(w_2km_sub_mn,pfull_gen,'--r')
+plot(w_1km_center_mn,pfull_gen,'k')
+plot(w_1km_sub_mn,pfull_gen,'--k')
+title('vertical velocity')
+
+
+
 

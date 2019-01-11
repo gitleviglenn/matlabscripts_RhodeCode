@@ -1,10 +1,12 @@
-%------------------------------------------------------------------
+%--------------------------------------------------------------------
 % physical constants are defined in the script phys_constants
 %
 % experi and exptype both need to be defined in advance 
 %
+% use read_1var_ztmn to read a variable and take the zonal time mean
+%
 % levi silvers                                       dec 2018
-%------------------------------------------------------------------
+%--------------------------------------------------------------------
 path_base='/Users/silvers/data/WalkerCell/'
 %tit_st=' cos sq ';
 %tit_st=' gaussian ';
@@ -118,7 +120,9 @@ source_25km_8xday=strcat(path_25km,yearstr_79,'.atmos_8xdaily.nc');
 source_25km=strcat(path_25km,yearstr_79,'.atmos_daily.nc');
 %source_25km_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
 source_gcm_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
-source_gcm_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
+%source_gcm_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
+
+source_100km_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
 
 source_1km_month=strcat(path,'c10x4000L33_am4p0_1km_wlkr_4K/','1979_6mn.atmos_month.nc');
 %source_1km_month=strcat(path_1km,'19790301.atmos_month_psivars.nc');
@@ -150,8 +154,8 @@ xcrm_1km_ngp=4000;
 % precip can be converted into mm/day (scale1) 
 % or energy units of W/m2 (scale2)
 scale1=86400.; % s m^2 mm / kg day
-%scale2=2.265e6; % J/kg why the difference with the value below?
-scale2=2.501e6;
+scale2=2.265e6; % J/kg why the difference with the value below?
+%scale2=2.501e6;
 scale=scale1;
 cltscale=100. % convert to percentage of cloud fraction
 
@@ -169,6 +173,16 @@ p_cv_2km=ncread(source_2km_month,'prec_conv'); %kg(h2o)/m2/2
 p_ls_2km=ncread(source_2km_month,'prec_ls');
 
 temp_2km=ncread(source_2km_month,'temp');
+temp_crm_zmn=squeeze(mean(temp_2km,2)); 
+temp_crm_zmn=temp_crm_zmn(:,:,3:6);
+temp_crm_ztmn=squeeze(mean(temp_crm_zmn,3));
+temp_crm_ztzmn=squeeze(mean(temp_crm_ztmn,1));
+
+temp_1km=ncread(source_1km_month,'temp');
+temp_crm1_zmn=squeeze(mean(temp_1km,2)); 
+temp_crm1_zmn=temp_crm1_zmn(:,:,3:6);
+temp_crm1_ztmn=squeeze(mean(temp_crm1_zmn,3));
+
 w_2km=ncread(source_2km_month,'w');
 w_1km=ncread(source_1km_month,'w');
 
@@ -203,18 +217,24 @@ tsurf_fulltime=ncread(source_25km,'t_surf');
 tsfc=tsurf_fulltime(:,:,3:12);
 tsfc_mn=mean(tsfc,3);
 %tsfc_zmn=squeeze(mean(tsfc_mn,2)); computed in compTheta.m
+tsurf_crm=ncread(source_2km_month,'t_surf');
+tsurf_crm1=ncread(source_1km_month,'t_surf');
 
 % surface pressure
 p_sfc_fulltime=ncread(source_25km,'ps');
 psurf=mean(p_sfc_fulltime,3);
 psurf_zmn=squeeze(mean(psurf,2));
 
+p_sfc_2km_fulltime=ncread(source_2km_month,'ps');
+psurf_2km=mean(p_sfc_2km_fulltime,3);
+psurf_2km_zmn=squeeze(mean(psurf_2km,2));
+
 % vertical velocity
 w_25km=ncread(source_gcm_month,'w');
-w_25km_zmn=squeeze(mean(w_25km,2));
+%w_25km_zmn=squeeze(mean(w_25km,2));
 %w_25km_zmn_eq=w_25km_zmn(:,:,an_t1_d:an_t2_d);
-w_25km_zmn_eq=w_25km_zmn(:,:,an_t1:an_t2);
-w_25km_ztmn=squeeze(mean(w_25km_zmn_eq,3));
+%w_25km_zmn_eq=w_25km_zmn(:,:,an_t1:an_t2);
+%w_25km_ztmn=squeeze(mean(w_25km_zmn_eq,3));
 
 w500_25km=ncread(source_25km,'w500');
 w500_2km=ncread(source_2km_dprecp,'w500');
@@ -244,7 +264,6 @@ ice_25km=ncread(source_gcm_month,'tot_ice_amt');
 
 hur_1km=ncread(source_1km_month,'rh');
 hur_2km=ncread(source_2km_month,'rh');
-%hur_25km=ncread(source_gcm_month,'rh');
 
 pfull_2km=ncread(source_2km_month,'pfull');
 pfull_25km=ncread(source_2km_month,'pfull');
@@ -280,7 +299,6 @@ liq_25km_zmn_9m=squeeze(mean(liq_25km_zmn_last10m,3));
 
 hur_2km_zmn=squeeze(mean(hur_2km,2));
 hur_1km_zmn=squeeze(mean(hur_1km,2));
-%hur_25km_zmn=squeeze(mean(hur_25km,2));
 %hur_2km_ztmn=hur_2km_zmn;
 
 % if using last 3 months of crm data:
@@ -292,6 +310,8 @@ hur_1km_zmn=hur_1km_zmn(:,:,t_mid:t_end);
 hur_1km_zmn=squeeze(mean(hur_1km_zmn,3));
 hur_1km_ztmn=hur_1km_zmn;
 
+%hur_25km=ncread(source_gcm_month,'rh');
+%hur_25km_zmn=squeeze(mean(hur_25km,2));
 %hur_25km_zmn_last10m=hur_25km_zmn(:,:,an_t1:an_t2);
 %hur_25km_ztmn=squeeze(mean(hur_25km_zmn_last10m,3));
 
@@ -302,6 +322,7 @@ hur_1km_ztmn=hur_1km_zmn;
 %%q_25km_zmn_end=q_25km_zmn(:,:,2);
 %q_25km_ztmn=mean(q_25km_zmn_end,3);
 
+w_25km_ztmn    = read_1var_ztmn(source_gcm_month,'w');
 q_25km_ztmn    = read_1var_ztmn(source_gcm_month,'sphum');
 hur_25km_ztmn  = read_1var_ztmn(source_gcm_month,'rh');
 temp_25km_ztmn = read_1var_ztmn(source_gcm_month,'temp');
@@ -343,26 +364,26 @@ clt_1km_znm_eq_tmn=mean(clt_1km_znm_eq,3);
 % grab w at or near 500 mb
 w_25km_532=squeeze(w_25km(:,:,18,:)); % grab 532 level
 w_25km_532_zmn=squeeze(mean(w_25km_532,2));
-w_25km_532_zmn_tm=mean(w_25km_532_zmn,2);
+w_25km_532_ztmn=mean(w_25km_532_zmn,2);
 w500_25km_zmn=squeeze(mean(w500_25km,2)); % output on the 500mb level
-w500_25km_zmn_tm=mean(w500_25km_zmn,2);
+w500_25km_ztmn=mean(w500_25km_zmn,2);
 
 w_2km_532=squeeze(w_2km(:,:,18,t_mid:t_end));
 w_2km_532_zmn=squeeze(mean(w_2km_532,2));
-w_2km_532_zmn_tm=mean(w_2km_532_zmn,2);
+w_2km_532_ztmn=mean(w_2km_532_zmn,2);
 w500_2km_zmn=squeeze(mean(w500_2km,2)); % output on the 500mb level
-w500_2km_zmn_tm=mean(w500_2km_zmn,2);
+w500_2km_ztmn=mean(w500_2km_zmn,2);
 
 % w at all levels
-w_25km_zmn=squeeze(mean(w_25km,2));
-w_25km_ztmn_last8=squeeze(w_25km_zmn(:,:,an_t1:an_t2));
-w_25km_zmn_tm=squeeze(mean(w_25km_ztmn_last8,3));
+%w_25km_zmn=squeeze(mean(w_25km,2));
+%w_25km_ztmn_last8=squeeze(w_25km_zmn(:,:,an_t1:an_t2));
+%w_25km_ztmn=squeeze(mean(w_25km_ztmn_last8,3));
 
 w_2km_zmn=squeeze(mean(w_2km,2));
-w_2km_zmn_tm=mean(w_2km_zmn(:,:,t_mid:t_end),3); 
+w_2km_ztmn=mean(w_2km_zmn(:,:,t_mid:t_end),3); 
 
 w_1km_zmn=squeeze(mean(w_1km,2));
-w_1km_zmn_tm=mean(w_1km_zmn(:,:,t_mid:t_end),3); 
+w_1km_ztmn=mean(w_1km_zmn(:,:,t_mid:t_end),3); 
 
 q25=q_25km_ztmn';
 q2=q_2km_ztmn';
@@ -381,10 +402,12 @@ nlon=8;
 pfull_gen=pfull_25km;
 temp_gen=temp_25km;
 
+WalkerEnergetics % compute several of the radiative flux fields
 compTheta % compute the potential temperature
+
+
 %StreamFun % compute the streamfunction
 % call psi_driver to compute the streamfunction
-WalkerEnergetics % compute several of the radiative flux fields
 
 %psi_mat(ind,:,:)=psi_3(:,:);
 p_mat(ind,:,:)=p_25km_8x_znm(:,:);
@@ -512,26 +535,26 @@ title(tit_c)
 % title(tit_d)
 wlev=18;
 tendindex=4000;
-w_1km_zmn_tm_1lev=squeeze(w_1km_zmn_tm(:,wlev));
-incoming_ts=w_1km_zmn_tm_1lev;
+w_1km_ztmn_1lev=squeeze(w_1km_ztmn(:,wlev));
+incoming_ts=w_1km_ztmn_1lev;
 running_mean
 tendindex=3992;
 incoming_ts=output_ts;
 running_mean
-w_1km_zmn_tm_1lev_smooth=output_ts;
-w_1km_smooth_ts=w_1km_zmn_tm_1lev;
-w_1km_smooth_ts(9:3992)=w_1km_zmn_tm_1lev_smooth(1:3984);
+w_1km_ztmn_1lev_smooth=output_ts;
+w_1km_smooth_ts=w_1km_ztmn_1lev;
+w_1km_smooth_ts(9:3992)=w_1km_ztmn_1lev_smooth(1:3984);
 
 figure
 %subplot(1,2,1)
-plot(xcrm(1:xcrm_ngp),w_2km_zmn_tm(:,wlev),'k','LineWidth',1.5);
-%plot(xcrm(1:xcrm_ngp),w500_2km_zmn_tm(:),'k','LineWidth',2);
+plot(xcrm(1:xcrm_ngp),w_2km_ztmn(:,wlev),'k','LineWidth',1.5);
+%plot(xcrm(1:xcrm_ngp),w500_2km_ztmn(:),'k','LineWidth',2);
 hold on
-%plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_zmn_tm(:,wlev),'k','LineWidth',2);
+%plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_ztmn(:,wlev),'k','LineWidth',2);
 plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_smooth_ts,'--k','LineWidth',1.5);
-%plot(xgcm(1:xgcm_ngp),w_25km_zmn_tm(:,wlev),'c','LineWidth',2); % used for the lwoff
-plot(xgcm(1:xgcm_ngp),w_25km_zmn_tm(:,wlev),'b','LineWidth',2);
-%plot(xgcm(1:xgcm_ngp),w500_25km_zmn_tm(:),'r','LineWidth',2);
+%plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'c','LineWidth',2); % used for the lwoff
+plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'b','LineWidth',2);
+%plot(xgcm(1:xgcm_ngp),w500_25km_ztmn(:),'r','LineWidth',2);
 ylabel('w (m/s)','FontSize',20)
 xlabel('km','FontSize',20)
 yt=get(gca,'YTick');
