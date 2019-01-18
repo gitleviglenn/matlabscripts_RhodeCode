@@ -18,6 +18,11 @@ path=strcat(path_base,'gauss_d/');
 % define physical constants
 phys_constants
 
+% default values for the first time WalkerCell is run:
+experi=3 % experi=3 uses the ent0p9 experiment
+exptype=0
+
+
 %path_25km='/Users/silvers/data/WalkerCell/gauss_d/'
 %init_st_fname='19790101';
 %init_st_fname=strcat(path,'c96L33_8x80_nh.19790101');
@@ -152,9 +157,10 @@ xcrm_1km_ngp=4000;
 
 % scaling factors
 % precip can be converted into mm/day (scale1) 
+% what is the value of the latent heat conversion used in AM4?
 % or energy units of W/m2 (scale2)
 scale1=86400.; % s m^2 mm / kg day
-scale2=2.265e6; % J/kg why the difference with the value below?
+%scale2=2.265e6; % J/kg why the difference with the value below?
 %scale2=2.501e6;
 scale=scale1;
 cltscale=100. % convert to percentage of cloud fraction
@@ -190,19 +196,9 @@ precip_25km_znm=mean(precip_25km,2);
 precip_2km_znm=mean(precip_2km,2);
 precip_1km_znm=mean(precip_1km,2);
 precip_25km_8x_znm=mean(precip_25km_8x,2);
-%precip_2km_8x_znm=mean(precip_2km_8x,2);
 
-%p_contours=[10.,20.,30.,40.,50.,60.,70.,80.,90.,100.];
-%p_contours=[5.,20.,35.,50.,65.,80.,95.,110.,125.,140.];
-
-%precip_25km_znm=mean(precip_25km,2);
-%precip_25km_8x=precip_25km_8x(:,:,4800:2920);
-%precip_25km_8x_znm=mean(precip_25km_8x,2);
-%precip_2km_znm=mean(precip_2km,2);
-%precip_2km_8x_znm=mean(precip_2km_8x,2);
 p_2km_znm=scale.*(squeeze(precip_2km_znm));
 p_1km_znm=scale.*(squeeze(precip_1km_znm));
-%p_2km_8x_znm=scale.*(squeeze(precip_2km_8x_znm));
 p_25km_znm=scale.*(squeeze(precip_25km_znm));
 p_25km_8x_znm=scale.*(squeeze(precip_25km_8x_znm));
 
@@ -229,12 +225,13 @@ p_sfc_2km_fulltime=ncread(source_2km_month,'ps');
 psurf_2km=mean(p_sfc_2km_fulltime,3);
 psurf_2km_zmn=squeeze(mean(psurf_2km,2));
 
+p_sfc_1km_fulltime=ncread(source_1km_month,'ps');
+psurf_1km=mean(p_sfc_1km_fulltime,3);
+psurf_1km_zmn=squeeze(mean(psurf_1km,2));
+
 % vertical velocity
 w_25km=ncread(source_gcm_month,'w');
-%w_25km_zmn=squeeze(mean(w_25km,2));
-%w_25km_zmn_eq=w_25km_zmn(:,:,an_t1_d:an_t2_d);
-%w_25km_zmn_eq=w_25km_zmn(:,:,an_t1:an_t2);
-%w_25km_ztmn=squeeze(mean(w_25km_zmn_eq,3));
+w_25km_ztmn    = read_1var_ztmn(source_gcm_month,'w');
 
 w500_25km=ncread(source_25km,'w500');
 w500_2km=ncread(source_2km_dprecp,'w500');
@@ -256,27 +253,35 @@ clt_25km=ncread(source_gcm_month,'cld_amt');
 
 liq_1km=ncread(source_1km_month,'tot_liq_amt');
 liq_2km=ncread(source_2km_month,'tot_liq_amt');
-liq_25km=ncread(source_gcm_month,'tot_liq_amt');
 
 ice_1km=ncread(source_1km_month,'tot_ice_amt');
 ice_2km=ncread(source_2km_month,'tot_ice_amt');
-ice_25km=ncread(source_gcm_month,'tot_ice_amt');
 
 hur_1km=ncread(source_1km_month,'rh');
 hur_2km=ncread(source_2km_month,'rh');
 
-pfull_2km=ncread(source_2km_month,'pfull');
 pfull_25km=ncread(source_2km_month,'pfull');
 pfull_25km=100.*pfull_25km; % convert to Pa
+
+pfull_2km=ncread(source_2km_month,'pfull');
 pfull_2km=100.*pfull_2km; % convert to Pa
+
+pfull_1km=ncread(source_1km_month,'pfull');
+pfull_1km=100.*pfull_1km; % convert to Pa
 
 
 %tsurf=ncread(source_25km,'t_surf');
-temp_25km=ncread(source_gcm_month,'temp');
+%temp_25km=ncread(source_gcm_month,'temp');
 
-zfull_25km=ncread(source_2km_month,'z_full');
-zfull_25km_zmn=squeeze(mean(zfull_25km,2));
-zfull_25km_ztmn=squeeze(mean(zfull_25km_zmn,3));
+zfull_25km_ztmn=read_1var_ztmn(source_gcm_month,'z_full');
+
+zfull_2km=ncread(source_2km_month,'z_full');
+zfull_2km_zmn=squeeze(mean(zfull_2km,2));
+zfull_2km_ztmn=squeeze(mean(zfull_2km_zmn,3));
+
+zfull_1km=ncread(source_1km_month,'z_full');
+zfull_1km_zmn=squeeze(mean(zfull_1km,2));
+zfull_1km_ztmn=squeeze(mean(zfull_1km_zmn,3));
 
 liq_1km_tot=liq_1km+ice_1km;
 liq_1km_zmn=squeeze(mean(liq_1km_tot,2));
@@ -289,17 +294,21 @@ liq_2km_zmn=squeeze(mean(liq_2km_tot,2));
 liq_2km_zmn=liq_2km_zmn(:,:,t_mid:t_end);
 liq_2km_zmn=squeeze(mean(liq_2km_zmn,3));
 
-liq_25km_tot=liq_25km+ice_25km;
-liq_25km_zmn=squeeze(mean(liq_25km_tot,2));
-liq_25km_zmn_last10m=liq_25km_zmn(:,:,an_t1:an_t2);
-liq_25km_zmn_9m=squeeze(mean(liq_25km_zmn_last10m,3));
+liq_25km=ncread(source_gcm_month,'tot_liq_amt');
+liq_25km_ztmn=read_1var_ztmn(source_gcm_month,'tot_liq_amt');
+ice_25km=ncread(source_gcm_month,'tot_ice_amt');
+ice_25km_ztmn=read_1var_ztmn(source_gcm_month,'tot_ice_amt');
+
+% total zonal time mean condensate
+liq_25km_tot_ztmn=liq_25km_ztmn+ice_25km_ztmn;
 
 % relative humidity
 % for the 2km runs, the time dimension is often not present becuase it is 1
 
+hur_25km_ztmn  = read_1var_ztmn(source_gcm_month,'rh');
+
 hur_2km_zmn=squeeze(mean(hur_2km,2));
 hur_1km_zmn=squeeze(mean(hur_1km,2));
-%hur_2km_ztmn=hur_2km_zmn;
 
 % if using last 3 months of crm data:
 hur_2km_zmn=hur_2km_zmn(:,:,t_mid:t_end);
@@ -310,36 +319,19 @@ hur_1km_zmn=hur_1km_zmn(:,:,t_mid:t_end);
 hur_1km_zmn=squeeze(mean(hur_1km_zmn,3));
 hur_1km_ztmn=hur_1km_zmn;
 
-%hur_25km=ncread(source_gcm_month,'rh');
-%hur_25km_zmn=squeeze(mean(hur_25km,2));
-%hur_25km_zmn_last10m=hur_25km_zmn(:,:,an_t1:an_t2);
-%hur_25km_ztmn=squeeze(mean(hur_25km_zmn_last10m,3));
-
-
-%q_25km=ncread(source_gcm_month,'sphum');
-%q_25km_zmn=squeeze(mean(q_25km,2));
-%q_25km_zmn_end=q_25km_zmn(:,:,an_t1:an_t2);
-%%q_25km_zmn_end=q_25km_zmn(:,:,2);
-%q_25km_ztmn=mean(q_25km_zmn_end,3);
-
-w_25km_ztmn    = read_1var_ztmn(source_gcm_month,'w');
+% specific humidity
 q_25km_ztmn    = read_1var_ztmn(source_gcm_month,'sphum');
-hur_25km_ztmn  = read_1var_ztmn(source_gcm_month,'rh');
-temp_25km_ztmn = read_1var_ztmn(source_gcm_month,'temp');
-
-%function var = read_1var_ztmn(filnam,varnam)
-%var = ncread(filnam,varnam);
-%var = squeeze(mean(var(:,:,:,:),4)); % average over time
-%var = squeeze(mean(var,2)); % average meridionally
-%end
 
 q_2km=ncread(source_2km_month,'sphum');
 q_2km_zmn=squeeze(mean(q_2km,2));
-%q_2km_zmn_end=q_2km_zmn(:,:,2);
-%q_2km_zmntmn=mean(q_2km_zmn_end,3);
-
 q_2km_ztmn=squeeze(q_2km_zmn(:,:,1));
 
+q_1km=ncread(source_1km_month,'sphum');
+q_1km_zmn=squeeze(mean(q_1km,2));
+q_1km_ztmn=squeeze(q_1km_zmn(:,:,1));
+
+
+temp_25km_ztmn = read_1var_ztmn(source_gcm_month,'temp');
 tsurf1=squeeze(tsurf_fulltime(:,4,1)); % indices shouldn't matter here...
 
 clt_25km_znm=cltscale.*squeeze(mean(clt_25km,2));
@@ -400,10 +392,11 @@ nlon=8;
 %nlon=50;
 
 pfull_gen=pfull_25km;
-temp_gen=temp_25km;
+%temp_gen=temp_25km;
 
-WalkerEnergetics % compute several of the radiative flux fields
 compTheta % compute the potential temperature
+WalkerEnergetics % compute several of the radiative flux fields
+%compTheta % compute the potential temperature
 
 
 %StreamFun % compute the streamfunction
@@ -451,6 +444,37 @@ gcm_ris=xgcm_ngp/2;
 gcm_sub=xgcm_ngp-4;
 crm_ris=xcrm_ngp/2;
 crm_sub=xcrm_ngp-100;
+
+wlev=18;
+tendindex=4000;
+w_1km_ztmn_1lev=squeeze(w_1km_ztmn(:,wlev));
+incoming_ts=w_1km_ztmn_1lev;
+running_mean
+tendindex=3992;
+incoming_ts=output_ts;
+running_mean
+w_1km_ztmn_1lev_smooth=output_ts;
+w_1km_smooth_ts=w_1km_ztmn_1lev;
+w_1km_smooth_ts(9:3992)=w_1km_ztmn_1lev_smooth(1:3984);
+
+figure
+%subplot(1,2,1)
+plot(xcrm(1:xcrm_ngp),w_2km_ztmn(:,wlev),'k','LineWidth',1.5);
+%plot(xcrm(1:xcrm_ngp),w500_2km_ztmn(:),'k','LineWidth',2);
+hold on
+%plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_ztmn(:,wlev),'k','LineWidth',2);
+plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_smooth_ts,'--k','LineWidth',1.5);
+%plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'c','LineWidth',2); % used for the lwoff
+plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'b','LineWidth',2);
+%plot(xgcm(1:xgcm_ngp),w500_25km_ztmn(:),'r','LineWidth',2);
+ylabel('w (m/s)','FontSize',20)
+xlabel('km','FontSize',20)
+yt=get(gca,'YTick');
+set(gca,'FontWeight','bold')
+set(gca,'FontSize',16)
+tit_e=strcat('Vertical Velocity');
+title(tit_e)
+
 
 stop
 
@@ -533,35 +557,6 @@ title(tit_c)
 % set(gca,'FontSize',16)
 % tit_d=strcat('Surface Temperature',tit_st);
 % title(tit_d)
-wlev=18;
-tendindex=4000;
-w_1km_ztmn_1lev=squeeze(w_1km_ztmn(:,wlev));
-incoming_ts=w_1km_ztmn_1lev;
-running_mean
-tendindex=3992;
-incoming_ts=output_ts;
-running_mean
-w_1km_ztmn_1lev_smooth=output_ts;
-w_1km_smooth_ts=w_1km_ztmn_1lev;
-w_1km_smooth_ts(9:3992)=w_1km_ztmn_1lev_smooth(1:3984);
-
-figure
-%subplot(1,2,1)
-plot(xcrm(1:xcrm_ngp),w_2km_ztmn(:,wlev),'k','LineWidth',1.5);
-%plot(xcrm(1:xcrm_ngp),w500_2km_ztmn(:),'k','LineWidth',2);
-hold on
-%plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_ztmn(:,wlev),'k','LineWidth',2);
-plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_smooth_ts,'--k','LineWidth',1.5);
-%plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'c','LineWidth',2); % used for the lwoff
-plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'b','LineWidth',2);
-%plot(xgcm(1:xgcm_ngp),w500_25km_ztmn(:),'r','LineWidth',2);
-ylabel('w (m/s)','FontSize',20)
-xlabel('km','FontSize',20)
-yt=get(gca,'YTick');
-set(gca,'FontWeight','bold')
-set(gca,'FontSize',16)
-tit_e=strcat('Vertical Velocity');
-title(tit_e)
 
 subplot(1,2,2)
 % plot precip time mean
@@ -580,7 +575,7 @@ suptitle(tit_st)
 figure
 liq_1km_zmn_scale=liq_1km_zmn*1000.;
 liq_2km_zmn_scale=liq_2km_zmn*1000.;
-liq_25km_zmn_scale=liq_25km_zmn_9m*1000.;
+liq_25km_zmn_scale=liq_25km_tot_ztmn*1000.;
 q_contours=[0.4,0.1,0.06,0.04,0.03,0.02,0.01,0.001,0.0001,0.0001];
 q_contours=[0.4,0.1,0.06,0.04,0.03,0.02];
 subplot(1,3,1)
