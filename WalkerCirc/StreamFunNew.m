@@ -67,13 +67,19 @@
 
 % if using a 1km or 2km resolution...
 if gridspac < 10
+	start_tim=2;
+        end_tim=6;
 % incoming data should have xdim ydim zdim
   w_gen=ncread(source_psi,'w');
   u_gen=ncread(source_psi,'ucomp');
   sphum_gen=ncread(source_psi,'sphum');
   temp_gen=ncread(source_psi,'temp');
   pfull_gen=ncread(source_psi,'pfull');
-% else if using a 25km resolution...
+  w_gen=w_gen(:,:,:,start_tim:end_tim);
+  u_gen=u_gen(:,:,:,start_tim:end_tim);
+  sphum_gen=sphum_gen(:,:,:,start_tim:end_tim);
+  temp_gen=temp_gen(:,:,:,start_tim:end_tim);
+% else if using a start_tim5km resolution...
   'grid spacing is less than 10km '
 else % grid spacing is greater than 10 km 
   an_t1=1;

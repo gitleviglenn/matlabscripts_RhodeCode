@@ -29,81 +29,93 @@
 %tdtlw_crm=tdtlw_2_tzmn;
 %tdtls_crm=tdtls_2km_tzmn;
 
-% nccreate('mymy_psi_lwoff.nc','mystream',...
-% 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
-% ncwrite('mymy_psi_lwoff.nc','mystream',psi_mat_lwoff);
+
+crm_file      ='mymy_crm_ctl_tmn.nc';
+cloud_file    ='mymy_clouds_ctl.nc';
+gcm_tend_file ='mymy_tdt_ctl.nc';
+gcm_psi_file  ='mymy_psi_ent0p9.nc';
+
+%crm_file  ='mymy_crm_lwoff_tmn.nc';
+%cloud_file='mymy_clouds_lwoff.nc';
+%gcm_tend_file='mymy_tdt_lwoff.nc';
+
+ nccreate(gcm_psi_file,'mystream',...
+ 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
+ ncwrite(gcm_psi_file,'mystream',psi_mat);
 
 % write to mymy_clouds.nc
-nccreate('mymy_clouds.nc','myrh',...
+nccreate(cloud_file,'myrh',...
 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
-ncwrite('mymy_clouds.nc','myrh',rh_mat);
-nccreate('mymy_clouds.nc','myclouds',...
+ncwrite(cloud_file,'myrh',rh_mat);
+nccreate(cloud_file,'myclouds',...
 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
-ncwrite('mymy_clouds.nc','myclouds',cl_mat);
-nccreate('mymy_clouds.nc','tot_condensed',...
-'Dimensions',{'xdim',160,'pdim',33});
-ncwrite('mymy_clouds.nc','tot_condensed',liq_25km_zmn_9m);
-nccreate('mymy_clouds.nc','pfull',...
+ncwrite(cloud_file,'myclouds',cl_mat);
+nccreate(cloud_file,'tot_condensed',...
+'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
+ncwrite(cloud_file,'tot_condensed',liq_25km_tot_mat);
+nccreate(cloud_file,'pfull',...
 'Dimensions',{'pdim',33});
-ncwrite('mymy_clouds.nc','pfull',pfull_2km);
+ncwrite(cloud_file,'pfull',pfull_2km);
 
 % write out gcm tdt variables to netcdf file...
 % write to mymy_tdt.nc
-nccreate('mymy_tdt.nc','tdtlw_gcm',...
+nccreate(gcm_tend_file,'tdtlw_gcm',...
 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
-ncwrite('mymy_tdt.nc','tdtlw_gcm',tdtlw_mat);
+ncwrite(gcm_tend_file,'tdtlw_gcm',tdtlw_mat);
 
-nccreate('mymy_tdt.nc','tdtsw_gcm',...
+nccreate(gcm_tend_file,'tdtsw_gcm',...
 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
-ncwrite('mymy_tdt.nc','tdtsw_gcm',tdtsw_mat);
+ncwrite(gcm_tend_file,'tdtsw_gcm',tdtsw_mat);
 
-nccreate('mymy_tdt.nc','tdtls_gcm',...
+nccreate(gcm_tend_file,'tdtls_gcm',...
 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
-ncwrite('mymy_tdt.nc','tdtls_gcm',tdtls_mat);
+ncwrite(gcm_tend_file,'tdtls_gcm',tdtls_mat);
 
-nccreate('mymy_tdt.nc','tdtconv_gcm',...
+nccreate(gcm_tend_file,'tdtconv_gcm',...
 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
-ncwrite('mymy_tdt.nc','tdtconv_gcm',tdtconv_mat);
+ncwrite(gcm_tend_file,'tdtconv_gcm',tdtconv_mat);
 
-nccreate('mymy_tdt.nc','tdt_totcl_gcm',...
+nccreate(gcm_tend_file,'tdt_totcl_gcm',...
 'Dimensions',{'ensemble',5,'xdim',160,'pdim',33});
-ncwrite('mymy_tdt.nc','tdt_totcl_gcm',tdt_totcl_mat);
+ncwrite(gcm_tend_file,'tdt_totcl_gcm',tdt_totcl_mat);
 
 % write out crm tdt variables to netcdf file...
 % crm_file='mymy_crm_tdt.nc';
 % write to mymy_crm_tmn.nc
-crm_file='mymy_crm_tmn.nc';
+% crm_file='mymy_crm_tmn.nc';
 nccreate(crm_file,'tdtlw_2km',...
 'Dimensions',{'xdim',2000,'pdim',33});
-ncwrite(crm_file,'tdtlw_2km',tdtlw_2_tzmn);
+ncwrite(crm_file,'tdtlw_2km',tdtlw_2_ztmn);
 
 nccreate(crm_file,'tdtlw_1km',...
 'Dimensions',{'xdim2',4000,'pdim',33});
-ncwrite(crm_file,'tdtlw_1km',tdtlw_1_tzmn);
+ncwrite(crm_file,'tdtlw_1km',tdtlw_1_ztmn);
 
 nccreate(crm_file,'tdtsw_2km',...
 'Dimensions',{'xdim',2000,'pdim',33});
-ncwrite(crm_file,'tdtsw_2km',tdtsw_2_tzmn);
+ncwrite(crm_file,'tdtsw_2km',tdtsw_2_ztmn);
 
 nccreate(crm_file,'tdtsw_1km',...
 'Dimensions',{'xdim2',4000,'pdim',33});
-ncwrite(crm_file,'tdtsw_1km',tdtsw_1_tzmn);
+ncwrite(crm_file,'tdtsw_1km',tdtsw_1_ztmn);
 
 nccreate(crm_file,'tdtls_1km',...
 'Dimensions',{'xdim2',4000,'pdim',33});
-ncwrite(crm_file,'tdtls_1km',tdtls_1_tzmn);
+ncwrite(crm_file,'tdtls_1km',tdtls_1_ztmn);
 
 nccreate(crm_file,'tdtls_2km',...
 'Dimensions',{'xdim',2000,'pdim',33});
-ncwrite(crm_file,'tdtls_2km',tdtls_2_tzmn);
+ncwrite(crm_file,'tdtls_2km',tdtls_2_ztmn);
 
 nccreate(crm_file,'hur_2km',...
 'Dimensions',{'xdim',2000,'pdim',33});
-ncwrite(crm_file,'hur_2km',hur_2km_zmn_tmn);
+%ncwrite(crm_file,'hur_2km',hur_2km_zmn_tmn);
+ncwrite(crm_file,'hur_2km',hur_2km_ztmn);
 
 nccreate(crm_file,'hur_1km',...
 'Dimensions',{'xdim2',4000,'pdim',33});
-ncwrite(crm_file,'hur_1km',hur_1km_zmn_tmn);
+%ncwrite(crm_file,'hur_1km',hur_1km_zmn_tmn);
+ncwrite(crm_file,'hur_1km',hur_1km_ztmn);
 
 nccreate(crm_file,'tot_condensed_2km',...
 'Dimensions',{'xdim',2000,'pdim',33});

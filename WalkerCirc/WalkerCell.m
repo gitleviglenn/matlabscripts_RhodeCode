@@ -8,26 +8,19 @@
 % levi silvers                                       dec 2018
 %--------------------------------------------------------------------
 path_base='/Users/silvers/data/WalkerCell/'
-%tit_st=' cos sq ';
-%tit_st=' gaussian ';
-%path_25km=path;
 
 path=strcat(path_base,'gauss_d/');
-%path=path_base;
+path_n=strcat(path_base,'testing_20181203/');
 
 % define physical constants
 phys_constants
 
 % default values for the first time WalkerCell is run:
 experi=3 % experi=3 uses the ent0p9 experiment
-exptype=0
+exptype=0 % 0 is the default experimental configuration (lwcre is on)
+% 2 corresponds to lwoff
 
-
-%path_25km='/Users/silvers/data/WalkerCell/gauss_d/'
-%init_st_fname='19790101';
-%init_st_fname=strcat(path,'c96L33_8x80_nh.19790101');
-
-%exptype: 0: default; 2: p4K; 3: lwoff
+%exptype: 0: default; 2: lwoff; 3: p4K
 if (experi < 2) 
     estr='ent0p5'
     estr2='ent0p5'
@@ -36,62 +29,63 @@ if (experi < 2)
     elseif (exptype > 1)
         estr2='ent0p5_lwoff'
     end
-    %estr2='ent0p5_p4K'
+    %estr2='ent0p5_p4K'plot(tdt_heat_prof_25(1,10:33),zzfull(10:33),'-o','Color',colyel) 
     ind=1
     % initialize several matrices to hold the ensemble of gcm experiments
     %psi_mat       = zeros(5,160,33);
-    p_mat         = zeros(5,160,2920);
-    prec_mn_mat   = zeros(6,1);
-    radh_mn_mat   = zeros(6,1);
-    rh_mat        = zeros(5,160,33);
-    cl_mat        = zeros(5,160,33);
-    tdtlw_mat     = zeros(5,160,33);
-    tdtsw_mat     = zeros(5,160,33);
-    tdtconv_mat   = zeros(5,160,33);
-    tdt_totcl_mat = zeros(5,160,33);
-    rad_heat_mat  = zeros(5,33);
-    lts_mat       = zeros(5,160);
+    p_mat            = zeros(5,160,2920);
+    prec_mn_mat      = zeros(6,1);
+    radh_mn_mat      = zeros(6,1);
+    rh_mat           = zeros(5,160,33);
+    cl_mat           = zeros(5,160,33);
+    liq_25km_tot_mat = zeros(5,160,33);
+    tdtlw_mat        = zeros(5,160,33);
+    tdtsw_mat        = zeros(5,160,33);
+    tdtconv_mat      = zeros(5,160,33);
+    tdt_totcl_mat    = zeros(5,160,33);
+    rad_heat_mat     = zeros(5,33);
+    lts_mat          = zeros(5,160);
 elseif (experi < 3)
-estr='ent0p7'
-estr2='ent0p7'
-if (exptype > 2)
-  estr2='ent0p7_p4K'
-elseif (exptype > 1)
-  estr2='ent0p7_lwoff'
-end
-ind=2
+  estr='ent0p7'
+  estr2='ent0p7'
+  if (exptype > 2)
+    estr2='ent0p7_p4K'
+  elseif (exptype > 1)
+    estr2='ent0p7_lwoff'
+  end
+  ind=2
 elseif (experi < 4)
-estr='ent0p9'
-estr2='ent0p9'
-if (exptype > 2)
-  estr2='ent0p9_p4K'
-elseif (exptype > 1)
-  estr2='ent0p9_lwoff'
-end
-%estr2='b' % this is only necessary because of the stupid experiment names i chose
-ind=3
+  estr='ent0p9'
+  estr2='ent0p9'
+  if (exptype > 2)
+    estr2='ent0p9_p4K'
+  elseif (exptype > 1)
+    estr2='ent0p9_lwoff'
+  end
+  ind=3
 elseif (experi < 5)
-estr='ent1p1'
-estr2='ent1p1'
-if (exptype > 2)
-  estr2='ent1p1_p4K'
-elseif (exptype > 1)
-  estr2='ent1p1_lwoff'
-end
-ind=4
+  estr='ent1p1'
+  estr2='ent1p1'
+  if (exptype > 2)
+    estr2='ent1p1_p4K'
+  elseif (exptype > 1)
+    estr2='ent1p1_lwoff'
+  end
+  ind=4
 elseif (experi < 6)
-estr='ent1p3'
-estr2='ent1p3'
-if (exptype > 2)
-  estr2='ent1p3_p4K'
-elseif (exptype > 1)
-  estr2='ent1p3_lwoff'
-end
-ind=5
+  estr='ent1p3'
+  estr2='ent1p3'
+  if (exptype > 2)
+    estr2='ent1p3_p4K'
+  elseif (exptype > 1)
+    estr2='ent1p3_lwoff'
+  end
+  ind=5
 end 
 
 %tit_st='4K ent1p1';
 tit_st=strcat('4K ',estr2);
+
 
 % timing variables for gcm 
 an_t1=1; % for months
@@ -103,7 +97,7 @@ an_t2_d=365;
 % timing variables for crm [days]
 %t_end=181; % was 59 original
 %t_mid=91; % was 30 originally
-t_mid=3;
+t_mid=1;
 t_end=6;
 
 yearstr='/1980th1983';
@@ -111,38 +105,60 @@ yearstr_79='/19790101';
 
 % path strings... 
 %path_25km=strcat(path,'c96L33_am4p0_8x160_nh_25km_wlkr_4K_',estr2,'/19790101');
-path_25km=strcat(path,'c8x160L33_am4p0_25km_wlkr_',estr2);
-path_100km=strcat(path,'c8x160L33_am4p0_100km_wlkr_',estr2);
+path_25km=strcat(path_n,'c8x160L33_am4p0_25km_wlkr_',estr2);
+path_100km=strcat(path_n,'c8x160L33_am4p0_100km_wlkr_',estr2);
 
 %path_2km=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790401');
 %path_2km=strcat(path,'c50x2000L33_am4p0_2km_wlkr_4K/');
 %path_1km=strcat(path,'c96L33_am4p0_10x4000_nh_1km_wlkr_4K/');
-path_1km=strcat(path,'c10x4000L33_am4p0_1km_wlkr_4K/');
+%path_1km=strcat(path_n,'c10x4000L33_am4p0_1km_wlkr_4K/');
 % path_2km=strcat(path,'am4p0_50x2000_4K/','19790301');
 
 % source strings...
-source_25km_8xday=strcat(path_25km,yearstr_79,'.atmos_8xdaily.nc');
-source_25km=strcat(path_25km,yearstr_79,'.atmos_daily.nc');
-%source_25km_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
-source_gcm_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
-%source_gcm_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
+%%source_25km_8xday=strcat(path_25km,yearstr_79,'.atmos_8xdaily.nc');
+%source_25km=strcat(path_25km,yearstr_79,'.atmos_daily.nc');
+
+%%% this should be the default definition of the path
+%source_gcm_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
+%source_gcm_daily=strcat(path_25km,'/1979th1983_daily.nc');
+
+ind=4
+% in some cases the indices indicate differing entrainment values, in other cases diff exps
+% ind 1 = either 0p5 or noconv
+% ind 2 = either 0p7 or lwoff
+% ind 3 = either 0p9 or control (0p9, lwon, conv on)
+% ind 4 = either 1p1 or noconv lwoff
+% ind 5 = either 1p3 or ...
+
+% use the path below for noconv_lwoff or  noconv
+source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/',yearstr,'.atmos_month_tmn.nc');
+source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/','1979th1983_daily.nc');
+%source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
+%source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/','1979th1983_daily.nc');
+%source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_100km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
+
+%source_25km=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/',yearstr_79,'.atmos_daily.nc');
+%%source_gcm_month=strcat(path_25km,'_noconv',yearstr,'.atmos_month_tmn.nc');
+%%source_gcm_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
 
 source_100km_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
 
-source_1km_month=strcat(path,'c10x4000L33_am4p0_1km_wlkr_4K/','1979_6mn.atmos_month.nc');
+%lwstring='4K_lwoff/';
+lwstring='4K/';
+
+source_1km_month=strcat(path_n,'c10x4000L33_am4p0_1km_wlkr_',lwstring,'1979_6mn.atmos_month.nc');
 %source_1km_month=strcat(path_1km,'19790301.atmos_month_psivars.nc');
 %source_1km_month=strcat(path_1km,'1979.mn3456.atmos_month_psivars.tmn.nc');
-source_1km_liq_month=strcat(path_1km,'1979.040506.atmos_month.liqvars.3months.nc');
+%source_1km_liq_month=strcat(path_1km,'1979.040506.atmos_month.liqvars.3months.nc');
 %source_2km=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','1979_6mn.atmos_daily.nc');
 %source_2km=strcat(path_2km,'.atmos_daily.nc');
-% source_2km_month=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','1979_6mn.atmos_month.nc');
-source_2km_month=strcat(path,'c50x2000L33_am4p0_2km_wlkr_4K/','1979_6mn.atmos_month.nc');
-source_2km_dprecp=strcat(path,'c50x2000L33_am4p0_2km_wlkr_4K/','1979_6mn.atmos_daily_precp.nc');
+%source_2km_month=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','1979_6mn.atmos_month.nc');
+%source_2km_month=strcat(path,'c50x2000L33_am4p0_2km_wlkr_4K_lwoff/','1979_6mn.atmos_month.nc');
+source_2km_month=strcat(path_n,'c50x2000L33_am4p0_2km_wlkr_',lwstring,'1979_6mn.atmos_month.nc');
+source_2km_dprecp=strcat(path_n,'c50x2000L33_am4p0_2km_wlkr_',lwstring,'1979.6mn.atmos_daily_selvars.nc');
 %source_2km_month=strcat(path_2km,'.atmos_month.nc');
 %source_2km_8xday=strcat(path_2km,'.atmos_8xdaily.nc');
 
-% pfull_2km=ncread(source_2km_month,'pfull');
-% 
 
 % domain related parameters:
 xgcm=0:25:4000; % size of gcm domain in km
@@ -168,56 +184,63 @@ cltscale=100. % convert to percentage of cloud fraction
 % read variables from input files
 
 % precipitation
-precip_25km=ncread(source_25km,'precip');
+precip_25km_daily=ncread(source_gcm_daily,'precip');
+precip_25km=ncread(source_gcm_month,'precip');
 precip_2km=ncread(source_2km_month,'precip');
 precip_1km=ncread(source_1km_month,'precip');
-precip_25km_8x=ncread(source_25km_8xday,'precip');
+%precip_25km_8x=ncread(source_25km_8xday,'precip');
 %precip_2km_8x=ncread(source_2km_8xday,'precip');
-p_cv_25km=ncread(source_25km,'prec_conv'); %kg(h2o)/m2/2
-p_ls_25km=ncread(source_25km,'prec_ls');
-p_cv_2km=ncread(source_2km_month,'prec_conv'); %kg(h2o)/m2/2
-p_ls_2km=ncread(source_2km_month,'prec_ls');
+%p_cv_25km=ncread(source_25km,'prec_conv'); %kg(h2o)/m2/2
+%p_ls_25km=ncread(source_25km,'prec_ls');
+%p_cv_2km=ncread(source_2km_month,'prec_conv'); %kg(h2o)/m2/2
+%p_ls_2km=ncread(source_2km_month,'prec_ls');
 
 temp_2km=ncread(source_2km_month,'temp');
-temp_crm_zmn=squeeze(mean(temp_2km,2)); 
-temp_crm_zmn=temp_crm_zmn(:,:,3:6);
+temp_crm_eq=temp_2km(:,:,:,t_mid:t_end);
+temp_crm_zmn=squeeze(mean(temp_crm_eq,2)); 
+%temp_crm_zmn=temp_crm_zmn(:,:,t_mid:t_end);
 temp_crm_ztmn=squeeze(mean(temp_crm_zmn,3));
 temp_crm_ztzmn=squeeze(mean(temp_crm_ztmn,1));
 
 temp_1km=ncread(source_1km_month,'temp');
 temp_crm1_zmn=squeeze(mean(temp_1km,2)); 
-temp_crm1_zmn=temp_crm1_zmn(:,:,3:6);
+temp_crm1_zmn=temp_crm1_zmn(:,:,t_mid:t_end);
 temp_crm1_ztmn=squeeze(mean(temp_crm1_zmn,3));
 
 w_2km=ncread(source_2km_month,'w');
 w_1km=ncread(source_1km_month,'w');
 
 precip_25km_znm=mean(precip_25km,2);
+precip_25km_daily_znm=mean(precip_25km_daily,2);
 precip_2km_znm=mean(precip_2km,2);
 precip_1km_znm=mean(precip_1km,2);
-precip_25km_8x_znm=mean(precip_25km_8x,2);
+%precip_25km_8x_znm=mean(precip_25km_8x,2);
 
 p_2km_znm=scale.*(squeeze(precip_2km_znm));
 p_1km_znm=scale.*(squeeze(precip_1km_znm));
 p_25km_znm=scale.*(squeeze(precip_25km_znm));
-p_25km_8x_znm=scale.*(squeeze(precip_25km_8x_znm));
+p_25km_daily_znm=scale.*(squeeze(precip_25km_daily_znm));
+%p_25km_8x_znm=scale.*(squeeze(precip_25km_8x_znm));
 
 % time mean precip
-p_25km_8x_znm_equil=p_25km_8x_znm(:,960:2920);
-p_25km_tmean=mean(p_25km_8x_znm_equil,2);
+%p_25km_8x_znm_equil=p_25km_8x_znm(:,960:2920);
+%p_25km_tmean=mean(p_25km_8x_znm_equil,2);
+p_25km_tmean=mean(p_25km_znm,2);
+p_25km_dly_tmean=mean(p_25km_daily_znm,2);
 p_2km_tmean=mean(p_2km_znm,2);
 p_1km_tmean=mean(p_1km_znm,2);
 
 % surface temperature
-tsurf_fulltime=ncread(source_25km,'t_surf');
-tsfc=tsurf_fulltime(:,:,3:12);
-tsfc_mn=mean(tsfc,3);
+tsurf_fulltime=ncread(source_gcm_month,'t_surf');
+%tsfc=tsurf_fulltime(:,:,:);
+tsfc_mn=mean(tsurf_fulltime,3);
 %tsfc_zmn=squeeze(mean(tsfc_mn,2)); computed in compTheta.m
 tsurf_crm=ncread(source_2km_month,'t_surf');
 tsurf_crm1=ncread(source_1km_month,'t_surf');
 
 % surface pressure
-p_sfc_fulltime=ncread(source_25km,'ps');
+%p_sfc_fulltime=ncread(source_25km,'ps');
+p_sfc_fulltime=ncread(source_gcm_month,'ps');
 psurf=mean(p_sfc_fulltime,3);
 psurf_zmn=squeeze(mean(psurf,2));
 
@@ -229,26 +252,44 @@ p_sfc_1km_fulltime=ncread(source_1km_month,'ps');
 psurf_1km=mean(p_sfc_1km_fulltime,3);
 psurf_1km_zmn=squeeze(mean(psurf_1km,2));
 
+% velocity
+u_25km_ztmn    = read_1var_ztmn(source_gcm_month,'ucomp');
+v_25km_ztmn    = read_1var_ztmn(source_gcm_month,'vcomp');
+u_2km_ztmn     = read_1var_ztmn(source_2km_month,'ucomp');
+v_2km_ztmn     = read_1var_ztmn(source_2km_month,'vcomp');
+u_1km_ztmn     = read_1var_ztmn(source_1km_month,'ucomp');
+v_1km_ztmn     = read_1var_ztmn(source_1km_month,'vcomp');
+
+% look at horizontal shear...
+u_25km_dmn     = squeeze(mean(u_25km_ztmn,1));
+u_2km_dmn      = squeeze(mean(u_2km_ztmn,1));
+u_1km_dmn      = squeeze(mean(u_1km_ztmn,1));
+
 % vertical velocity
 w_25km=ncread(source_gcm_month,'w');
 w_25km_ztmn    = read_1var_ztmn(source_gcm_month,'w');
 
-w500_25km=ncread(source_25km,'w500');
-w500_2km=ncread(source_2km_dprecp,'w500');
+omega_25km_ztmn  = read_1var_ztmn(source_gcm_month,'omega');
+omega_2km_ztmn   = read_1var_ztmn(source_2km_month,'omega');
+omega_1km_ztmn   = read_1var_ztmn(source_1km_month,'omega');
+
+%w500_25km=ncread(source_25km,'w500');
+%w500_2km=ncread(source_2km_dprecp,'w500');
 
 w_2km=ncread(source_2km_month,'w');
 w_2km_zmn=squeeze(mean(w_2km,2));
-w_2km_zmn=w_2km_zmn(:,:,3:6);
+w_2km_zmn=w_2km_zmn(:,:,t_mid:t_end);
 w_2km_ztmn=squeeze(mean(w_2km_zmn,3));
 
 w_1km=ncread(source_1km_month,'w');
 w_1km_zmn=squeeze(mean(w_1km,2));
-w_1km_zmn=w_1km_zmn(:,:,3:6);
+w_1km_zmn=w_1km_zmn(:,:,t_mid:t_end);
 w_1km_ztmn=squeeze(mean(w_1km_zmn,3));
 
 clt_2km=ncread(source_2km_month,'cld_amt');
 clt_1km=ncread(source_1km_month,'cld_amt');
 %clt_25km=ncread(source_25km,'cld_amt');
+%clt_25km=ncread(source_gcm_month,'cld_amt');
 clt_25km=ncread(source_gcm_month,'cld_amt');
 
 liq_1km=ncread(source_1km_month,'tot_liq_amt');
@@ -294,10 +335,23 @@ liq_2km_zmn=squeeze(mean(liq_2km_tot,2));
 liq_2km_zmn=liq_2km_zmn(:,:,t_mid:t_end);
 liq_2km_zmn=squeeze(mean(liq_2km_zmn,3));
 
-liq_25km=ncread(source_gcm_month,'tot_liq_amt');
+%liq_25km=ncread(source_gcm_month,'tot_liq_amt');
 liq_25km_ztmn=read_1var_ztmn(source_gcm_month,'tot_liq_amt');
-ice_25km=ncread(source_gcm_month,'tot_ice_amt');
+liq_25km_prof=squeeze(mean(liq_25km_ztmn,1));
 ice_25km_ztmn=read_1var_ztmn(source_gcm_month,'tot_ice_amt');
+ice_25km_prof=squeeze(mean(ice_25km_ztmn,1));
+liq_wat_25km_ztmn=read_1var_ztmn(source_gcm_month,'liq_wat');
+liq_wat_25km_prof=squeeze(mean(liq_wat_25km_ztmn,1));
+
+liq_2km_ztmn=read_1var_ztmn(source_2km_month,'tot_liq_amt');
+liq_2km_prof=squeeze(mean(liq_2km_ztmn,1));
+ice_2km_ztmn=read_1var_ztmn(source_2km_month,'tot_ice_amt');
+ice_2km_prof=squeeze(mean(ice_2km_ztmn,1));
+
+liq_1km_ztmn=read_1var_ztmn(source_1km_month,'tot_liq_amt');
+liq_1km_prof=squeeze(mean(liq_1km_ztmn,1));
+ice_1km_ztmn=read_1var_ztmn(source_1km_month,'tot_ice_amt');
+ice_1km_prof=squeeze(mean(ice_1km_ztmn,1));
 
 % total zonal time mean condensate
 liq_25km_tot_ztmn=liq_25km_ztmn+ice_25km_ztmn;
@@ -357,14 +411,14 @@ clt_1km_znm_eq_tmn=mean(clt_1km_znm_eq,3);
 w_25km_532=squeeze(w_25km(:,:,18,:)); % grab 532 level
 w_25km_532_zmn=squeeze(mean(w_25km_532,2));
 w_25km_532_ztmn=mean(w_25km_532_zmn,2);
-w500_25km_zmn=squeeze(mean(w500_25km,2)); % output on the 500mb level
-w500_25km_ztmn=mean(w500_25km_zmn,2);
+%w500_25km_zmn=squeeze(mean(w500_25km,2)); % output on the 500mb level
+%w500_25km_ztmn=mean(w500_25km_zmn,2);
 
 w_2km_532=squeeze(w_2km(:,:,18,t_mid:t_end));
 w_2km_532_zmn=squeeze(mean(w_2km_532,2));
 w_2km_532_ztmn=mean(w_2km_532_zmn,2);
-w500_2km_zmn=squeeze(mean(w500_2km,2)); % output on the 500mb level
-w500_2km_ztmn=mean(w500_2km_zmn,2);
+%w500_2km_zmn=squeeze(mean(w500_2km,2)); % output on the 500mb level
+%w500_2km_ztmn=mean(w500_2km_zmn,2);
 
 % w at all levels
 %w_25km_zmn=squeeze(mean(w_25km,2));
@@ -382,6 +436,15 @@ q2=q_2km_ztmn';
 
 % call script compTheta
 % prelims to calling compTheta: 
+clear rho_25km;
+clear rho_2km;
+clear rho_1km;
+
+rho_25km=rho_2d_gen(temp_25km_ztmn,q_25km_ztmn,pfull_25km,160);
+rho_2km=rho_2d_gen(temp_crm_ztmn,q_2km_ztmn,pfull_2km,2000);
+rho_1km=rho_2d_gen(temp_crm1_ztmn,q_1km_ztmn,pfull_1km,2000);
+
+
 % below for 25km
 nlev=33;
 nlat=160;
@@ -398,14 +461,20 @@ compTheta % compute the potential temperature
 WalkerEnergetics % compute several of the radiative flux fields
 %compTheta % compute the potential temperature
 
+% compute the diabatic divergence
+div_d_25km=diabdiv(vvel_d_25km,160,psurf_zmn,pfull_gen);
+div_d_2km=diabdiv(vvel_d_2km,2000,psurf_2km_zmn,pfull_gen);
+div_d_1km=diabdiv(vvel_d_1km,4000,psurf_1km_zmn,pfull_gen);
+
 
 %StreamFun % compute the streamfunction
 % call psi_driver to compute the streamfunction
 
 %psi_mat(ind,:,:)=psi_3(:,:);
-p_mat(ind,:,:)=p_25km_8x_znm(:,:);
+p_mat(ind,:,:)=p_25km_daily_znm(:,1:365); % probably needs to be checked
 rh_mat(ind,:,:)=hur_25km_ztmn(:,:);
 cl_mat(ind,:,:)=clt_25km_znm_tmn(:,:);
+liq_25km_tot_mat(ind,:,:)=liq_25km_tot_ztmn(:,:);
 tdtlw_mat(ind,:,:)=tdtlw_25_ztmn(:,:);
 tdtsw_mat(ind,:,:)=tdtsw_25_ztmn(:,:);
 tdtls_mat(ind,:,:)=tdtls_25km_ztmn(:,:);
@@ -426,6 +495,7 @@ temprad=tdtlw_dmn+tdtsw_dmn;
 rad_heat_mat(ind,:)=temprad;
 
 MeanPrecip_25km=mean(p_25km_tmean,1)
+MeanPrecip_25km_dly=mean(p_25km_dly_tmean,1)
 MeanPrecip_2km=mean(p_2km_tmean,1)
 MeanPrecip_1km=mean(p_1km_tmean,1)
 
@@ -453,30 +523,62 @@ running_mean
 tendindex=3992;
 incoming_ts=output_ts;
 running_mean
+tendindex=3984;
+incoming_ts=output_ts;
+running_mean
 w_1km_ztmn_1lev_smooth=output_ts;
 w_1km_smooth_ts=w_1km_ztmn_1lev;
-w_1km_smooth_ts(9:3992)=w_1km_ztmn_1lev_smooth(1:3984);
+w_1km_smooth_ts(13:3988)=w_1km_ztmn_1lev_smooth(1:3976);
+
+tendindex=2000;
+w_2km_ztmn_1lev=squeeze(w_2km_ztmn(:,wlev));
+incoming_ts=w_2km_ztmn_1lev;
+running_mean
+tendindex=1992;
+incoming_ts=output_ts;
+running_mean
+tendindex=1984;
+incoming_ts=output_ts;
+running_mean
+w_2km_ztmn_1lev_smooth=output_ts;
+w_2km_smooth_ts=w_2km_ztmn_1lev;
+w_2km_smooth_ts(13:1988)=w_2km_ztmn_1lev_smooth(1:1976);
 
 figure
 %subplot(1,2,1)
-plot(xcrm(1:xcrm_ngp),w_2km_ztmn(:,wlev),'k','LineWidth',1.5);
+plot(xcrm(1:xcrm_ngp),w_2km_smooth_ts,'Color',colblu,'LineWidth',1.5);
 %plot(xcrm(1:xcrm_ngp),w500_2km_ztmn(:),'k','LineWidth',2);
 hold on
 %plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_ztmn(:,wlev),'k','LineWidth',2);
-plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_smooth_ts,'--k','LineWidth',1.5);
+plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_smooth_ts,'Color',colgrn,'LineWidth',1.5);
 %plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'c','LineWidth',2); % used for the lwoff
-plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'b','LineWidth',2);
+plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'Color',colyel,'LineWidth',2);
 %plot(xgcm(1:xgcm_ngp),w500_25km_ztmn(:),'r','LineWidth',2);
 ylabel('w (m/s)','FontSize',20)
 xlabel('km','FontSize',20)
 yt=get(gca,'YTick');
 set(gca,'FontWeight','bold')
 set(gca,'FontSize',16)
-tit_e=strcat('Vertical Velocity');
+set(gca,'YLim',[-0.01 0.04]);
+tit_e=strcat('Vertical Velocity: LWoff convoff');
 title(tit_e)
 
+figure
+plot(liq_25km_prof,pfull_2km,'Color',colyel)
+set(gca,'Ydir','reverse')
+hold on
+plot(ice_25km_prof,pfull_2km,'Color',colyel)
+plot(ice_2km_prof,pfull_2km,'Color',colblu)
+plot(liq_2km_prof,pfull_2km,'Color',colblu)
+plot(liq_1km_prof,pfull_2km,'Color',colgrn)
+plot(ice_1km_prof,pfull_2km,'Color',colgrn)
+plot(ice_1km_prof+liq_1km_prof,pfull_2km,'Color',colgrn)
+plot(ice_1km_prof+liq_1km_prof,pfull_2km,'Color',colgrn,'LineWidth',2)
+plot(ice_2km_prof+liq_2km_prof,pfull_2km,'Color',colblu,'LineWidth',2)
+plot(ice_25km_prof+liq_25km_prof,pfull_2km,'Color',colyel,'LineWidth',2)
+title('Domain mean Liquid and Ice Amount [kg/kg]')
 
-stop
+%stop
 
 set(gca,'YLim',[10000 100000]);
 %set(gca,'XLim',[0 100]);
@@ -506,6 +608,8 @@ set(gca,'YScale','log')
 set(gca,'Ydir','reverse')
 colorbar
 suptitle(tit_st)
+
+stop 
 
 % the figure below is bet run after the matrix has been filled
 figure

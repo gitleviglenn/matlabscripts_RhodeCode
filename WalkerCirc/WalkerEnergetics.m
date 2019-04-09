@@ -15,7 +15,10 @@ conv=60*60*24; % convert to Kelvin per day
 source_100km_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
 
 % kg/m2 s
-evap_25km_ztmn=read_1var_ztmn(source_gcm_month,'evap');
+%evap_25km_ztmn=read_1var_ztmn(source_gcm_month,'evap');
+evap_25km_full=ncread(source_gcm_month,'evap');
+evap_25km_tmn=squeeze(mean(evap_25km_full,3));
+evap_25km_ztmn=squeeze(mean(evap_25km_tmn,2));
 
 evap_2km=ncread(source_2km_month,'evap');
 evap_2km_zmn=squeeze(mean(evap_2km,2));
@@ -38,7 +41,7 @@ evap_25km_en_ztmn=latheat.*evap_25km_ztmn;
 evap_2km_en_ztmn=latheat.*evap_2km_ztmn;
 evap_1km_en_ztmn=latheat.*evap_1km_ztmn;
 
-% deg K/s
+% deg K/s; using 'conv' converts to K/day
 %tdtconv_2km=ncread(source_2km_month,'tdt_conv');
 tdtconv_25km_ztmn=conv.*read_1var_ztmn(source_gcm_month,'tdt_conv');
 tdtconv_25km_prof=squeeze(mean(tdtconv_25km_ztmn,1));
@@ -81,7 +84,7 @@ tdtvdif_25km=conv.*tdtvdif_25km;
 tdtvdif_2km=ncread(source_2km_month,'tdt_vdif');
 tdtvdif_2km=conv.*tdtvdif_2km;
 
-% det K/s
+% det K/s; using 'conv' converts to K/day
 tdtlw_25_ztmn=conv.*read_1var_ztmn(source_gcm_month,'tdt_lw');
 tdtlw_100_ztmn=conv.*read_1var_ztmn(source_gcm_month,'tdt_lw');
 
@@ -117,23 +120,49 @@ lwflx_2km=ncread(source_2km_month,'lwflx');
 shflx_25km=ncread(source_gcm_month,'shflx');
 shflx_2km=ncread(source_2km_month,'shflx');
 
-% W/m2
-olr_25km=ncread(source_gcm_month,'olr');
-olr_2km=ncread(source_2km_month,'olr');
-olr_zmn=squeeze(mean(olr_25km,2));
-olr_zxmn=squeeze(mean(olr_zmn,1));
+%% W/m2
+%olr_25km=ncread(source_gcm_month,'olr');
+%olr_2km=ncread(source_2km_month,'olr');
+%olr_zmn=squeeze(mean(olr_25km,2));
+%olr_zxmn=squeeze(mean(olr_zmn,1));
+%
+%swdn_t_25km=ncread(source_gcm_month,'swdn_toa');
+%swdn_t_2km=ncread(source_2km_month,'swdn_toa');
+%swdn_t_zmn=squeeze(mean(swdn_t_25km,2));
+%swdn_t_zxmn=squeeze(mean(swdn_t_zmn,1));
+%
+%swup_t_25km=ncread(source_gcm_month,'swup_toa');
+%swup_t_2km=ncread(source_2km_month,'swup_toa');
+%swup_t_zmn=squeeze(mean(swup_t_25km,2));
+%swup_t_zxmn=squeeze(mean(swup_t_zmn,1));
+%
+%rad_net_toa=-olr_zxmn+swdn_t_zxmn-swup_t_zxmn;
 
-swdn_t_25km=ncread(source_gcm_month,'swdn_toa');
-swdn_t_2km=ncread(source_2km_month,'swdn_toa');
-swdn_t_zmn=squeeze(mean(swdn_t_25km,2));
-swdn_t_zxmn=squeeze(mean(swdn_t_zmn,1));
+% test new function read_1var_xymn.m
 
-swup_t_25km=ncread(source_gcm_month,'swup_toa');
-swup_t_2km=ncread(source_2km_month,'swup_toa');
-swup_t_zmn=squeeze(mean(swup_t_25km,2));
-swup_t_zxmn=squeeze(mean(swup_t_zmn,1));
+% what is the latent heat of vaporization constant?  
+lvlv=2500000.;  % this gives a smaller imbalance than that in the phys_constants
 
-rad_net_toa=-olr_zxmn+swdn_t_zxmn-swup_t_zxmn;
+olr_gcm_toa      =read_1var_xymn(source_gcm_month,'olr');
+swdn_gcm_toa     =read_1var_xymn(source_gcm_month,'swdn_toa');
+swup_gcm_toa     =read_1var_xymn(source_gcm_month,'swup_toa');
+
+rad_net_toa_gcm  =-olr_gcm_toa+swdn_gcm_toa-swup_gcm_toa;
+
+swdn_gcm_sfc     =read_1var_xymn(source_gcm_month,'swdn_sfc');
+lwdn_gcm_sfc     =read_1var_xymn(source_gcm_month,'lwdn_sfc');
+swup_gcm_sfc     =read_1var_xymn(source_gcm_month,'swup_sfc');
+lwup_gcm_sfc     =read_1var_xymn(source_gcm_month,'lwup_sfc');
+lwflx_gcm        =read_1var_xymn(source_gcm_month,'lwflx');
+shflx_gcm        =read_1var_xymn(source_gcm_month,'shflx');
+evap_gcm         =read_1var_xymn(source_gcm_month,'evap');
+
+%evap_gcm_en      =latheat.*evap_gcm;
+evap_gcm_en      =lvlv.*evap_gcm;
+
+rad_net_sfc_gcm  =swdn_gcm_sfc-swup_gcm_sfc+lwdn_gcm_sfc-lwup_gcm_sfc-shflx_gcm-evap_gcm_en;
+atm_imb_rad=rad_net_toa_gcm-rad_net_sfc_gcm;
+% end of test
 
 precip_100km=ncread(source_100km_month,'precip');
 precip_25km=ncread(source_gcm_month,'precip');
@@ -168,7 +197,7 @@ heatrad_2km=ncread(source_2km_month,'heat2d_rad');
 heatrad_1km=ncread(source_1km_month,'heat2d_rad');
 
 heatsw_25km=ncread(source_gcm_month,'heat2d_sw');
-heatsw_2km=ncread(source_2km_month,'heat2d_sw');
+%heatsw_2km=ncread(source_2km_month,'heat2d_sw');
 
 heatr_100km_1=squeeze(mean(heatrad_100km,1));
 heatr_100km_2=squeeze(mean(heatr_100km_1,1));
@@ -205,25 +234,32 @@ app_R=zeros(160,33);
 
 for j=2:32
     for i=1:160
-        stst(i,j)=(.102/rho_25km(i,j)).*(temp_25km_ztmn(i,j)/theta_znm(i,j).*((theta_znm(i,j+1)-theta_znm(i,j-1))/(zfull_25km_ztmn(i,j+1)-zfull_25km_ztmn(i,j-1))));
+%        stst(i,j)=(.102/rho_25km(i,j)).*(temp_25km_ztmn(i,j)/theta_znm(i,j).*((theta_znm(i,j+1)-theta_znm(i,j-1))/(zfull_25km_ztmn(i,j+1)-zfull_25km_ztmn(i,j-1))));
+        stst(i,j)=(.102/rho_25km(i,j)).*(temp_25km_ztmn(i,j)/theta_gcm(i,j).*((theta_gcm(i,j+1)-theta_gcm(i,j-1))/(zfull_25km_ztmn(i,j+1)-zfull_25km_ztmn(i,j-1))));
     end 
 end
 
 for i=1:160
     %stst(i,1)=-(.1/rho_25km(i,j)).*(temp_znm(i,1)/theta_znm(i,1).*((theta_znm(i,2)-theta_znm(i,1))/(pfull_25km(2)-pfull_25km(1))));
     %stst(i,33)=-(.1/rho_25km(i,j)).*(temp_znm(i,33)/theta_znm(i,33).*((theta_znm(i,33)-theta_znm(i,32))/(pfull_25km(33)-pfull_25km(32))));
-    stst(i,1)=(.102/rho_25km(i,1)).*(temp_25km_ztmn(i,1)/theta_znm(i,1).*((theta_znm(i,2)-theta_znm(i,1))/(zfull_25km_ztmn(i,2)-zfull_25km_ztmn(i,1))));
-    stst(i,33)=(.102/rho_25km(i,33)).*(temp_25km_ztmn(i,33)/theta_znm(i,33).*((theta_znm(i,33)-theta_znm(i,32))/(zfull_25km_ztmn(i,33)-zfull_25km_ztmn(i,32))));
+    stst(i,1)=(.102/rho_25km(i,1)).*(temp_25km_ztmn(i,1)/theta_gcm(i,1).*((theta_gcm(i,2)-theta_gcm(i,1))/(zfull_25km_ztmn(i,2)-zfull_25km_ztmn(i,1))));
+    stst(i,33)=(.102/rho_25km(i,33)).*(temp_25km_ztmn(i,33)/theta_gcm(i,33).*((theta_gcm(i,33)-theta_gcm(i,32))/(zfull_25km_ztmn(i,33)-zfull_25km_ztmn(i,32))));
 end 
+
+%% define colors
+colyel=[0.9290,0.6940,0.1250];
+colblu=[0.3010,0.7450,0.9330];
+colgrn=[0.4660,0.6740,0.1880];
+
 
 %stst_conv=stst*conv;
 %app_R=w_25km_ztmn./stst;
-app_R=conv*w_25km_ztmn.*stst;   % units?  should be K/day
+%app_R=conv*w_25km_ztmn.*stst;   % units?  should be K/day
 
 rad_heating_100=tdtlw_100_ztmn+tdtsw_100_ztmn;
 rad_heat_prof_100=mean(rad_heating_100,1);
 
-rad_heating_25=tdtlw_25_ztmn+tdtsw_25_ztmn;
+rad_heating_25=tdtlw_25_ztmn+tdtsw_25_ztmn; % radiative heating is needed in compTheta
 rad_heat_prof_25=mean(rad_heating_25,1);
 
 rad_heating_1=tdtlw_1_ztmn+tdtsw_1_ztmn;
@@ -231,6 +267,16 @@ rad_heat_prof_1=mean(rad_heating_1,1);
 
 rad_heating_2=tdtlw_2_ztmn+tdtsw_2_ztmn;
 rad_heat_prof_2=mean(rad_heating_2,1);
+
+% compute the diabatic vertical velocity
+vvel_d_25km               = zeros(160,nlev);
+vvel_d_2km                = zeros(2000,nlev);
+vvel_d_1km                = zeros(4000,nlev);
+vvel_d_25km=rad_heating_25./staticst_par_25km;
+vvel_d_2km=rad_heating_2./staticst_par_2km;
+vvel_d_1km=rad_heating_1./staticst_par_1km;
+
+
 
 figure_prof=figure
 axes2 = axes('Parent',figure_prof,'BoxStyle','full','YMinorTick','on',...
@@ -245,11 +291,60 @@ ylim(axes2,[10000 100000]);
 box(axes2,'on');
 hold(axes2,'on');
 %set(gca,'Ydir','reverse')
-plot(rad_heat_prof_25,pfull_2km,'-.k','LineWidth',2.0);
+%plot(rad_heat_prof_25,pfull_2km,'-.k','LineWidth',2.0);
+plot(rad_heat_prof_25,pfull_2km,'Color',colyel,'LineWidth',2.0);
 hold on
 plot(rad_heat_prof_100,pfull_2km,':k','LineWidth',2.0);
-plot(rad_heat_prof_2,pfull_2km,'k','LineWidth',1.5);
-plot(rad_heat_prof_1,pfull_2km,'--k','LineWidth',1.5);
+%plot(rad_heat_prof_2,pfull_2km,'k','LineWidth',1.5);
+plot(rad_heat_prof_2,pfull_2km,'Color',colblu,'LineWidth',1.5);
+plot(rad_heat_prof_1,pfull_2km,'Color',colgrn,'LineWidth',1.5);
+
+staticst_par_25km_w=mean(staticst_par_25km(80:120,:),1);
+staticst_par_25km_c=mean(staticst_par_25km(1:40,:),1);
+staticst_par_2km_w=mean(staticst_par_2km(750:1250,:),1);
+staticst_par_2km_c=mean(staticst_par_2km(1:500,:),1);
+staticst_par_1km_w=mean(staticst_par_1km(1500:2500,:),1);
+staticst_par_1km_c=mean(staticst_par_1km(1:100,:),1);
+figure_stst_prof=figure
+axes2 = axes('Parent',figure_stst_prof,'BoxStyle','full','YMinorTick','on',...
+    'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
+    'YScale','log',...
+    'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
+    'Layer','top',...
+    'YDir','reverse',...
+    'FontWeight','bold',...
+    'FontSize',14);%,...
+ylim(axes2,[10000 100000]);
+xlim(axes2,[-20 1]);
+box(axes2,'on');
+hold(axes2,'on');
+plot(10000.*staticst_par_25km,pfull_2km,'Color',colyel,'LineWidth',1.5);
+hold on
+plot(10000.*staticst_par_2km,pfull_2km,'Color',colblu,'LineWidth',1.5);
+plot(10000.*staticst_par_1km,pfull_2km,'Color',colgrn,'LineWidth',1.5);
+
+figure_stst_prof_b=figure
+axes2 = axes('Parent',figure_stst_prof_b,'BoxStyle','full','YMinorTick','on',...
+    'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
+    'YScale','log',...
+    'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
+    'Layer','top',...
+    'YDir','reverse',...
+    'FontWeight','bold',...
+    'FontSize',14);%,...
+ylim(axes2,[10000 100000]);
+xlim(axes2,[-15 1]);
+title('Static Stab Par')
+xlabel('K/100hPa')
+box(axes2,'on');
+hold(axes2,'on');
+plot(10000.*staticst_par_25km_w,pfull_2km,'Color',colyel,'LineWidth',1.5);
+hold on
+plot(10000.*staticst_par_25km_c,pfull_2km,'--','Color',colyel,'LineWidth',1.5);
+plot(10000.*staticst_par_2km_w,pfull_2km,'Color',colblu,'LineWidth',1.5);
+plot(10000.*staticst_par_2km_c,pfull_2km,'--','Color',colblu,'LineWidth',1.5);
+plot(10000.*staticst_par_1km_w,pfull_2km,'Color',colgrn,'LineWidth',1.5);
+plot(10000.*staticst_par_1km_c,pfull_2km,'--','Color',colgrn,'LineWidth',1.5);
 
 figure
 plot(tdtls_100km_prof,pfull_2km,'-.b');
@@ -263,17 +358,43 @@ plot(tdtconv_25km_prof+tdtls_25km_prof,pfull_2km,'r','LineWidth',2);
 plot(tdtls_2km_prof,pfull_2km,'k','LineWidth',2);
 plot(tdtls_1km_prof,pfull_2km,'g','LineWidth',2);
 
-figure
-plot(rad_heat_prof_25,pfull_2km,'-.k','LineWidth',2);
+figure_full_prof=figure
+axes2 = axes('Parent',figure_full_prof,'BoxStyle','full','YMinorTick','on',...
+    'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
+    'YScale','log',...
+    'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
+    'Layer','top',...
+    'YDir','reverse',...
+    'FontWeight','bold',...
+    'FontSize',14);%,...
+ylim(axes2,[10000 100000]);
+box(axes2,'on');
+hold(axes2,'on');
+plot(rad_heat_prof_25,pfull_2km,'Color',colyel,'LineWidth',2);
 set(gca,'Ydir','reverse')
+title('Heating: K/day')
 hold on
-plot(tdtconv_25km_prof+tdtls_25km_prof,pfull_2km,'-.k','LineWidth',2);
+plot(tdtconv_25km_prof+tdtls_25km_prof,pfull_2km,'Color',colyel,'LineWidth',2);
 plot(rad_heat_prof_100,pfull_2km,':k','LineWidth',2);
 plot(tdtconv_100km_prof+tdtls_100km_prof,pfull_2km,':k','LineWidth',2);
-plot(rad_heat_prof_2,pfull_2km,'--k','LineWidth',2);
-plot(tdtls_2km_prof,pfull_2km,'--k','LineWidth',2);
-plot(rad_heat_prof_1,pfull_2km,'-k','LineWidth',2);
-plot(tdtls_1km_prof,pfull_2km,'-k','LineWidth',2);
+plot(rad_heat_prof_2,pfull_2km,'Color',colblu,'LineWidth',2);
+plot(tdtls_2km_prof,pfull_2km,'Color',colblu,'LineWidth',2);
+plot(rad_heat_prof_1,pfull_2km,'Color',colgrn,'LineWidth',2);
+plot(tdtls_1km_prof,pfull_2km,'Color',colgrn,'LineWidth',2);
+
+tdt_heat_prof_100=tdtconv_100km_prof+tdtls_100km_prof;
+tdt_heat_prof_25=tdtconv_25km_prof+tdtls_25km_prof;
+tdt_heat_prof_2=tdtls_2km_prof;
+tdt_heat_prof_1=tdtls_1km_prof;
+
+figure
+plot(rad_heat_prof_25(1,10:33),zzfull(10:33),'-o','Color',colyel)
+hold on
+plot(tdt_heat_prof_25(1,10:33),zzfull(10:33),'-o','Color',colyel)
+plot(rad_heat_prof_2(1,10:33),zzfull(10:33),'-o','Color',colblu)
+plot(tdt_heat_prof_2(1,10:33),zzfull(10:33),'-o','Color',colblu)
+plot(rad_heat_prof_1(1,10:33),zzfull(10:33),'-o','Color',colgrn)
+plot(tdt_heat_prof_1(1,10:33),zzfull(10:33),'-o','Color',colgrn)
 
 tdt_total_cloud=tdtconv_25km_ztmn+tdtls_25km_ztmn;
 
@@ -288,7 +409,6 @@ v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
 clabel(C,h,v);
 title('GCM: lw heating K/d')
 set(gca,'Ydir','reverse')
-colorbar
 
 subplot(3,3,4)
 heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
@@ -297,7 +417,6 @@ v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
 clabel(C,h,v);
 title('GCM: sw heating K/d')
 set(gca,'Ydir','reverse')
-colorbar
 
 subplot(3,3,7)
 plot(xgcm(1:xgcm_ngp),evap_25km_en_ztmn,'r','LineWidth',1.5);
@@ -315,7 +434,6 @@ v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
 clabel(C,h,v);
 title('GCM: strat cloud heating K/d')
 set(gca,'Ydir','reverse') 
-colorbar
 
 subplot(3,3,5)
 heating_cons=[-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
@@ -324,9 +442,6 @@ v=[-0.5,0.0,0.5,1.0,2.0,3.0]; % if labels are desired on contours
 clabel(C,h,v);
 title('GCM: convective heating K/d')
 set(gca,'Ydir','reverse')
-colorbar
-
-
 
 subplot(3,3,8)
 heating_cons=[-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
@@ -335,7 +450,6 @@ v=[-0.5,0.0,0.5,1.0,2.0,3.0]; % if labels are desired on contours
 clabel(C,h,v);
 title('GCM: conv + ls heating K/d')
 set(gca,'Ydir','reverse')
-colorbar
 
 subplot(3,3,9)
 heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.5,1.0,1.5,2.,2.5,3.];
@@ -344,7 +458,6 @@ heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.5,1.0,1.5,2.,2.5,3.];
 clabel(C,h,v);
 title('CRM: strat cloud heating K/d')
 set(gca,'Ydir','reverse') 
-colorbar
 
 subplot(3,3,6)
 heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
@@ -353,9 +466,6 @@ v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
 clabel(C,h,v);
 title('CRM: sw heating K/d')
 set(gca,'Ydir','reverse')
-colorbar
-tit_en=strcat('Energetics: ',tit_st);
-suptitle(tit_en)
 
 subplot(3,3,3)
 heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
@@ -364,7 +474,9 @@ v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
 clabel(C,h,v);
 title('CRM: lw heating K/d')
 set(gca,'Ydir','reverse')
-colorbar
+
+tit_en=strcat('Energetics: ',tit_st);
+suptitle(tit_en)
 
 % %------------------------
 % 

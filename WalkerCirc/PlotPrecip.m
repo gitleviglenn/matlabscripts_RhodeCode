@@ -132,3 +132,134 @@ plot(p_ls_25km_ztmn,'b');
 title('conv (black) and ls (blue)')
 tit_pr=strcat('Precip LS: ',tit_st);
 suptitle(tit_pr)
+
+% code to plot 5 years of daily mean precip
+path_tele='/Users/silvers/data/WalkerCell/testing_20181203';
+
+path_exp_noconv_lwoff='/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff';
+path_exp_ctl='/c8x160L33_am4p0_25km_wlkr_ent0p9';
+path_exp_noconv='/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv';
+path_exp_lwoff='/c8x160L33_am4p0_25km_wlkr_ent0p9_lwoff';
+
+path_fname='/1979th1983_daily.nc';
+
+path_ctl=strcat(path_tele,path_exp_ctl,path_fname);
+path_lwoff=strcat(path_tele,path_exp_lwoff,path_fname);
+path_noconv=strcat(path_tele,path_exp_noconv,path_fname);
+path_noconv_lwoff=strcat(path_tele,path_exp_noconv_lwoff,path_fname);
+
+precip_25km_ctl=ncread(path_ctl,'precip');
+precip_25km_lwoff=ncread(path_lwoff,'precip');
+precip_25km_noconv_lwoff=ncread(path_noconv_lwoff,'precip');
+precip_25km_noconv=ncread(path_noconv,'precip');
+
+%% compute the domain mean shear...
+%u_ctl_ztmn             = read_1var_ztmn(path_ctl,'ucomp');
+%u_ctl_dmn              = squeeze(mean(u_ctl_ztmn,1));
+%u_lwoff_ztmn           = read_1var_ztmn(path_lwoff,'ucomp');
+%u_lwoff_dmn            = squeeze(mean(u_lwoff_ztmn,1));
+%u_noconv_lwoff_ztmn    = read_1var_ztmn(path_noconv_lwoff,'ucomp');
+%u_noconv_lwoff_dmn     = squeeze(mean(u_noconv_lwoff_ztmn,1));
+%u_noconv_ztmn          = read_1var_ztmn(path_noconv,'ucomp');
+%u_noconv_dmn           = squeeze(mean(u_noconv_ztmn,1));
+
+% ctl
+precip_25km_ctl_znm=mean(precip_25km_ctl,2);
+p_25km_ctl_znm=scale.*(squeeze(precip_25km_ctl_znm));
+precip_daily_ctl=squeeze(mean(p_25km_ctl_znm,1));
+
+% lwoff 
+precip_znm=mean(precip_25km_lwoff,2);
+p_znm=scale.*(squeeze(precip_znm));
+precip_daily_lwoff=squeeze(mean(p_znm,1));
+
+% noconv_lwoff 
+precip_znm=mean(precip_25km_noconv_lwoff,2);
+p_znm=scale.*(squeeze(precip_znm));
+precip_daily_noconv_lwoff=squeeze(mean(p_znm,1));
+
+% noconv
+precip_znm=mean(precip_25km_noconv,2);
+p_znm=scale.*(squeeze(precip_znm));
+precip_daily_noconv=squeeze(mean(p_znm,1));
+
+tendindex=1826;
+incoming_ts=precip_daily_ctl;
+running_mean;
+pre_rm1=output_ts;
+tendindex=1818;
+incoming_ts=output_ts;
+running_mean
+precip_25km_ctl=output_ts;
+
+tendindex=1826;
+incoming_ts=precip_daily_lwoff;
+running_mean;
+pre_rm1=output_ts;
+tendindex=1818;
+incoming_ts=output_ts;
+running_mean
+precip_25km_lwoff=output_ts;
+
+tendindex=1826;
+incoming_ts=precip_daily_noconv;
+running_mean;
+pre_rm1=output_ts;
+tendindex=1818;
+incoming_ts=output_ts;
+running_mean
+precip_25km_noconv=output_ts;
+
+tendindex=1826;
+incoming_ts=precip_daily_noconv_lwoff;
+running_mean;
+pre_rm1=output_ts;
+tendindex=1818;
+incoming_ts=output_ts;
+running_mean
+precip_25km_noconv_lwoff=output_ts;
+
+tendindex=1826;
+%incoming_ts=precip_mean_daily_25km;
+incoming_ts=precip_daily_ctl;
+running_mean;
+precip_ctl_rm1=output_ts;
+
+tendindex=1818;
+incoming_ts=output_ts;
+running_mean
+precip_ctl_rm2=output_ts;
+
+figure
+plot(precip_ctl_rm2,'k');
+hold on
+plot(precip_25km_lwoff,'b','LineWidth',2)
+set(gca,'YLim',[2.5,5])
+set(gca,'XLim',[0,1820])
+mean(precip_ctl_rm2(200:1810))
+mean(precip_25km_lwoff(200:1810))
+mean(precip_25km_noconv(200:1810))
+mean(precip_25km_noconv_lwoff(200:1810))
+
+
+tendindex=1810;
+incoming_ts=precip_ctl_rm2;
+running_mean
+precip_ctl_rm3=output_ts;
+
+tendindex=1810;
+incoming_ts=precip_25km_lwoff;
+running_mean
+precip_25km_lwoff_rm3=output_ts;
+
+
+
+
+
+
+
+
+
+
+
+
