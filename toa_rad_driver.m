@@ -15,11 +15,11 @@ del_swcre=[0,0,0,0,0];
 del_lwcre=[0,0,0,0,0];
 atm_enimb=zeros(2,5);
 
-grid_spac='100km';
-%grid_spac='25km';
+%grid_spac='100km';
+grid_spac='25km';
 
-%wkstn_loc='macbook';  % true if running scripts on my gfdl workstation
-wkstn_loc='wkstn';  % true if running scripts on my gfdl workstation
+wkstn_loc='macbook';  % true if running scripts on my gfdl workstation
+%wkstn_loc='wkstn';  % true if running scripts on my gfdl workstation
 comp_ts  ='getts';  % switch for computing time series of fluxes, getts corresponds to yes
 
 entval='0p5';

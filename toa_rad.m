@@ -65,8 +65,8 @@ evap_s_dmn  = domaintime_mn(evap);  % kg/m2/s
 lat_evap=2.5e6; % joules/kg
 
 % precip
-precip_dmn  = domaintime_mn(precip); % kg/m2/s
-prec_conv_dmn  = domaintime_mn(prec_conv);
+%precip_dmn  = domaintime_mn(precip); % kg/m2/s
+%prec_conv_dmn  = domaintime_mn(prec_conv);
 
 
 %% delR=incoming-outgoing=v.swdn_toa-v.olr_toa-v.swup_toa;

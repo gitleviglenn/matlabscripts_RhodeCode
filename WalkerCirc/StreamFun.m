@@ -30,12 +30,12 @@
 % source_2km_8xday=strcat(path_2km,'.atmos_8xdaily.nc');
 
 w_25km=ncread(source_25km,'w');
-u_25km=ncread(source_25km_month,'ucomp');
-sphum_25km=ncread(source_25km_month,'sphum');
+u_25km=ncread(source_gcm_month,'ucomp');
+sphum_25km=ncread(source_gcm_month,'sphum');
 %v_25km=ncread(source_25km_month,'vcomp');
-temp_25km=ncread(source_25km_month,'temp');
-zfull_25km=ncread(source_25km_month,'z_full');
-pfull_25km=ncread(source_25km_month,'pfull');
+temp_25km=ncread(source_gcm_month,'temp');
+zfull_25km=ncread(source_gcm_month,'z_full');
+pfull_25km=ncread(source_gcm_month,'pfull');
 
 w_2km=ncread(source_2km_month,'w');
 u_2km=ncread(source_2km_month,'ucomp');
@@ -72,10 +72,10 @@ temp_25km_zmn_eq=temp_25km_zmn(:,:,an_t1:an_t2);
 temp_25km_ztmn=squeeze(mean(temp_25km_zmn_eq,3));
 temp_25km_ztzmn=squeeze(mean(temp_25km_ztmn,1));
 
-temp_crm_zmn=squeeze(mean(temp_2km,2));
-temp_crm_zmn=temp_crm_zmn(:,:,3:6);
-temp_crm_ztmn=squeeze(mean(temp_crm_zmn,3));
-temp_crm_ztzmn=squeeze(mean(temp_crm_ztmn,1));
+%temp_crm_zmn=squeeze(mean(temp_2km,2));
+%temp_crm_zmn=temp_crm_zmn(:,:,3:6);
+%temp_crm_ztmn=squeeze(mean(temp_crm_zmn,3));
+%temp_crm_ztzmn=squeeze(mean(temp_crm_ztmn,1));
 
 u_25km_zmn=squeeze(mean(u_25km,2));
 u_25km_zmn_eq=u_25km_zmn(:,:,an_t1:an_t2);
