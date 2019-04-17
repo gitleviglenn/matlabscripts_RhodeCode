@@ -7,6 +7,11 @@
 %
 % my analysis in Silvers et al. 2018 used yearly means Stephan used montly means
 %
+% the sst analysis in sst_signal_longamip.m was complicated because the sst
+% was not on the same kind of grid as the model output so an interpolation 
+% had to be done.  the output from the am4 model is on a 180x288 grid, 
+% comared to the sst which is on a 180x360 grid.
+%
 % levi silvers                           april 2019
 %----------------------------------------------------------------------------------
 % ensemble 4 
@@ -24,6 +29,9 @@ timeend=1620;
 %%timeend=1608;
 %%
 level700=5; % for AM3, and AM4
+%
+[XN,YN]=meshgrid(0.2:0.8:288,1:180);
+swcre_ocean=zeros(360,180,endtime)
 %
 readvars
 global_weights
@@ -101,6 +109,13 @@ swcre_g_nocycle=scycle_remove(swcre_glb,nlat,nlon,nyears);
 % grab points in the tropics
 swcre_t_nocycle=swcre_g_nocycle(:,60:120,:);
 swcre_t=swcre_glb(:,60:120,:);
+
+% impose landseamask
+for timin=1:timeend
+  swcre_time1=squeeze(swcre_glb(timin,:,:)); % get sst at one time
+  swcre_ocean(:,:,timin)=nanlandinterp(swcre_time1,landm,XN,YN);
+end
+
 
 % compute domain means to create a time series
 swcre_trmn_nocycle_a=mean(swcre_t_nocycle,2);
