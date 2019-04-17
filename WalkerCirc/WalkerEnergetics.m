@@ -278,27 +278,29 @@ vvel_d_1km=rad_heating_1./staticst_par_1km;
 
 
 
-figure_prof=figure
-axes2 = axes('Parent',figure_prof,'BoxStyle','full','YMinorTick','on',...
-    'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
-    'YScale','log',...
-    'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
-    'Layer','top',...
-    'YDir','reverse',...
-    'FontWeight','bold',...
-    'FontSize',14);%,...
-ylim(axes2,[10000 100000]);
-box(axes2,'on');
-hold(axes2,'on');
-%set(gca,'Ydir','reverse')
-%plot(rad_heat_prof_25,pfull_2km,'-.k','LineWidth',2.0);
-plot(rad_heat_prof_25,pfull_2km,'Color',colyel,'LineWidth',2.0);
-hold on
-plot(rad_heat_prof_100,pfull_2km,':k','LineWidth',2.0);
-%plot(rad_heat_prof_2,pfull_2km,'k','LineWidth',1.5);
-plot(rad_heat_prof_2,pfull_2km,'Color',colblu,'LineWidth',1.5);
-plot(rad_heat_prof_1,pfull_2km,'Color',colgrn,'LineWidth',1.5);
+%figure_prof=figure  % radiative cooling only
+%axes2 = axes('Parent',figure_prof,'BoxStyle','full','YMinorTick','on',...
+%    'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
+%    'YScale','log',...
+%    'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
+%    'Layer','top',...
+%    'YDir','reverse',...
+%    'FontWeight','bold',...
+%    'FontSize',14);%,...
+%ylim(axes2,[10000 100000]);
+%box(axes2,'on');
+%hold(axes2,'on');
+%%set(gca,'Ydir','reverse')
+%%plot(rad_heat_prof_25,pfull_2km,'-.k','LineWidth',2.0);
+%plot(rad_heat_prof_25,pfull_2km,'Color',colyel,'LineWidth',2.0);
+%hold on
+%%plot(rad_heat_prof_100,pfull_2km,':k','LineWidth',2.0);
+%%plot(rad_heat_prof_2,pfull_2km,'k','LineWidth',1.5);
+%plot(rad_heat_prof_2,pfull_2km,'Color',colblu,'LineWidth',1.5);
+%plot(rad_heat_prof_1,pfull_2km,'Color',colgrn,'LineWidth',1.5);
 
+
+% static stability parameter across entire domain
 staticst_par_25km_w=mean(staticst_par_25km(80:120,:),1);
 staticst_par_25km_c=mean(staticst_par_25km(1:40,:),1);
 staticst_par_2km_w=mean(staticst_par_2km(750:1250,:),1);
@@ -316,6 +318,7 @@ axes2 = axes('Parent',figure_stst_prof,'BoxStyle','full','YMinorTick','on',...
     'FontSize',14);%,...
 ylim(axes2,[10000 100000]);
 xlim(axes2,[-20 1]);
+title('Static Stab Par')
 box(axes2,'on');
 hold(axes2,'on');
 plot(10000.*staticst_par_25km,pfull_2km,'Color',colyel,'LineWidth',1.5);
@@ -328,13 +331,14 @@ axes2 = axes('Parent',figure_stst_prof_b,'BoxStyle','full','YMinorTick','on',...
     'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
     'YScale','log',...
     'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
+    'XTick',[-15 -14 -13 -12 -11 -10 -9 -8 -7 -6 -5 -4 -3 -2 -1 0 1],...
     'Layer','top',...
     'YDir','reverse',...
     'FontWeight','bold',...
     'FontSize',14);%,...
 ylim(axes2,[10000 100000]);
 xlim(axes2,[-15 1]);
-title('Static Stab Par')
+title('StatStab Par over warm and cold regions: LWCRE')
 xlabel('K/100hPa')
 box(axes2,'on');
 hold(axes2,'on');
@@ -346,23 +350,24 @@ plot(10000.*staticst_par_2km_c,pfull_2km,'--','Color',colblu,'LineWidth',1.5);
 plot(10000.*staticst_par_1km_w,pfull_2km,'Color',colgrn,'LineWidth',1.5);
 plot(10000.*staticst_par_1km_c,pfull_2km,'--','Color',colgrn,'LineWidth',1.5);
 
-figure
-plot(tdtls_100km_prof,pfull_2km,'-.b');
-set(gca,'Ydir','reverse')
-hold on
-plot(tdtconv_100km_prof,pfull_2km,'--b');
-plot(tdtconv_100km_prof+tdtls_100km_prof,pfull_2km,'b','LineWidth',2);
-plot(tdtls_25km_prof,pfull_2km,'-.r');
-plot(tdtconv_25km_prof,pfull_2km,'--r');
-plot(tdtconv_25km_prof+tdtls_25km_prof,pfull_2km,'r','LineWidth',2);
-plot(tdtls_2km_prof,pfull_2km,'k','LineWidth',2);
-plot(tdtls_1km_prof,pfull_2km,'g','LineWidth',2);
+%figure
+%plot(tdtls_100km_prof,pfull_2km,'-.b');
+%set(gca,'Ydir','reverse')
+%hold on
+%plot(tdtconv_100km_prof,pfull_2km,'--b');
+%plot(tdtconv_100km_prof+tdtls_100km_prof,pfull_2km,'b','LineWidth',2);
+%plot(tdtls_25km_prof,pfull_2km,'-.r');
+%plot(tdtconv_25km_prof,pfull_2km,'--r');
+%plot(tdtconv_25km_prof+tdtls_25km_prof,pfull_2km,'r','LineWidth',2);
+%plot(tdtls_2km_prof,pfull_2km,'k','LineWidth',2);
+%plot(tdtls_1km_prof,pfull_2km,'g','LineWidth',2);
 
 figure_full_prof=figure
 axes2 = axes('Parent',figure_full_prof,'BoxStyle','full','YMinorTick','on',...
     'YTickLabel',{'100','200','300','400','500','600','700','800','900','1000'},...
     'YScale','log',...
     'YTick',[10000 20000 30000 40000 50000 60000 70000 80000 90000 100000],...
+    'XTick',[-5 -4 -3 -2 -1 0 1 2 3 4 5],...
     'Layer','top',...
     'YDir','reverse',...
     'FontWeight','bold',...
@@ -372,11 +377,11 @@ box(axes2,'on');
 hold(axes2,'on');
 plot(rad_heat_prof_25,pfull_2km,'Color',colyel,'LineWidth',2);
 set(gca,'Ydir','reverse')
-title('Heating: K/day')
+title('Heating: K/day: LWCRE ')
 hold on
 plot(tdtconv_25km_prof+tdtls_25km_prof,pfull_2km,'Color',colyel,'LineWidth',2);
-plot(rad_heat_prof_100,pfull_2km,':k','LineWidth',2);
-plot(tdtconv_100km_prof+tdtls_100km_prof,pfull_2km,':k','LineWidth',2);
+%plot(rad_heat_prof_100,pfull_2km,':k','LineWidth',2);
+%plot(tdtconv_100km_prof+tdtls_100km_prof,pfull_2km,':k','LineWidth',2);
 plot(rad_heat_prof_2,pfull_2km,'Color',colblu,'LineWidth',2);
 plot(tdtls_2km_prof,pfull_2km,'Color',colblu,'LineWidth',2);
 plot(rad_heat_prof_1,pfull_2km,'Color',colgrn,'LineWidth',2);
@@ -447,6 +452,90 @@ subplot(3,3,8)
 heating_cons=[-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
 [C,h]=contourf(1:xgcm_ngp,pfull_2km,tdt_total_cloud',heating_cons);
 v=[-0.5,0.0,0.5,1.0,2.0,3.0]; % if labels are desired on contours
+clabel(C,h,v);
+title('GCM: conv + ls heating K/d')
+set(gca,'Ydir','reverse')
+
+subplot(3,3,9)
+heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.5,1.0,1.5,2.,2.5,3.];
+[C,h]=contourf(1:xcrm_ngp,pfull_2km,tdtls_2_ztmn',heating_cons);
+%v=[-3.5,-2.5,-1.5,-0.5,0.5,1.0,2.0]; % if labels are desired on contours
+clabel(C,h,v);
+title('CRM: strat cloud heating K/d')
+set(gca,'Ydir','reverse') 
+
+subplot(3,3,6)
+heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
+[C,h]=contourf(1:xcrm_ngp,pfull_2km,tdtsw_2_ztmn',heating_cons);
+v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
+clabel(C,h,v);
+title('CRM: sw heating K/d')
+set(gca,'Ydir','reverse')
+
+subplot(3,3,3)
+heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
+[C,h]=contourf(1:xcrm_ngp,pfull_2km,tdtlw_2_ztmn',heating_cons);
+v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
+clabel(C,h,v);
+title('CRM: lw heating K/d')
+set(gca,'Ydir','reverse')
+
+tit_en=strcat('Energetics: ',tit_st);
+suptitle(tit_en)
+%
+%
+figure
+subplot(3,3,1)
+heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
+[C,h]=contourf(1:xgcm_ngp,pfull_2km,tdtlw_25_ztmn',heating_cons);
+v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
+clabel(C,h,v);
+title('GCM: lw heating K/d')
+set(gca,'Ydir','reverse')
+
+subplot(3,3,4)
+heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
+[C,h]=contourf(1:xgcm_ngp,pfull_2km,tdtsw_25_ztmn',heating_cons);
+v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
+clabel(C,h,v);
+title('GCM: sw heating K/d')
+set(gca,'Ydir','reverse')
+
+subplot(3,3,2)
+plot(xgcm(1:xgcm_ngp),evap_25km_en_ztmn,'r','LineWidth',1.5);
+hold on;
+plot(xgcm(1:xgcm_ngp),sh_25km_ztmn,'r','LineWidth',1.5);
+plot(xcrm(1:xcrm_ngp),evap_2km_en_ztmn,'k','LineWidth',1.5);
+plot(xcrm(1:xcrm_ngp),sh_2km_ztmn,'k','LineWidth',1.5);
+title('Surface Fluxes: W/m2')
+
+%
+tdt_cond_25km_ztmn=tdtls_25km_ztmn+tdtconv_25km_ztmn;
+tdt_total_25km_ztmn=tdt_cond_25km_ztmn+tdtlw_25_ztmn+tdtsw_25_ztmn;
+tdt_total_2km_ztmn=tdtls_2_ztmn+tdtlw_2_ztmn+tdtsw_2_ztmn;
+%
+subplot(3,3,7)
+heating_cons=[-5.0,-3.,-2.5,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
+[C,h]=contourf(1:xgcm_ngp,pfull_2km,tdt_cond_25km_ztmn',heating_cons);
+v=[-3.5,-2.5,-1.5,-0.5,0.0,0.5,1.0,2.0]; % if labels are desired on contours
+clabel(C,h,v);
+title('GCM: condensational heating K/d')
+set(gca,'Ydir','reverse') 
+
+subplot(3,3,5)
+heating_cons=[-3.,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
+[C,h]=contourf(1:xgcm_ngp,pfull_2km,tdt_total_25km_ztmn',heating_cons);
+%v=[-0.5,0.0,0.5,1.0,2.0,3.0]; % if labels are desired on contours
+v=[-3.0,-1.5,-0.5,0.0,0.5,1.5,3.0]; % if labels are desired on contours
+clabel(C,h,v);
+title('GCM: latent plus radiative K/d')
+set(gca,'Ydir','reverse')
+
+subplot(3,3,8)
+heating_cons=[-3.,-2.0,-1.5,-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
+%heating_cons=[-1.,-0.5,0.0,0.5,1.0,1.5,2.,2.5,3.];
+[C,h]=contourf(1:xcrm_ngp,pfull_2km,tdt_total_2km_ztmn',heating_cons);
+v=[-3.0,-1.5,-0.5,0.0,0.5,1.5,3.0]; % if labels are desired on contours
 clabel(C,h,v);
 title('GCM: conv + ls heating K/d')
 set(gca,'Ydir','reverse')

@@ -19,12 +19,13 @@ theta_crm1  = zeros(4000,nlev);
 theta_e_crm1  = zeros(4000,nlev);
 theta_crm2  = zeros(2000,nlev);
 theta_e_crm2  = zeros(2000,nlev);
-lts_f       = zeros(nlat,nlon);
+%lts_f       = zeros(nlat,nlon);
 rh_sfc      = zeros(nlat,nlon);
 theta_temp  = zeros(nlat,nlon);
 %staticst    = zeros(nlat,nlev);
 gamma_d     = zeros(1,nlev);
 gamma_m     = zeros(3,nlev);
+%gamma_m_edge= zeros(3,nlev);
 gamma       = zeros(3,nlev);
 stastapar   = zeros(3,nlev);
 es          = zeros(1,nlev);
@@ -40,7 +41,16 @@ tsurf_crm1_ztmn=squeeze(mean(tsurf_crm1_zmn,2));
 tsurf_crm2_zmn=squeeze(mean(tsurf_crm,2));
 tsurf_crm2_ztmn=squeeze(mean(tsurf_crm2_zmn,2));
 % compute theta at the surface
-theta_sfc=tsurf_zmn.*(p0./psurf_zmn).^kappa;
+theta_25_sfc=tsurf_zmn.*(p0./psurf_zmn).^kappa;
+theta_2_sfc=tsurf_crm2_ztmn.*(p0./psurf_2km_zmn).^kappa;
+theta_1_sfc=tsurf_crm1_ztmn.*(p0./psurf_1km_zmn).^kappa;
+
+
+%stastapar(2,:)=stastap(temp_crm_ztmn,plot_lat,psurf_2km_zmn,pfull_gen,zfull_prof);
+%plot_lat=2000;
+%%zfull_prof=squeeze(zfull_1km_ztmn(plot_lat,:));
+%stastapar(3,:)=stastap(temp_crm1_ztmn,plot_lat,psurf_1km_zmn,pfull_gen,zfull_prof);
+
 
 % assume psurf are the same for all models and experiments
 
@@ -94,13 +104,17 @@ es(:)=satvappres(temp_eq_prof);
 qs(:)=qstar(es,pfull_gen);
 gamma_m(1,:)=moistadiabat(temp_eq_prof,qs);
 
+%gamma(1,:)=lapser(temp_eq_ztmn,rho_25km,plot_lat,tsfc_mn,psurf_zmn,pfull_gen);
+%gamma_m(1,:)=moistadiabat(temp_eq_prof,qs);
+
 plot_lat=1000;
 %plot_lat=1;
 gamma(2,:)=lapser(temp_crm_ztmn,rho_2km,plot_lat,tsurf_crm2_ztmn,psurf_2km_zmn,pfull_gen);
 temp_crm_prof=temp_crm_ztmn(plot_lat,:);
 es(:)=satvappres(temp_crm_prof); % compute sat vapor pressure
 qs(:)=qstar(es,pfull_gen); % compute saturation mixing ratio
-gamma_m(2,:)=moistadiabat(temp_eq_prof,qs);
+%gamma_m(2,:)=moistadiabat(temp_eq_prof,qs);
+gamma_m(2,:)=moistadiabat(temp_crm_prof,qs);
 
 gamma_2d_cen=zeros(500,nlev);
 gamma_2d_edg=zeros(500,nlev);
@@ -115,7 +129,7 @@ gamma(3,:)=lapser(temp_crm1_ztmn,rho_1km,plot_lat,tsurf_crm1_ztmn,psurf_1km_zmn,
 temp_crm1_prof=temp_crm1_ztmn(plot_lat,:);
 es(:)=satvappres(temp_crm1_prof);
 qs(:)=qstar(es,pfull_gen);
-gamma_m(3,:)=moistadiabat(temp_eq_prof,qs);
+gamma_m(3,:)=moistadiabat(temp_crm1_prof,qs);
 
 % compute the average over the middle quarter of the domain: 
 temp_eq_ztmn_mid=mean(temp_eq_ztmn(60:100,:));
@@ -198,7 +212,61 @@ w_1km_des=squeeze(mean(w_1km_ztmn(1:1499,:),1))+squeeze(mean(w_1km_ztmn(2501:400
 %div_d_1km=diabdiv(vvel_d_1km,4000,psurf_1km_zmn,pfull_gen);
 
 % compute an approximate lower tropospheric stability
-lts=theta_gcm(:,21)-theta_sfc(:);
+% as well as the estimated inversion strength
+lts_25km=theta_gcm(:,21)-theta_25_sfc(:);
+lts_2km=theta_crm2(:,21)-theta_2_sfc(:);
+lts_1km=theta_crm1(:,21)-theta_1_sfc(:);
+
+zi=zfull_prof(21); % hieght of the 719hPa pressure level
+
+% compute the lcl as a function of x
+lcl_gcm_x=zeros(xgcm_ngp,1);
+lcl_crm1_x=zeros(xcrm_1km_ngp,1);
+lcl_crm2_x=zeros(xcrm_ngp,1);
+for xind=1:xgcm_ngp; % compute the 3d potential temperature field
+   lcl_gcm_x(xind)=lcl_romps(pfull_25km(33),temp_eq_ztmn(xind,33),0.01*hur_25km_ztmn(xind,33),false,false);
+end
+for xind=1:xcrm_1km_ngp; % compute the 3d potential temperature field
+   lcl_crm1_x(xind)=lcl_romps(pfull_2km(33),temp_crm1_ztmn(xind,33),0.01*hur_1km_ztmn(xind,33),false,false);
+end
+for xind=1:xcrm_ngp; % compute the 3d potential temperature field
+   lcl_crm2_x(xind)=lcl_romps(pfull_2km(33),temp_crm_ztmn(xind,33),0.01*hur_2km_ztmn(xind,33),false,false);
+end
+
+for xind=1:xgcm_ngp; % compute the 3d potential temperature field
+  % level 24 corresponds to the pressure level 848 hPa
+  eis_gcm(xind)=lts_25km(xind)-gamma_m(1,24)*(zi-lcl_gcm_x(xind));
+end
+for xind=1:xcrm_ngp; % compute the 3d potential temperature field
+  % level 24 corresponds to the pressure level 848 hPa
+  eis_crm_2km(xind)=lts_2km(xind)-gamma_m(2,24)*(zi-lcl_crm2_x(xind));
+end
+for xind=1:xcrm_1km_ngp; % compute the 3d potential temperature field
+  % level 24 corresponds to the pressure level 848 hPa
+  eis_crm_1km(xind)=lts_1km(xind)-gamma_m(3,24)*(zi-lcl_crm1_x(xind));
+end
+
 
 fr_line=zeros(1,33)+273.15;
+
+figure
+plot(xgcm(1:xgcm_ngp),lts,'Color',colyel)
+hold on
+%set(gca,'Ydir','reverse')
+plot(xcrm_1km(1:xcrm_1km_ngp),lts_1km,'Color',colgrn)
+plot(xcrm(1:xcrm_ngp),lts_2km,'Color',colblu)
+title('lower tropospheric stability')
+
+figure
+plot(xgcm(1:xgcm_ngp),eis_gcm,'Color',colyel)
+hold on
+plot(xcrm_1km(1:xcrm_1km_ngp),eis_crm_1km,'Color',colgrn)
+plot(xcrm(1:xcrm_ngp),eis_crm_2km,'Color',colblu)
+title('estimated inversion strength')
+
+figure
+plot(xgcm(1:xgcm_ngp),lcl_gcm_x,'Color',colyel)
+hold on
+plot(xcrm_1km(1:xcrm_1km_ngp),lcl_crm1_x,'Color',colgrn)
+plot(xcrm(1:xcrm_ngp),lcl_crm2_x,'Color',colblu)
 

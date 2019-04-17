@@ -122,7 +122,7 @@ path_100km=strcat(path_n,'c8x160L33_am4p0_100km_wlkr_',estr2);
 %source_gcm_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
 %source_gcm_daily=strcat(path_25km,'/1979th1983_daily.nc');
 
-ind=4
+ind=1
 % in some cases the indices indicate differing entrainment values, in other cases diff exps
 % ind 1 = either 0p5 or noconv
 % ind 2 = either 0p7 or lwoff
@@ -131,10 +131,10 @@ ind=4
 % ind 5 = either 1p3 or ...
 
 % use the path below for noconv_lwoff or  noconv
-source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/',yearstr,'.atmos_month_tmn.nc');
-source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/','1979th1983_daily.nc');
-%source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
-%source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/','1979th1983_daily.nc');
+%source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/',yearstr,'.atmos_month_tmn.nc');
+%source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/','1979th1983_daily.nc');
+source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
+source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/','1979th1983_daily.nc');
 %source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_100km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
 
 %source_25km=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/',yearstr_79,'.atmos_daily.nc');
