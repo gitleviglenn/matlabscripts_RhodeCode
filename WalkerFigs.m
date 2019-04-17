@@ -13,7 +13,7 @@ xcrm_2to1=0:2:3998;
 xaxis_gcm2crm=0:25:3975;
 
 % figure with lwcre
-lwoff = true;
+lwoff = false;
 
 % for the lwoff switch to work the model needs to be run with the lwoff path names
 % which are set in the WalkerCell script.  Then the resulting data needs to be 

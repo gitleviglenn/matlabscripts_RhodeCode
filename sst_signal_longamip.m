@@ -7,6 +7,7 @@ landm=ncread('~/data/am4p0/atmos.static.nc','land_mask');
 %% define parameters and initialize arrays
 endtime=1776; % needs to be an integer of 12
 nyears=endtime/12;
+monthint=1/12;
 years=1860.0833:monthint:1860+nyears;
 years_n=1860.75:monthint:1860+nyears; % time series to use for the smoothed data.
 month=repmat(1:12,1,nyears);
