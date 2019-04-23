@@ -1,4 +1,9 @@
 function sst_o = nanlandinterp(sstin,landm,XN,YN)
+%
+% incoming sst is 360x180, landm from AM4 is 288x180
+% performs an interpolation to apply the land mask to sst data.  
+%
+% levi silvers    
 
 [X,Y]=meshgrid(1:288,1:180);
 %[XN,YN]=meshgrid(0.2:0.8:288,1:180);
