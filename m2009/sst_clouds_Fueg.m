@@ -31,10 +31,10 @@ timeend=1620;
 level700=5; % for AM3, and AM4
 %
 [XN,YN]=meshgrid(0.2:0.8:288,1:180);
-swcre_ocean=zeros(360,180,endtime)
+swcre_ocean=zeros(360,180,timeend);
 %
-readvars
-global_weights
+readvars;
+global_weights;
 %
 % define the tropical window
 wlat1=60;
@@ -104,10 +104,11 @@ end
 % new
 % global fields
 swcre_glb=swup_ts-swup_clr_ts;
-swcre_g_nocycle=scycle_remove(swcre_glb,nlat,nlon,nyears);
+swcre_g_nocycle=zeros(tindex,nlat,nlon);
+swcre_g_nocycle=scycle_remove(swcre_glb,nlon,nlat,nyears);
 
 % grab points in the tropics
-swcre_t_nocycle=swcre_g_nocycle(:,60:120,:);
+%swcre_t_nocycle=swcre_g_nocycle(:,60:120,:);
 swcre_t=swcre_glb(:,60:120,:);
 
 % impose landseamask
@@ -115,7 +116,6 @@ for timin=1:timeend
   swcre_time1=squeeze(swcre_glb(timin,:,:)); % get sst at one time
   swcre_ocean(:,:,timin)=nanlandinterp(swcre_time1,landm,XN,YN);
 end
-
 
 % compute domain means to create a time series
 swcre_trmn_nocycle_a=mean(swcre_t_nocycle,2);
@@ -127,11 +127,11 @@ swcre_trmn_b=mean(swcre_trmn_a,3);
 % smooth the data with a 9 point running mean
 index=1620;
 incoming_ts=swcre_trmn_nocycle_b;
-running_mean
+running_mean;
 swcre_trmn_nocyc_smooth=output_ts;
 index=1611;
 incoming_ts=swcre_trmn_nocyc_smooth;
-running_mean
+running_mean;
 swcre_trmn_nocyc_smooth_b=output_ts;
 
 
