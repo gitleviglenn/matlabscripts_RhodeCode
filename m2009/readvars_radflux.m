@@ -61,8 +61,10 @@ fin_olr       = netcdf(source_olr_ts,'nowrite');
 fileid(4)=fopen(source_olr_ts);
 fin_olr_clr   = netcdf(source_olr_clr_ts,'nowrite');
 fileid(5)=fopen(source_olr_clr_ts);
-fin_tref      = netcdf(source_tref_ts,'nowrite');
-fileid(6)=fopen(source_tref_ts);
+if (aqua_hack < 1)
+  fin_tref      = netcdf(source_tref_ts,'nowrite');
+  fileid(6)=fopen(source_tref_ts);
+end
 
 %% grab time series over a specified period:
 vlon               = fin_olr{'lon'}(:); 
@@ -70,7 +72,9 @@ vlat               = fin_olr{'lat'}(:);
 vlevel             = fin_olr{'level'}(:);
 v.lon              = fin_olr{'lon'}(:); 
 v.lat              = fin_olr{'lat'}(:);
-tref_ts            = fin_tref{tas}(timest:timeend,:,:); 
+if (aqua_hack < 1)
+  tref_ts            = fin_tref{tas}(timest:timeend,:,:); 
+end
 swdn_ts            = fin_swdn{rsdt}(timest:timeend,:,:,:);
 swup_ts            = fin_swup{rsut}(timest:timeend,:,:,:);
 %swup_ts            = -1.*swup_ts;  % data request defines swup as + up
@@ -81,7 +85,13 @@ olr_ts             = fin_olr{rlut}(timest:timeend,:,:,:);
 olr_clr_ts         = fin_olr_clr{rlutcs}(timest:timeend,:,:,:);
 %olr_clr_ts         = -1.*olr_clr_ts;
 
-for i=1:6
+if (aqua_hack < 1)
+  nfiles=6;
+else
+  nfiles=5;
+end
+
+for i=1:nfiles
   fclose(fileid(i));
 end
 
