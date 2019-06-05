@@ -31,7 +31,8 @@ rsut='swup_toa'
 rsutcs='swup_toa_clr'
 rlutcs='olr'
 rlut='olr_clr'
-tas='tas'
+%tas='tas'
+tas='t_surf'
 
 if (cmip_format=='true') 
   rsdt='rsdt'
