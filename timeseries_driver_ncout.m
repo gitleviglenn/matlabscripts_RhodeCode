@@ -42,9 +42,16 @@ lcloud_w=zeros(nmonths,nlat,nlon);
 
 % apply the weighting array
 for index=1:endtime;
-  temp_sfc_w(index,:,:)  =glblatweight_gen.*squeeze(temp_sfc_am4_mn(index,:,:));
-  eis_w(index,:,:)       =glblatweight_gen.*squeeze(eis_ens_am4_mn(index,:,:));
-  lcloud_w(index,:,:)    =glblatweight_gen.*squeeze(lcloud_am4_mn(index,:,:));
+  temp_sfc_w(index,:,:)         =glblatweight_gen.*squeeze(temp_sfc_am4_mn(index,:,:));
+  eis_w(index,:,:)              =glblatweight_gen.*squeeze(eis_ens_am4_mn(index,:,:));
+  lcloud_w(index,:,:)           =glblatweight_gen.*squeeze(lcloud_am4_mn(index,:,:));
+  tref_w(index,:,:)             =glblatweight_gen.*squeeze(tref_ts(index,:,:));
+  olr_clr_w(index,:,:)          =glblatweight_gen.*squeeze(olr_clr_ts(index,:,:));
+  olr_w(index,:,:)              =glblatweight_gen.*squeeze(olr_ts(index,:,:));
+  swup_clr_w(index,:,:)         =glblatweight_gen.*squeeze(swup_clr_ts(index,:,:));
+  swup_w(index,:,:)             =glblatweight_gen.*squeeze(swup_ts(index,:,:));
+  swdn_w(index,:,:)             =glblatweight_gen.*squeeze(swdn_ts(index,:,:));
+  toa_net_rflux_w(index,:,:)    =glblatweight_gen.*squeeze(toa_net_rflux_ens5(index,:,:));
 end
 
 % for the tropics plus/minus 30
@@ -159,44 +166,41 @@ sst_del_glb  =sst_del_glb;
 % write out weighted time series to ncout file
 lcc_eis_tsfc_raw_ncout
 
+% try for radiative fluxes
+latso=30;  % 45 is the equator
+latno=60;
+% convert to latitudes relevent to the am4 grid
+latso_am4=2*latso;
+latno_am4=2*latno;
 
+% average over the window
+swup_ts_window=swup_w(:,latso_am4:latno_am4,:); 
+swup_ts_tr=compute_tmn_anom(swup_ts_window);
 
-%sst_tr_mn_a=mean(sst_tr,3);
-%sst_tr_mn=mean(sst_tr_mn_a,2);
-%eis_tr_mn_a=mean(eis_tr,3);
-%eis_tr_mn=mean(eis_tr_mn_a,2);
-%lcc_tr_mn_a=mean(lcc_tr,3);
-%lcc_tr_mn=mean(lcc_tr_mn_a,2);
+swup_clr_ts_window=swup_clr_w(:,latso_am4:latno_am4,:); 
+swup_clr_ts_tr=compute_tmn_anom(swup_clr_ts_window);
+
+olr_clr_ts_window=olr_clr_w(:,latso_am4:latno_am4,:); 
+olr_clr_ts_tr=compute_tmn_anom(olr_clr_ts_window);
+
+olr_ts_window=olr_w(:,latso_am4:latno_am4,:); 
+olr_ts_tr=compute_tmn_anom(olr_ts_window);
+
+tref_ts_window=tref_w(:,latso_am4:latno_am4,:); 
+tref_ts_tr=compute_tmn_anom(tref_ts_window);
+
+net_rflux_ts_window=toa_net_rflux_w(:,latso_am4:latno_am4,:); 
+net_rflux_ts_tr=compute_tmn_anom(net_rflux_ts_window);
+
+% now write out the fields and compute over a different window...
+
 %
-%% average over time
-%sst_tmn=mean(sst_tr_mn,1);
-%eis_tmn=mean(eis_tr_mn,1);
-%lcc_tmn=mean(lcc_tr_mn,1);
-%
-%% compute anomalies
-%eis_del=eis_tr_mn-eis_tmn;
-%sst_del=sst_tr_mn-sst_tmn;
-%lcc_del=lcc_tr_mn-lcc_tmn;
-
-% now save the eis_del, sst_del, and lcc_del arrays to the eis_del_pm90 type arrays 
-% that will be written to netcdf with lcc_eis_tsfc_raw_ncout.m
-
-
-%sst_w_mn_a=mean(sst_w,3);
-%sst_w_mn=mean(sst_w_mn_a,2);
-%eis_w_mn_a=mean(eis_w,3);
-%eis_w_mn=mean(eis_w_mn_a,2);
-%lcc_w_mn_a=mean(lcc_w,3);
-%lcc_w_mn=mean(lcc_w_mn_a,2);
-%
-%% average over time
-%sst_w_tmn=mean(sst_w_mn,1);
-%eis_w_tmn=mean(eis_w_mn,1);
-%lcc_w_tmn=mean(lcc_w_mn,1);
-%
-%% compute anomalies
-%eis_w_del=eis_w_mn-eis_w_tmn;
-%sst_w_del=sst_w_mn-sst_w_tmn;
-%lcc_w_del=lcc_w_mn-lcc_w_tmn;
+%  tref_w(index,:,:)    =glblatweight_gen.*squeeze(tref_ts(index,:,:));
+%  olr_clr_w(index,:,:)    =glblatweight_gen.*squeeze(olr_clr_ts(index,:,:));
+%  olr_w(index,:,:)    =glblatweight_gen.*squeeze(olr_ts(index,:,:));
+%  swup_clr_w(index,:,:)    =glblatweight_gen.*squeeze(swup_clr_ts(index,:,:));
+%  swup_w(index,:,:)    =glblatweight_gen.*squeeze(swup_ts(index,:,:));
+%  swdn_w(index,:,:)    =glblatweight_gen.*squeeze(swdn_ts(index,:,:));
+%  toa_net_rflux_w(index,:,:)    =glblatweight_gen.*squeeze(toa_net_rflux_ts(index,:,:));
 %
 
