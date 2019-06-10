@@ -8,6 +8,7 @@
 
 %%------------------------------------------------------------------------------------------
 % create a new netcdf file
+file_out='levis_longer_radflux_am4.nc'
 nc = netcdf(file_out,'clobber'); 
 if isempty(nc) error('NetCDF File Not Opened.'); end
 nc.Conventions = 'CF-1.0';
