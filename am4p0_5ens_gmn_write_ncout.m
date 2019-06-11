@@ -3,6 +3,9 @@
 %
 % write output to a netcdf file 
 %
+% at least initially, data this file writes to an netcdf file is being computed/processed
+% in am4p0_radflux_ncout.m
+%
 % levi silvers                                        may 2017
 %------------------------------------------------------------------------------------------
 
