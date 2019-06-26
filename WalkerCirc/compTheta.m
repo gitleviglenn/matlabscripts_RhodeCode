@@ -26,13 +26,14 @@ theta_temp  = zeros(nlat,nlon);
 gamma_d     = zeros(1,nlev);
 gamma_m     = zeros(3,nlev);
 %gamma_m_edge= zeros(3,nlev);
+gamma_full  = zeros(nlat,nlev);
 gamma       = zeros(3,nlev);
 stastapar   = zeros(3,nlev);
 es          = zeros(1,nlev);
 qs          = zeros(1,nlev);
 sten        = zeros(nlat,nlev);
 
-gamma_d = gamma_d+grav/cp;
+%gamma_d = gamma_d+grav/cp;
 
 % first compute theta at the surface
 tsurf_zmn=squeeze(mean(tsfc_mn,2));
@@ -40,10 +41,14 @@ tsurf_crm1_zmn=squeeze(mean(tsurf_crm1,2));
 tsurf_crm1_ztmn=squeeze(mean(tsurf_crm1_zmn,2));
 tsurf_crm2_zmn=squeeze(mean(tsurf_crm,2));
 tsurf_crm2_ztmn=squeeze(mean(tsurf_crm2_zmn,2));
-% compute theta at the surface
-theta_25_sfc=tsurf_zmn.*(p0./psurf_zmn).^kappa;
-theta_2_sfc=tsurf_crm2_ztmn.*(p0./psurf_2km_zmn).^kappa;
-theta_1_sfc=tsurf_crm1_ztmn.*(p0./psurf_1km_zmn).^kappa;
+%% compute theta at the surface (next three lines are original, wrong way)
+%theta_25_sfc=tsurf_zmn.*(p0./psurf_zmn).^kappa;
+%theta_2_sfc=tsurf_crm2_ztmn.*(p0./psurf_2km_zmn).^kappa;
+%theta_1_sfc=tsurf_crm1_ztmn.*(p0./psurf_1km_zmn).^kappa;
+
+theta_25_sfc=tsurf_zmn.*(1.).^kappa;
+theta_2_sfc=tsurf_crm2_ztmn.*(1.).^kappa;
+theta_1_sfc=tsurf_crm1_ztmn.*(1.).^kappa;
 
 
 %stastapar(2,:)=stastap(temp_crm_ztmn,plot_lat,psurf_2km_zmn,pfull_gen,zfull_prof);
@@ -67,9 +72,12 @@ temp_crm_ztmn=read_1var_ztmn(source_2km_month,'temp');
 temp_crm1_ztmn=read_1var_ztmn(source_1km_month,'temp');
 
 for lev=1:nlev; % compute the 3d potential temperature field
-   theta_gcm(:,lev)=temp_eq_ztmn(:,lev).*(p0/pfull_gen(lev))^kappa;
-   theta_crm2(:,lev)=temp_crm_ztmn(:,lev).*(p0/pfull_gen(lev))^kappa;
-   theta_crm1(:,lev)=temp_crm1_ztmn(:,lev).*(p0/pfull_gen(lev))^kappa;
+   %theta_gcm(:,lev)=temp_eq_ztmn(:,lev).*(p0/pfull_gen(lev))^kappa;
+   %theta_crm2(:,lev)=temp_crm_ztmn(:,lev).*(p0/pfull_gen(lev))^kappa;
+   %theta_crm1(:,lev)=temp_crm1_ztmn(:,lev).*(p0/pfull_gen(lev))^kappa;
+   theta_gcm(:,lev)=temp_eq_ztmn(:,lev).*(psurf_zmn(:)./pfull_gen(lev)).^kappa;
+   theta_crm2(:,lev)=temp_crm_ztmn(:,lev).*(psurf_2km_zmn(:)./pfull_gen(lev)).^kappa;
+   theta_crm1(:,lev)=temp_crm1_ztmn(:,lev).*(psurf_1km_zmn(:)./pfull_gen(lev)).^kappa;
 end
 
 theta_e_gcm=theta_gcm.*exp((q_25km_ztmn*latheat)./(cp*temp_25km_ztmn));
@@ -95,26 +103,43 @@ Tv_1km=temp_crm1_ztmn.*(1+q_1km_ztmn./epsilon)./(1+q_1km_ztmn);
 
 % lev 1 is the at the top of the domain, lev 33 is the lowest atmospheric level
 % gamma = -g*rho*delT/delp
-plot_lat=80;
-%plot_lat=1;
-gamma(1,:)=lapser(temp_eq_ztmn,rho_25km,plot_lat,tsfc_mn,psurf_zmn,pfull_gen);
-%gamma(1,:)=lapser(temp_eq_ztmn_midmn,rho_25km_midmn,plot_lat,tsfc,psurf_zmn,pfull_gen);
+plot_lat=100;
+%plot_lat=5;
+for jx=1:160;
+  gamma_full(jx,:)=lapser(temp_eq_ztmn,rho_25km,jx,tsfc_mn,psurf_zmn,pfull_gen);
+end
+%gamma(1,:)=lapser(temp_eq_ztmn,rho_25km,plot_lat,tsfc_mn,psurf_zmn,pfull_gen);
+gamma(1,:)=mean(gamma_full,1);
+gamma_ascent=gamma_full(80:120,:);
+gamma_sub=gamma_full(1:40,:);
+gamma_asc(1,:)=mean(gamma_ascent,1);
+gamma_sub(1,:)=mean(gamma_sub,1);
+
 temp_eq_prof=temp_eq_ztmn(plot_lat,:);
 es(:)=satvappres(temp_eq_prof);
 qs(:)=qstar(es,pfull_gen);
 gamma_m(1,:)=moistadiabat(temp_eq_prof,qs);
+zfull_prof=squeeze(zfull_25km_ztmn(plot_lat,:));
+for j=1:33
+  hsat_25km(j)=cp*temp_eq_ztmn(plot_lat,j)+grav*zfull_prof(j)+latheat*qs(j);
+end
 
 %gamma(1,:)=lapser(temp_eq_ztmn,rho_25km,plot_lat,tsfc_mn,psurf_zmn,pfull_gen);
 %gamma_m(1,:)=moistadiabat(temp_eq_prof,qs);
 
-plot_lat=1000;
-%plot_lat=1;
+%plot_lat=1000;
+%plot_lat=850;
+plot_lat=10;
 gamma(2,:)=lapser(temp_crm_ztmn,rho_2km,plot_lat,tsurf_crm2_ztmn,psurf_2km_zmn,pfull_gen);
 temp_crm_prof=temp_crm_ztmn(plot_lat,:);
 es(:)=satvappres(temp_crm_prof); % compute sat vapor pressure
 qs(:)=qstar(es,pfull_gen); % compute saturation mixing ratio
 %gamma_m(2,:)=moistadiabat(temp_eq_prof,qs);
 gamma_m(2,:)=moistadiabat(temp_crm_prof,qs);
+zfull_prof=squeeze(zfull_2km_ztmn(plot_lat,:));
+for j=1:33
+  hsat_2km(j)=cp*temp_crm_ztmn(plot_lat,j)+grav*zfull_prof(j)+latheat*qs(j);
+end
 
 gamma_2d_cen=zeros(500,nlev);
 gamma_2d_edg=zeros(500,nlev);
@@ -123,13 +148,19 @@ gamma_2d_cen(i-749,:)=lapser(temp_crm_ztmn,rho_2km,i,tsurf_crm2_ztmn,psurf_2km_z
 gamma_2d_edg(i-749,:)=lapser(temp_crm_ztmn,rho_2km,i-749,tsurf_crm2_ztmn,psurf_2km_zmn,pfull_gen);
 end 
 
-plot_lat=2000;
-%plot_lat=1;
+%plot_lat=1750;
+%plot_lat=2000;
+plot_lat=10;
+%temp_crm1_ztmn=squeeze(temp_crm1_ztmn
 gamma(3,:)=lapser(temp_crm1_ztmn,rho_1km,plot_lat,tsurf_crm1_ztmn,psurf_1km_zmn,pfull_gen);
 temp_crm1_prof=temp_crm1_ztmn(plot_lat,:);
 es(:)=satvappres(temp_crm1_prof);
 qs(:)=qstar(es,pfull_gen);
 gamma_m(3,:)=moistadiabat(temp_crm1_prof,qs);
+zfull_prof=squeeze(zfull_1km_ztmn(plot_lat,:));
+for j=1:33
+  hsat_1km(j)=cp*temp_crm1_ztmn(plot_lat,j)+grav*zfull_prof(j)+latheat*qs(j);
+end
 
 % compute the average over the middle quarter of the domain: 
 temp_eq_ztmn_mid=mean(temp_eq_ztmn(60:100,:));
@@ -149,36 +180,40 @@ lcl_gcm=lcl_romps(pfull_25km(33),temp_eq_ztmn(80,33),0.01*hur_25km_ztmn(80,33),f
 lcl_crm2=lcl_romps(pfull_2km(33),temp_crm_ztmn(1000,33),0.01*hur_2km_ztmn(1000,33),false,false)
 lcl_crm1=lcl_romps(pfull_2km(33),temp_crm1_ztmn(2000,33),0.01*hur_1km_ztmn(2000,33),false,false)
 
-% s=cp*T+g*z  % dry static energy
+% s=cp*T+g*z  % dry static energy, computed in stastap.m
 % the output is only a function of height
-plot_lat=80;
+plot_lat=100;
 zfull_prof=squeeze(zfull_25km_ztmn(plot_lat,:));
-stastapar(1,:)=stastap(temp_eq_ztmn,plot_lat,psurf_zmn,pfull_gen,zfull_prof);
+stastapar(1,:)=stastap(temp_eq_ztmn,hur_25km_ztmn,plot_lat,psurf_zmn,pfull_gen,zfull_prof);
 plot_lat=1000;
 %zfull_prof=squeeze(zfull_2km_ztmn(plot_lat,:));
-stastapar(2,:)=stastap(temp_crm_ztmn,plot_lat,psurf_2km_zmn,pfull_gen,zfull_prof);
+stastapar(2,:)=stastap(temp_crm_ztmn,hur_2km_ztmn,plot_lat,psurf_2km_zmn,pfull_gen,zfull_prof);
 plot_lat=2000;
 %zfull_prof=squeeze(zfull_1km_ztmn(plot_lat,:));
-stastapar(3,:)=stastap(temp_crm1_ztmn,plot_lat,psurf_1km_zmn,pfull_gen,zfull_prof);
+stastapar(3,:)=stastap(temp_crm1_ztmn,hur_1km_ztmn,plot_lat,psurf_1km_zmn,pfull_gen,zfull_prof);
 
 %compute the static stability throughout the domain
-staticst_25km             = zeros(160,nlev);
+staticst_25km             = zeros(160,nlev); % static energy: cp*T+gz
+msts_25km                 = zeros(160,nlev); % moist static energy: cp*T+gz+Lq
 staticst_par_25km         = zeros(160,nlev);
 %vvel_d_25km               = zeros(160,nlev);
 div_d_25km                = zeros(160,nlev);
-staticst_25km=stasta_3d(temp_eq_ztmn,160,psurf_zmn,pfull_gen,zfull_prof);
-staticst_par_25km=stastap_3d(staticst_25km,160,psurf_zmn,pfull_gen);
+[msts_25km,staticst_25km]=stasta_3d(temp_eq_ztmn,q_25km_ztmn,160,psurf_zmn,pfull_gen,zfull_prof);
+msts_25km=msts_25km./cp; % divide by cp to give units of Kelvin
+staticst_par_25km=stastap_3d(staticst_25km,160,psurf_zmn,pfull_gen); % divides staticst_25km by cp
 
 staticst_2km              = zeros(2000,nlev);
+msts_2km                  = zeros(2000,nlev);
 staticst_par_2km          = zeros(2000,nlev);
 %vvel_d_2km                = zeros(2000,nlev);
-staticst_2km=stasta_3d(temp_crm_ztmn,2000,psurf_2km_zmn,pfull_gen,zfull_prof);
+[msts_2km,staticst_2km]=stasta_3d(temp_crm_ztmn,q_2km_ztmn,2000,psurf_2km_zmn,pfull_gen,zfull_prof);
 staticst_par_2km=stastap_3d(staticst_2km,2000,psurf_2km_zmn,pfull_gen);
 
 staticst_1km              = zeros(4000,nlev);
+msts_1km                  = zeros(4000,nlev);
 staticst_par_1km          = zeros(4000,nlev);
 %vvel_d_1km                = zeros(4000,nlev);
-staticst_1km=stasta_3d(temp_crm1_ztmn,4000,psurf_1km_zmn,pfull_gen,zfull_prof);
+[msts_1km,staticst_1km]=stasta_3d(temp_crm1_ztmn,q_1km_ztmn,4000,psurf_1km_zmn,pfull_gen,zfull_prof);
 staticst_par_1km=stastap_3d(staticst_1km,4000,psurf_1km_zmn,pfull_gen);
 
 % location of updraft:
@@ -218,6 +253,9 @@ lts_2km=theta_crm2(:,21)-theta_2_sfc(:);
 lts_1km=theta_crm1(:,21)-theta_1_sfc(:);
 
 zi=zfull_prof(21); % hieght of the 719hPa pressure level
+z700_25km=zfull_25km_ztmn(:,21);
+z700_2km=zfull_2km_ztmn(:,21);
+z700_1km=zfull_1km_ztmn(:,21);
 
 % compute the lcl as a function of x
 lcl_gcm_x=zeros(xgcm_ngp,1);
@@ -235,38 +273,42 @@ end
 
 for xind=1:xgcm_ngp; % compute the 3d potential temperature field
   % level 24 corresponds to the pressure level 848 hPa
-  eis_gcm(xind)=lts_25km(xind)-gamma_m(1,24)*(zi-lcl_gcm_x(xind));
+  %eis_gcm(xind)=lts_25km(xind)-gamma_m(1,24)*(zi-lcl_gcm_x(xind));
+  eis_gcm(xind)=lts_25km(xind)-gamma_m(1,24)*(z700_25km(xind)-lcl_gcm_x(xind));
 end
 for xind=1:xcrm_ngp; % compute the 3d potential temperature field
   % level 24 corresponds to the pressure level 848 hPa
-  eis_crm_2km(xind)=lts_2km(xind)-gamma_m(2,24)*(zi-lcl_crm2_x(xind));
+  %eis_crm_2km(xind)=lts_2km(xind)-gamma_m(2,24)*(zi-lcl_crm2_x(xind));
+  eis_crm_2km(xind)=lts_2km(xind)-gamma_m(2,24)*(z700_2km(xind)-lcl_crm2_x(xind));
 end
 for xind=1:xcrm_1km_ngp; % compute the 3d potential temperature field
   % level 24 corresponds to the pressure level 848 hPa
-  eis_crm_1km(xind)=lts_1km(xind)-gamma_m(3,24)*(zi-lcl_crm1_x(xind));
+  %eis_crm_1km(xind)=lts_1km(xind)-gamma_m(3,24)*(zi-lcl_crm1_x(xind));
+  eis_crm_1km(xind)=lts_1km(xind)-gamma_m(3,24)*(z700_1km(xind)-lcl_crm1_x(xind));
 end
 
 
 fr_line=zeros(1,33)+273.15;
 
 figure
-plot(xgcm(1:xgcm_ngp),lts,'Color',colyel)
+plot(xgcm(1:xgcm_ngp),lts_25km,'Color',colyel)
 hold on
 %set(gca,'Ydir','reverse')
 plot(xcrm_1km(1:xcrm_1km_ngp),lts_1km,'Color',colgrn)
 plot(xcrm(1:xcrm_ngp),lts_2km,'Color',colblu)
-title('lower tropospheric stability')
+title('lower tropospheric stability [K]')
 
 figure
 plot(xgcm(1:xgcm_ngp),eis_gcm,'Color',colyel)
 hold on
 plot(xcrm_1km(1:xcrm_1km_ngp),eis_crm_1km,'Color',colgrn)
 plot(xcrm(1:xcrm_ngp),eis_crm_2km,'Color',colblu)
-title('estimated inversion strength')
+title('estimated inversion strength [K]')
 
 figure
 plot(xgcm(1:xgcm_ngp),lcl_gcm_x,'Color',colyel)
 hold on
 plot(xcrm_1km(1:xcrm_1km_ngp),lcl_crm1_x,'Color',colgrn)
 plot(xcrm(1:xcrm_ngp),lcl_crm2_x,'Color',colblu)
+title('lifting condensation level [m]')
 
