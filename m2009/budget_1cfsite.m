@@ -125,51 +125,19 @@ tnhusc=fin_tnhusc{'tnhusc'}; % tend of specific humidity due to convection
 %qdt_conv=fin_qdt_conv{'qdt_conv'}; % temperature
 
 
-
-%phalf=fin_total{'phalf'};
-%hus=fin_total{'sphum'}; % specific humidity 
-%hur=fin_total{'rh_cmip'}; % relative humidity 
-% temp tends
-%tnt_dyn=fin_total{'tdt_dyn'}; % K/s from dynamics?  does this include advection or dissipation?
-%tnt_vdif=fin_total{'tdt_vdif'}; % K/s temp tend from vert diff 
-%tntc=fin_total{'tdt_conv'}; % temp tend from conv deg/s
-%tntls=fin_total{'tdt_ls'}; % K/s temp tend from strat cloud deg/s
-%tnt_topo=fin_total{'tdt_diss_topo'};
-%tnt_rad=fin_total{'allradp'}; % K/s temp tend from sw+lw radiation
-%tnt_phy=fin_total{'tdt_phys'}; % K/s temp tend from physics deg/s
-%tnt_phy=fin_total{'tntmp'}; % K/s temp tend from physics deg/s
-%tnt_dyn=fin_total{'tnta'}; % K/s from dynamics?  does this include advection or dissipation?
-%tnt_rad=fin_total{'tntr'}; % K/s temp tend from sw+lw radiation
-%tnt_radl=fin_total{'tntrl'}; % K/s temp tend from lw radiation
-%tnt_rads=fin_total{'tntrs'}; % K/s temp tend from sw radiation
-%tntc=fin_total{'tntc'}; % temp tend from conv deg/s
-%%tnt_vdif=fin_total{'tdt_vdif'}; % K/s temp tend from vert diff 
-%tntpbl=fin_total{'tntpbl'}; % K/s temp tend from vert diff 
-%tnt_vdif=tntpbl; % is this so?
-%%tntls=fin_total{'tdt_ls'}; % K/s temp tend from strat cloud deg/s
-%tntls=fin_total{'tntscp'}; % K/s temp tend from strat cloud deg/s
-
-%% specific hum tends
-%qdt_vdif=fin_total{'qdt_vdif'}; % kg/kg/s spec hum from vert diff
-%tnhuspbl=fin_total{'tnhuspbl'}; % kg/kg/s spec hum from vert diff
-%qdt_ls=fin_total{'qdt_ls'}; % kg/kg/s  spec hum tend from strat clouds
-%qdt_dyn=fin_total{'qdt_dyn'}; % kg/kg/s spec hum tend from 
-%qdt_conv=fin_total{'qdt_conv'}; % kg/kg/s spec hum tend from convection
-%tnhusc=fin_total{'tnhusc'}; % kg/kg/s spec hum tend from convection
-
-
 % tendencies are in units of blah blah per second.  Output is every halfhour
 %conv=1800.; % number of seconds per half hour
 conv=1.; % when comparing to values from PiControl experiments to QC no conversion is better..
 %timest=1750;
-timest=2;
-sitenum=10;
+timest=200;
+sitenum=68; % 52 is deep tropics; 24 the trades in the north tropical pacific
+% 68 is off the coast of S.A. a few degrees
 
 % these correspond to the actual profiles, that should be matched by adding tendencies
 %husdiff=hus(timest,:,1,1)-hus(timest-1,:,1,1);
 %tadiff=ta(timest,:,1,1)-ta(timest-1,:,1,1);
 husdiff=hus(timest,sitenum,:)-hus(timest-1,sitenum,:); % units?
-tadiff=ta(timest,sitenum,:)-ta(timest-1,sitenum,:); % units?
+tadiff=ta(timest,sitenum,:)-ta(timest-1,sitenum,:); % units? K/30 minutes?  
 
 % compute time series
 vlev=5;
@@ -216,6 +184,7 @@ plot(qdtmp,yyax,'k')
 plot(qdtcheck,yyax,'c','Linewidth',2)
 plot(qdta,yyax,'r')
 plot(qdt_tb,yyax,'--k')
+title('moisture tends')
 
 %%% temperature tendency terms
 
@@ -223,7 +192,60 @@ tdtmp=conv*(tntmp(timest,sitenum,:));
 tdtr=conv*(tntr(timest,sitenum,:));
 tdtc=conv*(tntc(timest,sitenum,:));
 tdta=conv*(tnta(timest,sitenum,:));
+tdtpbl=conv*(tntpbl(timest,sitenum,:));
+tdtscp=conv*(tntscp(timest,sitenum,:));
 tdt=conv*(tnt(timest,sitenum,:));
+
+tdt_test=tdta+tdtmp; % tendency due to advection and 'model physics'
+tdt_testmp=tdtr+tdtc+tdtpbl+tdtscp; % tendencies due to individual physics terms
+% it looks like tdta + tdtmp (tendency due to model physics plus the 
+% tendency due to the advection) equal the tendency computed explicitly 
+% by differencing the temperature.  
+% However, the tendency due to model physics (tdtmp) is not equal to 
+% the tendencies of the individual components (tdtr+tdtc+tdtpbl+tdtscp)
+
+% this suggests that there is a term which changes the temperature of the
+% atmosphere that is included in the tdtmp term but which is not included 
+% in tdtr, tdtc, tdtpbl, or tdtscp.
+
+figure
+plot(tdtr,yyax,'b')
+hold on
+plot(tdtc,yyax,'r')
+plot(tdtpbl,yyax,'c')
+plot(tdtscp,yyax,'--c')
+plot(tdta,yyax,'--k')
+plot(tadiff./1800.,yyax,'k')
+sitechar=int2str(sitenum);
+tottit=strcat('temperature tends at:',sitechar)
+title(tottit)
+
+figure
+plot(tdtr,yyax,'b')
+hold on
+plot(tdtc,yyax,'r')
+plot(tdtmp,yyax,'c')
+%plot(tdtscp,yyax,'--c')
+plot(tdta,yyax,'k')
+plot(tdt,yyax,'g')
+%plot(tadiff./1800.,yyax,'k')
+sitechar=int2str(sitenum);
+tottit=strcat('req in QC temp tends at:',sitechar)
+title(tottit)
+
+figure
+plot(tdt_test,yyax,'--k')
+hold on
+plot(tdt_testmp,yyax,'b')
+plot(tdta,yyax,'r')
+plot(tadiff./1800.,yyax,'k')
+title('temperature tends test')
+
+figure
+plot(tdt_testmp,yyax,'b')
+hold on
+plot(tdtmp,yyax,'r')
+title('2 physics tmprtr tnds')
 
 %%% dyn 
 %%% rad + c + ls + vdif + topo
@@ -256,22 +278,6 @@ tdt=conv*(tnt(timest,sitenum,:));
 %hold on
 %plot(squeeze(qdtcheck),newvf,'--g')
 %titlestr=strcat(statstring,': moisture budget tendency [kg/kg per 30 min]')
-%title(titlestr)
-%
-%figure
-%plot(squeeze(tadiff),newvf,'k','Linewidth',2)
-%set(gca,'Ydir','reverse')
-%hold on
-%plot(squeeze(tdtcheck4),newvf,'--g')
-%plot(squeeze(tdtcheck),newvf,'--r')
-%titlestr=strcat(statstring,': temp budget tendency [K per 30 min]');
-%title(titlestr)
-%
-%figure
-%plot(squeeze(tadiff_ts),'k','Linewidth',2)
-%hold on
-%plot(squeeze(tdtcheck4_ts),'--g')
-%titlestr=strcat(statstring,': temp budget tendency [K per 30 min]');
 %title(titlestr)
 %
 %hold off

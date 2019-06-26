@@ -20,7 +20,15 @@
 %path='/amip-p4K-a/gfdl.ncrc4-intel-prod-openmp/pp/atmos_cmip/ts/monthly/36yr/';
 
 timest=1;  % timest and timeend are used in readvars_radflux
-timeend=432;
+if (do_aqua > 0)
+  %aqua_hack = 1;
+  timeend=120; % for aquaplanet experiments of 10 years
+  years2='atmos_cmip.198001-198912'; % for aqua experiments
+else
+  aqua_hack = 0;
+  timeend=432;
+  years2='atmos_cmip.197901-201412'; % for amip experiments
+end
 
 %path='/c96L33_am4p0_longamip_1850rad/ts_all/';
 % for DECK amip
@@ -28,7 +36,8 @@ timeend=432;
 % for amip plus 4K
 %path='/amip-p4K-a/gfdl.ncrc4-intel-prod-openmp/pp/atmos_cmip/ts/monthly/36yr/';
 
-years2='atmos_cmip.197901-201412';
+%years2='atmos_cmip.197901-201412'; % for amip experiments
+%years2='atmos_cmip.198001-198912'; % for aqua experiments
 
 cmip_format='true';
 
@@ -37,14 +46,27 @@ readvars_radflux % this creates a timeseries of the global mean values
 global_weights
 
 %tindex=size(olr_ts,1);
-tindex=432;
+tindex=timeend;
 nyears=tindex/12;
+
+if (aqua_hack < 1)
+  tref_gmn_ts    =zeros(1,tindex);
+else
+  tref_aquap4k = tref_gmn_ts;
+end
+olr_gmn_ts     =zeros(1,tindex);
+olr_clr_gmn_ts =zeros(1,tindex);
+swdn_gmn_ts    =zeros(1,tindex);
+swup_gmn_ts    =zeros(1,tindex);
+swup_clr_gmn_ts=zeros(1,tindex);
 
 for ti=1:tindex;
 
+if (aqua_hack < 1)
   fullfield=squeeze(tref_ts(ti,:,:));
   global_wmean_quick;
   tref_gmn_ts(ti)=wgt_mean;
+end
 
   fullfield=squeeze(olr_ts(ti,:,:));
   global_wmean_quick;
@@ -98,8 +120,11 @@ toa_lwcre=olr_clr_yearlymean-olr_yearlymean; % clear sky - all sky
 toa_swcre=swup_clr_yearlymean-swup_yearlymean; 
 
 % these are the monthly time series
+% R_net is the net downwelling radiation, positive down
 R_net=swdn_gmn_ts-swup_gmn_ts-olr_gmn_ts;
-clr_R=swdn_gmn_ts-swup_gmn_ts-olr_clr_gmn_ts;
+%clr_R=swdn_gmn_ts-swup_gmn_ts-olr_clr_gmn_ts;% mistake in swup?should be clr?
+clr_R=swdn_gmn_ts-swup_clr_gmn_ts-olr_clr_gmn_ts;% mistake in swup?should be clr?
+% CRE is the cloud radiative effect, usually clear sky minus all 
 cre_net=clr_R-R_net;
 lwcre=olr_clr_gmn_ts-olr_gmn_ts;
 swcre=swup_clr_gmn_ts-swup_gmn_ts;
@@ -112,14 +137,19 @@ mncrelw=mean(lwcre)
 mncresw=mean(swcre)
 mnclrlw=mean(olr_clr_gmn_ts)
 mnclrsw=mean(swup_clr_gmn_ts)
-mntas  =mean(tref_gmn_ts)
+if (aqua_hack < 1)
+  mntas  =mean(tref_gmn_ts)
+else
+  mntas  =mean(tref_gmn_ts)+4.;
+end
 
 flux_array(1)=mnR;
 flux_array(2)=mncre;
 flux_array(3)=mncrelw;
 flux_array(4)=mncresw;
-flux_array(5)=mnclrlw;
+flux_array(5)=mnclrlw; % sign should probably be flipped
 flux_array(6)=mnclrsw;
 flux_array(7)=mntas;
+%flux_array(7)=mntas+4.;
 
 

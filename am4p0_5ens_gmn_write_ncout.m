@@ -3,11 +3,15 @@
 %
 % write output to a netcdf file 
 %
+% at least initially, data this file writes to an netcdf file is being computed/processed
+% in am4p0_radflux_ncout.m
+%
 % levi silvers                                        may 2017
 %------------------------------------------------------------------------------------------
 
 %%------------------------------------------------------------------------------------------
 % create a new netcdf file
+file_out='levis_longer_radflux_am4.nc'
 nc = netcdf(file_out,'clobber'); 
 if isempty(nc) error('NetCDF File Not Opened.'); end
 nc.Conventions = 'CF-1.0';

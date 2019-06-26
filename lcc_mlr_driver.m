@@ -14,13 +14,14 @@
 %incoming_lcc_ts=lcloud_am2_mn(:,30:60,:);
 
 % 45 is equator
-%latso=30; % am2 and am3 extend from 0:90, 30:60 is from -30S to +30N
-%latno=60;
+latso=30; % am2 and am3 extend from 0:90, 30:60 is from -30S to +30N
+latno=60;
 %latso=15; % 15 to 75 corresponds to 60S to 60N
 %latno=75
 
-latso=1;
-latno=90;
+% global extent
+%latso=1;
+%latno=90;
 
 
 %am2

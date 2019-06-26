@@ -32,6 +32,8 @@ eis_tr_mn=mean(eis_tr_mn_a,2);
 lcc_tr_mn_a=mean(lcc_tr,3);
 lcc_tr_mn=mean(lcc_tr_mn_a,2);
 
+% create a second set of timeseries which have applied a cosine weighting
+
 % average over time
 sst_tmn=mean(sst_tr_mn,1);
 eis_tmn=mean(eis_tr_mn,1);
