@@ -22,24 +22,37 @@ evap_25km_ztmn=squeeze(mean(evap_25km_tmn,2));
 
 evap_2km=ncread(source_2km_month,'evap');
 evap_2km_zmn=squeeze(mean(evap_2km,2));
+evap_2km_zmn_last3=squeeze(evap_2km_zmn(:,4:6));
 evap_2km_ztmn=squeeze(mean(evap_2km_zmn,2));
 
 evap_1km=ncread(source_1km_month,'evap');
 evap_1km_zmn=squeeze(mean(evap_1km,2));
-evap_1km_ztmn=squeeze(mean(evap_1km_zmn,2));
+evap_1km_zmn_last3=squeeze(evap_1km_zmn(:,4:6));
+evap_1km_ztmn=squeeze(mean(evap_1km_zmn_last3,2));
 
 % W/m2
 sh_1km=ncread(source_1km_month,'shflx');
 sh_2km=ncread(source_2km_month,'shflx');
-sh_25km_ztmn=read_1var_ztmn(source_gcm_month,'shflx');
+sh_25km_en_ztmn=read_1var_ztmn(source_gcm_month,'shflx');
+sh_25km_ztmn=squeeze(mean(sh_25km_en_ztmn,2));
 
+sh_1km_zmn=squeeze(mean(sh_1km,2));
+sh_1km_zmn_last3=squeeze(sh_1km_zmn(:,4:6));
+sh_1km_ztmn=squeeze(mean(sh_1km_zmn_last3,2));
 sh_2km_zmn=squeeze(mean(sh_2km,2));
-sh_2km_ztmn=squeeze(mean(sh_2km_zmn,2));
+sh_2km_zmn_last3=squeeze(sh_2km_zmn(:,4:6));
+sh_2km_ztmn=squeeze(mean(sh_2km_zmn_last3,2));
+
 
 % convert to energy units of W/m2
+% lvlv = 2.5e6 J/kg  % seems to give values that are too large.
+% latheat = 2.26e6 J/kg    
 evap_25km_en_ztmn=latheat.*evap_25km_ztmn;
 evap_2km_en_ztmn=latheat.*evap_2km_ztmn;
 evap_1km_en_ztmn=latheat.*evap_1km_ztmn;
+%evap_25km_en_ztmn=lvlv.*evap_25km_ztmn;
+%evap_2km_en_ztmn=lvlv.*evap_2km_ztmn;
+%evap_1km_en_ztmn=lvlv.*evap_1km_ztmn;
 
 % deg K/s; using 'conv' converts to K/day
 %tdtconv_2km=ncread(source_2km_month,'tdt_conv');
@@ -181,15 +194,25 @@ precip_25km_en=latheat*precip_25_tmn
 
 precip_2_zmn=squeeze(mean(precip_2km,2));
 precip_2_zxmn=squeeze(mean(precip_2_zmn,1));
-precip_2_tmn=squeeze(mean(precip_2_zxmn,2));
+precip_2_tmn=squeeze(mean(precip_2_zxmn(1,4:6),2));
 precip_2km_en=latheat*precip_2_tmn
+precip_2km_en_b=lvlv*precip_2_tmn
 
 precip_1_zmn=squeeze(mean(precip_1km,2));
 precip_1_zxmn=squeeze(mean(precip_1_zmn,1));
-precip_1_tmn=squeeze(mean(precip_1_zxmn,2));
+precip_1_tmn=squeeze(mean(precip_1_zxmn(1,4:6),2));
 precip_1km_en=latheat*precip_1_tmn
+precip_1km_en_b=lvlv*precip_1_tmn
 
 %precip_ts=latheat.*precip_zxmn;
+
+% compute the surface enthalpy flux (sum of latent and sensible heat fluxes)
+% see for example, Wing and Emanuel, 2014
+s_enth_25km=evap_25km_en_ztmn+sh_25km_ztmn;
+s_enth_2km=evap_2km_en_ztmn+sh_2km_ztmn;
+s_enth_1km=evap_1km_en_ztmn+sh_1km_ztmn;
+
+%
 
 heatrad_100km=ncread(source_100km_month,'heat2d_rad');
 heatrad_25km=ncread(source_gcm_month,'heat2d_rad');
@@ -269,13 +292,87 @@ rad_heating_2=tdtlw_2_ztmn+tdtsw_2_ztmn;
 rad_heat_prof_2=mean(rad_heating_2,1);
 
 % compute the diabatic vertical velocity
+% following some of the ideas in Mapes 2001 in which the diabatic divergence is equal to the
+% pressure derivative of teh diabatic omega.  it can also be computed as the pressure derivative
+% of Q/sigma where Q is the heating rate and sigma is the static stability paramete?  
+
+% test an ideal cooling profile:
+rad_cool=zeros(1,33);
+rad_cool=-2.; % Kelvin/day
+staticst_const=zeros(1,33)-0.0005;
+x_local_25=100;
+x_local_2=1000;
+x_local_1=2000;
+
 vvel_d_25km               = zeros(160,nlev);
 vvel_d_2km                = zeros(2000,nlev);
 vvel_d_1km                = zeros(4000,nlev);
-vvel_d_25km=rad_heating_25./staticst_par_25km;
-vvel_d_2km=rad_heating_2./staticst_par_2km;
-vvel_d_1km=rad_heating_1./staticst_par_1km;
+vvel_d_25km_1d            = zeros(1,nlev);
+vvel_d_2km_1d             = zeros(1,nlev);
+vvel_d_1km_1d             = zeros(1,nlev);
+vvel_d_25km_1d_sig        = zeros(1,nlev);
+vvel_d_2km_1d_sig         = zeros(1,nlev);
+vvel_d_1km_1d_sig         = zeros(1,nlev);
 
+vvel_d_25km        =rad_heating_25./staticst_par_25km;
+vvel_d_2km         =rad_heating_2./staticst_par_2km;
+vvel_d_1km         =rad_heating_1./staticst_par_1km;
+
+vvel_d_1km_1d      =rad_heating_1(x_local_1,:)./staticst_par_1km(x_local_1,:);
+vvel_d_2km_1d      =rad_heating_2(x_local_2,:)./staticst_par_1km(x_local_2,:);
+vvel_d_25km_1d     =rad_heating_25(x_local_25,:)./staticst_par_1km(x_local_25,:);
+
+vvel_d_ideal       =rad_cool./staticst_par_25km;
+vvel_d_ideal_2     =rad_cool./staticst_par_2km;
+vvel_d_ideal_1     =rad_cool./staticst_par_1km;
+
+vvel_d_1km_1d_sig  =rad_heating_1(x_local_1,:)./staticst_const;
+vvel_d_2km_1d_sig  =rad_heating_2(x_local_2,:)./staticst_const;
+vvel_d_25km_1d_sig =rad_heating_25(x_local_25,:)./staticst_const;
+
+% compute the divergent velocity at individual locations
+% full variability in Q and sigma
+blast_25=press_deriv(vvel_d_25km(x_local_25,:),99800,pfull_2km);
+blast_1=press_deriv(vvel_d_1km(x_local_1,:),99800,pfull_2km);
+blast_2=press_deriv(vvel_d_2km(x_local_2,:),99800,pfull_2km);
+% full variability in Q, all profiles use the 1km sigma
+blast_25_1d=press_deriv(vvel_d_25km_1d,99800,pfull_2km);
+blast_2_1d=press_deriv(vvel_d_2km_1d,99800,pfull_2km);
+blast_1_1d=press_deriv(vvel_d_1km_1d,99800,pfull_2km);
+% full variability in sigma, all profiles use a Q that is uniformly -2K/d
+blast_ideal_25=press_deriv(vvel_d_ideal(x_local_25,:),99800,pfull_2km);
+blast_ideal_2=press_deriv(vvel_d_ideal_2(x_local_2,:),99800,pfull_2km);
+blast_ideal_1=press_deriv(vvel_d_ideal_1(x_local_1,:),99800,pfull_2km);
+
+div_idealsig_25 =press_deriv(vvel_d_25km_1d_sig,99800,pfull_2km);
+div_idealsig_2  =press_deriv(vvel_d_2km_1d_sig,99800,pfull_2km);
+div_idealsig_1  =press_deriv(vvel_d_1km_1d_sig,99800,pfull_2km);
+
+
+figure
+plot(blast_25,pfull_2km,'Color',colyel)
+set(gca,'Ydir','reverse')
+xlim([-0.5,0.5])
+hold on
+plot(blast_25_1d,pfull_2km,'Color',colyel)
+plot(blast_2,pfull_2km,'Color',colblu)
+plot(blast_2_1d,pfull_2km,'Color',colblu)
+plot(blast_1,pfull_2km,'Color',colgrn)
+plot(blast_1_1d,pfull_2km,'Color',colgrn)
+plot(blast_ideal_25,pfull_2km,'k')
+plot(blast_ideal_2,pfull_2km,'--k')
+plot(blast_ideal_1,pfull_2km,'-.k')
+
+figure
+plot(blast_ideal_25,pfull_2km,'k')
+hold on
+set(gca,'Ydir','reverse')
+xlim([-0.5,0.5])
+plot(blast_ideal_2,pfull_2km,'--k')
+plot(blast_ideal_1,pfull_2km,'-.k')
+plot(div_idealsig_25,pfull_2km,'r')
+plot(div_idealsig_2,pfull_2km,'--r')
+plot(div_idealsig_1,pfull_2km,'-.r')
 
 
 %figure_prof=figure  % radiative cooling only
@@ -566,6 +663,30 @@ set(gca,'Ydir','reverse')
 
 tit_en=strcat('Energetics: ',tit_st);
 suptitle(tit_en)
+
+figure
+subplot(2,1,1)
+%heating_cons=[-5.,-4.,-3.,-2.0,-1.5,-1.,-0.5,0.0,1.0,2.0,3.,4.,5.,6.];
+heating_cons=[-5.,-4.,-3.,-2.0,-1.,0.0,1.0,2.0,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.];
+[C,h]=contourf(1:xgcm_ngp,pfull_2km,tdt_total_25km_ztmn',heating_cons);
+%v=[-5.0,-4.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0]; % if labels are desired on contours
+v=[-5.0,-4.0,-2.0,0.0,2.0,4.0,6.0,8.0,10.0,12.0]; % if labels are desired on contours
+clabel(C,h,v);
+set(h,'EdgeColor','none') % to turn off the black overline on the contours
+title('25km: tdt due to rad and cond K/d')
+set(gca,'Ydir','reverse')
+
+subplot(2,1,2)
+[C,h]=contourf(1:xcrm_ngp,pfull_2km,tdt_total_2km_ztmn',heating_cons);
+%v=[-3.0,-1.5,-0.5,0.0,0.5,1.5,3.0]; % if labels are desired on contours
+clabel(C,h,v);
+set(h,'EdgeColor','none') % no contour lines
+title('2km: tdt due to rad and cond K/d')
+set(gca,'Ydir','reverse')
+
+tit_en=strcat('Energetics: ',tit_st);
+suptitle(tit_en)
+
 
 % %------------------------
 % 
