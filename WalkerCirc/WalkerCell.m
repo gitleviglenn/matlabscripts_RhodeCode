@@ -20,6 +20,39 @@ experi=3 % experi=3 uses the ent0p9 experiment
 exptype=0 % 0 is the default experimental configuration (lwcre is on)
 % 2 corresponds to lwoff
 
+%estr2='ent0p5_p4K'plot(tdt_heat_prof_25(1,10:33),zzfull(10:33),'-o','Color',colyel) 
+
+initialrun=0;
+if initialrun
+% initialize several matrices to hold the ensemble of gcm experiments
+p_mat            = zeros(5,160,1826);
+prec_mn_mat      = zeros(6,1);
+radh_mn_mat      = zeros(6,1);
+rh_mat           = zeros(5,160,33);
+cl_mat           = zeros(5,160,33);
+liq_25km_tot_mat = zeros(5,160,33);
+tdtlw_mat        = zeros(5,160,33);
+tdtsw_mat        = zeros(5,160,33);
+tdtconv_mat      = zeros(5,160,33);
+tdt_totcl_mat    = zeros(5,160,33);
+rad_heat_mat     = zeros(5,33);
+lts_mat          = zeros(5,160);
+
+% these arrays are for use in WalkerFigs.m
+rh_tmp_arr       =zeros(5,33);
+rh_sub_arr       =zeros(5,33);
+ice_prof_arr     =zeros(5,33);
+liq_prof_arr     =zeros(5,33);
+gam_arr          =zeros(5,33);
+gam_m_arr        =zeros(5,33);
+rad_prof_arr     =zeros(5,33);
+tdtconv_prof_arr =zeros(5,33);
+tdtls_prof_arr   =zeros(5,33);
+stap_arr         =zeros(5,33);
+th_e_gcm_arr     =zeros(5,33);
+th_gcm_arr       =zeros(5,33);
+end
+
 %exptype: 0: default; 2: lwoff; 3: p4K
 if (experi < 2) 
     estr='ent0p5'
@@ -29,22 +62,22 @@ if (experi < 2)
     elseif (exptype > 1)
         estr2='ent0p5_lwoff'
     end
-    %estr2='ent0p5_p4K'plot(tdt_heat_prof_25(1,10:33),zzfull(10:33),'-o','Color',colyel) 
-    ind=1
-    % initialize several matrices to hold the ensemble of gcm experiments
-    %psi_mat       = zeros(5,160,33);
-    p_mat            = zeros(5,160,2920);
-    prec_mn_mat      = zeros(6,1);
-    radh_mn_mat      = zeros(6,1);
-    rh_mat           = zeros(5,160,33);
-    cl_mat           = zeros(5,160,33);
-    liq_25km_tot_mat = zeros(5,160,33);
-    tdtlw_mat        = zeros(5,160,33);
-    tdtsw_mat        = zeros(5,160,33);
-    tdtconv_mat      = zeros(5,160,33);
-    tdt_totcl_mat    = zeros(5,160,33);
-    rad_heat_mat     = zeros(5,33);
-    lts_mat          = zeros(5,160);
+%    %estr2='ent0p5_p4K'plot(tdt_heat_prof_25(1,10:33),zzfull(10:33),'-o','Color',colyel) 
+%    ind=1
+%    % initialize several matrices to hold the ensemble of gcm experiments
+%    %psi_mat       = zeros(5,160,33);
+%    p_mat            = zeros(5,160,2920);
+%    prec_mn_mat      = zeros(6,1);
+%    radh_mn_mat      = zeros(6,1);
+%    rh_mat           = zeros(5,160,33);
+%    cl_mat           = zeros(5,160,33);
+%    liq_25km_tot_mat = zeros(5,160,33);
+%    tdtlw_mat        = zeros(5,160,33);
+%    tdtsw_mat        = zeros(5,160,33);
+%    tdtconv_mat      = zeros(5,160,33);
+%    tdt_totcl_mat    = zeros(5,160,33);
+%    rad_heat_mat     = zeros(5,33);
+%    lts_mat          = zeros(5,160);
 elseif (experi < 3)
   estr='ent0p7'
   estr2='ent0p7'
@@ -119,10 +152,22 @@ path_100km=strcat(path_n,'c8x160L33_am4p0_100km_wlkr_',estr2);
 %source_25km=strcat(path_25km,yearstr_79,'.atmos_daily.nc');
 
 %%% this should be the default definition of the path
-%source_gcm_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
-%source_gcm_daily=strcat(path_25km,'/1979th1983_daily.nc');
+ConvParam=0;
+ConvExp=1;
 
-ind=1
+if ConvParam
+  source_gcm_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
+  source_gcm_daily=strcat(path_25km,'/1979th1983_daily.nc');
+  arr_ind=1;
+  ind=3;
+end
+if ConvExp
+  source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
+  source_gcm_daily=strcat(path_25km,'/1979th1983_daily.nc');
+  arr_ind=2;
+  ind=1
+end
+
 % in some cases the indices indicate differing entrainment values, in other cases diff exps
 % ind 1 = either 0p5 or noconv
 % ind 2 = either 0p7 or lwoff
@@ -133,8 +178,8 @@ ind=1
 % use the path below for noconv_lwoff or  noconv
 %source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/',yearstr,'.atmos_month_tmn.nc');
 %source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/','1979th1983_daily.nc');
-source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
-source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/','1979th1983_daily.nc');
+%source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
+%source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/','1979th1983_daily.nc');
 %source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_100km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
 
 %source_25km=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/',yearstr_79,'.atmos_daily.nc');
@@ -185,7 +230,8 @@ cltscale=100. % convert to percentage of cloud fraction
 
 % precipitation
 precip_25km_daily=ncread(source_gcm_daily,'precip');
-precip_25km=ncread(source_gcm_month,'precip');
+precip_25km=ncread(source_gcm_month,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
+precip_100km=ncread(source_100km_month,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
 precip_2km=ncread(source_2km_month,'precip');
 precip_1km=ncread(source_1km_month,'precip');
 %precip_25km_8x=ncread(source_25km_8xday,'precip');
@@ -210,6 +256,7 @@ temp_crm1_ztmn=squeeze(mean(temp_crm1_zmn,3));
 w_2km=ncread(source_2km_month,'w');
 w_1km=ncread(source_1km_month,'w');
 
+precip_100km_znm=mean(precip_100km,2);
 precip_25km_znm=mean(precip_25km,2);
 precip_25km_daily_znm=mean(precip_25km_daily,2);
 precip_2km_znm=mean(precip_2km,2);
@@ -218,6 +265,7 @@ precip_1km_znm=mean(precip_1km,2);
 
 p_2km_znm=scale.*(squeeze(precip_2km_znm));
 p_1km_znm=scale.*(squeeze(precip_1km_znm));
+p_100km_znm=scale.*(squeeze(precip_100km_znm));
 p_25km_znm=scale.*(squeeze(precip_25km_znm));
 p_25km_daily_znm=scale.*(squeeze(precip_25km_daily_znm));
 %p_25km_8x_znm=scale.*(squeeze(precip_25km_8x_znm));
@@ -225,10 +273,13 @@ p_25km_daily_znm=scale.*(squeeze(precip_25km_daily_znm));
 % time mean precip
 %p_25km_8x_znm_equil=p_25km_8x_znm(:,960:2920);
 %p_25km_tmean=mean(p_25km_8x_znm_equil,2);
+p_100km_tmean=mean(p_100km_znm,2);
 p_25km_tmean=mean(p_25km_znm,2);
 p_25km_dly_tmean=mean(p_25km_daily_znm,2);
 p_2km_tmean=mean(p_2km_znm,2);
 p_1km_tmean=mean(p_1km_znm,2);
+
+gcm_wvp=ncread(source_gcm_month,'WVP');
 
 % surface temperature
 tsurf_fulltime=ncread(source_gcm_month,'t_surf');
@@ -301,7 +352,7 @@ ice_2km=ncread(source_2km_month,'tot_ice_amt');
 hur_1km=ncread(source_1km_month,'rh');
 hur_2km=ncread(source_2km_month,'rh');
 
-pfull_25km=ncread(source_2km_month,'pfull');
+pfull_25km=ncread(source_gcm_month,'pfull');
 pfull_25km=100.*pfull_25km; % convert to Pa
 
 pfull_2km=ncread(source_2km_month,'pfull');
@@ -365,9 +416,9 @@ hur_2km_zmn=squeeze(mean(hur_2km,2));
 hur_1km_zmn=squeeze(mean(hur_1km,2));
 
 % if using last 3 months of crm data:
-hur_2km_zmn=hur_2km_zmn(:,:,t_mid:t_end);
-hur_2km_zmn=squeeze(mean(hur_2km_zmn,3));
-hur_2km_ztmn=hur_2km_zmn;
+hur_2km_zmn_a=hur_2km_zmn(:,:,t_mid:t_end);
+hur_2km_zmn_b=squeeze(mean(hur_2km_zmn_a,3));
+hur_2km_ztmn=hur_2km_zmn_b;
 
 hur_1km_zmn=hur_1km_zmn(:,:,t_mid:t_end);
 hur_1km_zmn=squeeze(mean(hur_1km_zmn,3));
@@ -471,7 +522,8 @@ div_d_1km=diabdiv(vvel_d_1km,4000,psurf_1km_zmn,pfull_gen);
 % call psi_driver to compute the streamfunction
 
 %psi_mat(ind,:,:)=psi_3(:,:);
-p_mat(ind,:,:)=p_25km_daily_znm(:,1:365); % probably needs to be checked
+%p_mat(ind,:,:)=p_25km_daily_znm(:,1:365); % probably needs to be checked
+p_mat(ind,:,:)=p_25km_daily_znm(:,1:1826); % probably needs to be checked
 rh_mat(ind,:,:)=hur_25km_ztmn(:,:);
 cl_mat(ind,:,:)=clt_25km_znm_tmn(:,:);
 liq_25km_tot_mat(ind,:,:)=liq_25km_tot_ztmn(:,:);
@@ -479,7 +531,7 @@ tdtlw_mat(ind,:,:)=tdtlw_25_ztmn(:,:);
 tdtsw_mat(ind,:,:)=tdtsw_25_ztmn(:,:);
 tdtls_mat(ind,:,:)=tdtls_25km_ztmn(:,:);
 tdtconv_mat(ind,:,:)=tdtconv_25km_ztmn(:,:);
-lts_mat(ind,:)=lts(:); % computed in compTheta.m
+lts_mat(ind,:)=lts_25km(:); % computed in compTheta.m
  
 tdt_total_cloud=tdtconv_25km_ztmn+tdtls_25km_ztmn;
 tdt_totcl_mat(ind,:,:)=tdt_total_cloud(:,:);
@@ -494,6 +546,7 @@ tdtsw_dmn=squeeze(mean(tdtsw_25_ztmn,1));
 temprad=tdtlw_dmn+tdtsw_dmn;
 rad_heat_mat(ind,:)=temprad;
 
+MeanPrecip_100km=mean(p_100km_tmean,1)
 MeanPrecip_25km=mean(p_25km_tmean,1)
 MeanPrecip_25km_dly=mean(p_25km_dly_tmean,1)
 MeanPrecip_2km=mean(p_2km_tmean,1)
@@ -560,7 +613,7 @@ yt=get(gca,'YTick');
 set(gca,'FontWeight','bold')
 set(gca,'FontSize',16)
 set(gca,'YLim',[-0.01 0.04]);
-tit_e=strcat('Vertical Velocity: LWoff convoff');
+tit_e=strcat('Vertical Velocity: with LWCRE');
 title(tit_e)
 
 figure
@@ -607,6 +660,20 @@ set(gca,'YLim',[10000 100000]);
 set(gca,'YScale','log')
 set(gca,'Ydir','reverse')
 colorbar
+suptitle(tit_st)
+
+% plot time mean precip
+figure
+plot(xcrm(1:xcrm_ngp),p_2km_tmean(:),'Color',colblu,'LineWidth',2);
+hold on
+plot(xgcm(1:xgcm_ngp),p_25km_tmean(:),'Color',colyel,'LineWidth',2);
+plot(xgcm(1:xgcm_ngp),p_100km_tmean(:),'r','LineWidth',2);
+ylabel('Precip (mm/d)','FontSize',20)
+xlabel('km','FontSize',20)
+yt=get(gca,'YTick');
+set(gca,'FontSize',16)
+tit_e=strcat('Precip 100km,25km GCM:',num2str(MeanPrecip_100km),'; ',num2str(MeanPrecip_25km),' CRM:',num2str(MeanPrecip_2km));
+title(tit_e);
 suptitle(tit_st)
 
 stop 
@@ -661,19 +728,6 @@ title(tit_c)
 % set(gca,'FontSize',16)
 % tit_d=strcat('Surface Temperature',tit_st);
 % title(tit_d)
-
-subplot(1,2,2)
-% plot precip time mean
-plot(xcrm(1:xcrm_ngp),p_2km_tmean(:),'k','LineWidth',2);
-hold on
-plot(xgcm(1:xgcm_ngp),p_25km_tmean(:),'r','LineWidth',2);
-ylabel('Precip (mm/d)','FontSize',20)
-xlabel('km','FontSize',20)
-yt=get(gca,'YTick');
-set(gca,'FontSize',16)
-tit_e=strcat('Precip GCM:',num2str(MeanPrecip_25km),' CRM:',num2str(MeanPrecip_2km));
-title(tit_e); 
-suptitle(tit_st)
 
 
 figure
