@@ -4,6 +4,10 @@
 %
 % levi silvers                                   april 2018
 
+colyel=[0.9290,0.6940,0.1250];  % used for 25km runs
+colblu=[0.3010,0.7450,0.9330];  % 2 km runs
+colgrn=[0.4660,0.6740,0.1880];  % 1 km runs
+
 %path_2km_1=strcat(path,'am4p0_50x2000_4K/','19790101');
 path_2km_1=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790101');
 path_2km_2=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790201');
@@ -63,8 +67,57 @@ incoming_ts=precip_2km_smts_b;
 running_mean;
 precip_2km_smts=output_ts;
 
+% read in newer data from the 1km and 2km simululations
+path_new='/Users/silvers/data/WalkerCell/testing_20181203'
+path_2km_ctl=strcat(path_new,'/c50x2000L33_am4p0_2km_wlkr_4K/','1979.6mn.atmos_daily_selvars.nc');
+prec_2km_ctl_full=ncread(path_2km_ctl,'precip');
+prec_2km_ctl_a=squeeze(mean(prec_2km_ctl_full,1));
+prec_2km_ctl=squeeze(mean(prec_2km_ctl_a,1));
 
-precip_mean_daily_25km=squeeze(mean(p_25km_znm,1));
+path_new='/Users/silvers/data/WalkerCell/testing_20181203'
+path_2km_lwoff=strcat(path_new,'/c50x2000L33_am4p0_2km_wlkr_4K_lwoff/','1979.6mn.atmos_daily_selvars.nc');
+prec_2km_lwoff_full=ncread(path_2km_lwoff,'precip');
+prec_2km_lwoff_a=squeeze(mean(prec_2km_lwoff_full,1));
+prec_2km_lwoff=squeeze(mean(prec_2km_lwoff_a,1));
+
+path_new='/Users/silvers/data/WalkerCell/testing_20181203'
+path_1km_ctl=strcat(path_new,'/c10x4000L33_am4p0_1km_wlkr_4K/','1979.6mn.atmos_daily_selvars.nc');
+prec_1km_ctl_full=ncread(path_1km_ctl,'precip');
+prec_1km_ctl_a=squeeze(mean(prec_1km_ctl_full,1));
+prec_1km_ctl=squeeze(mean(prec_1km_ctl_a,1));
+
+path_new='/Users/silvers/data/WalkerCell/testing_20181203'
+path_1km_lwoff=strcat(path_new,'/c10x4000L33_am4p0_1km_wlkr_4K_lwoff/','1979.6mn.atmos_daily_selvars.nc');
+prec_1km_lwoff_full=ncread(path_1km_lwoff,'precip');
+prec_1km_lwoff_a=squeeze(mean(prec_1km_lwoff_full,1));
+prec_1km_lwoff=squeeze(mean(prec_1km_lwoff_a,1));
+
+prec_2km_ctl_sm   =apply_2_runmns(prec_2km_ctl);
+prec_2km_lwoff_sm =apply_2_runmns(prec_2km_lwoff);
+prec_1km_ctl_sm   =apply_2_runmns(prec_1km_ctl);
+prec_1km_lwoff_sm =apply_2_runmns(prec_1km_lwoff);
+
+figure
+plot(scale*prec_2km_ctl_sm,'k')
+hold on
+plot(scale*prec_2km_lwoff_sm,'-.k')
+plot(scale*prec_1km_ctl_sm,'r')
+plot(scale*prec_1km_lwoff_sm,'-.r')
+
+%precip_mean_daily_25km=squeeze(mean(p_25km_znm,1));
+precip_mean_dy_25km=squeeze(mean(precip_25km_daily,1));
+precip_mean_daily_25km=squeeze(mean(precip_mean_dy_25km,1));
+
+p_cv_25km=ncread(source_gcm_daily,'prec_conv'); %kg(h2o)/m2/2
+p_ls_25km=ncread(source_gcm_daily,'prec_ls');
+
+p_cv_100km=ncread(source_100_gcm_daily_l,'prec_conv'); %kg(h2o)/m2/2
+p_ls_100km=ncread(source_100_gcm_daily_l,'prec_ls');
+p_cv_100km_s=ncread(source_100_gcm_daily_s,'prec_conv'); %kg(h2o)/m2/2
+p_ls_100km_s=ncread(source_100_gcm_daily_s,'prec_ls');
+
+precip_mean_daily_25km_sm=apply_2_runmns(precip_mean_daily_25km);
+
 
 % smooth precip with a running mean
 tendindex=365;
@@ -105,9 +158,11 @@ plot(precip_2km_smts)
 % compute and plot the fraction of precip that is large-scale, as well as
 % the large-scale and convective precipitation
 
+% evaluate precip for 25km run 
 precip_25km_last10m=precip_25km(:,:,an_t1:an_t2);
 precip_25km_tmn=squeeze(mean(precip_25km_last10m,3));
 precip_25km_ztmn=squeeze(mean(precip_25km_tmn,2));
+
 p_cv_25km_last10m=p_cv_25km(:,:,an_t1:an_t2);
 p_cv_25km_tmn=squeeze(mean(p_cv_25km_last10m,3));
 p_cv_25km_ztmn=squeeze(mean(p_cv_25km_tmn,2));
@@ -118,17 +173,67 @@ p_ls_25km_ztmn=squeeze(mean(p_ls_25km_tmn,2));
 p_cv_25km_ztmn=scale1*p_cv_25km_ztmn;
 p_ls_25km_ztmn=scale1*p_ls_25km_ztmn;
 
+% evaluate precip for 100km run on the large domain
+p_cv_100km_last10m=p_cv_100km(:,:,an_t1:an_t2);
+p_cv_100km_tmn=squeeze(mean(p_cv_100km_last10m,3));
+p_cv_100km_ztmn=squeeze(mean(p_cv_100km_tmn,2));
+p_ls_100km_last10m=p_ls_100km(:,:,an_t1:an_t2);
+p_ls_100km_tmn=squeeze(mean(p_ls_100km_last10m,3));
+p_ls_100km_ztmn=squeeze(mean(p_ls_100km_tmn,2));
+
+p_cv_100km_ztmn=scale1*p_cv_100km_ztmn;
+p_ls_100km_ztmn=scale1*p_ls_100km_ztmn;
+
+% evaluate precip for 100km run on the small domain
+p_cv_100km_s=p_cv_100km_s(:,:,an_t1:an_t2);
+p_cv_100km_s_tmn=squeeze(mean(p_cv_100km_s,3));
+p_cv_100km_s_ztmn=squeeze(mean(p_cv_100km_s_tmn,2));
+p_ls_100km_s=p_ls_100km_s(:,:,an_t1:an_t2);
+p_ls_100km_s_tmn=squeeze(mean(p_ls_100km_s,3));
+p_ls_100km_s_ztmn=squeeze(mean(p_ls_100km_s_tmn,2));
+
+p_cv_100km_s_ztmn=scale1*p_cv_100km_s_ztmn;
+p_ls_100km_s_ztmn=scale1*p_ls_100km_s_ztmn;
+
+
 f_ls=p_ls_25km_ztmn./(p_ls_25km_ztmn+p_cv_25km_ztmn);
 f_test=p_ls_25km_ztmn./(precip_25km_ztmn);
+
+f_100_large_ls=p_ls_100km_ztmn./(p_ls_100km_ztmn+p_cv_100km_ztmn);
+f_100_small_ls=p_ls_100km_s_ztmn./(p_ls_100km_s_ztmn+p_cv_100km_s_ztmn);
 
 figure
 subplot(1,2,1)
 plot(f_ls)
-title('fraction of precip which is LS')
+title('fraction of precip which is LS: 25km')
 subplot(1,2,2)
 plot(p_cv_25km_ztmn,'k');
 hold on
 plot(p_ls_25km_ztmn,'b');
+title('conv (black) and ls (blue)')
+tit_pr=strcat('Precip LS: ',tit_st);
+suptitle(tit_pr)
+
+figure
+subplot(1,2,1)
+plot(f_100_large_ls)
+title('fraction of precip which is LS: 100km')
+subplot(1,2,2)
+plot(p_cv_100km_ztmn,'k');
+hold on
+plot(p_ls_100km_ztmn,'b');
+title('conv (black) and ls (blue)')
+tit_pr=strcat('Precip LS: ',tit_st);
+suptitle(tit_pr)
+
+figure
+subplot(1,2,1)
+plot(f_100_small_ls)
+title('fraction of precip which is LS: 100km small')
+subplot(1,2,2)
+plot(p_cv_100km_s_ztmn,'k');
+hold on
+plot(p_ls_100km_s_ztmn,'b');
 title('conv (black) and ls (blue)')
 tit_pr=strcat('Precip LS: ',tit_st);
 suptitle(tit_pr)
@@ -148,10 +253,10 @@ path_lwoff=strcat(path_tele,path_exp_lwoff,path_fname);
 path_noconv=strcat(path_tele,path_exp_noconv,path_fname);
 path_noconv_lwoff=strcat(path_tele,path_exp_noconv_lwoff,path_fname);
 
-precip_25km_ctl=ncread(path_ctl,'precip');
-precip_25km_lwoff=ncread(path_lwoff,'precip');
-precip_25km_noconv_lwoff=ncread(path_noconv_lwoff,'precip');
-precip_25km_noconv=ncread(path_noconv,'precip');
+precip_25km_ctl_raw=ncread(path_ctl,'precip');
+precip_25km_lwoff_raw=ncread(path_lwoff,'precip');
+precip_25km_noconv_lwoff_raw=ncread(path_noconv_lwoff,'precip');
+precip_25km_noconv_raw=ncread(path_noconv,'precip');
 
 %% compute the domain mean shear...
 %u_ctl_ztmn             = read_1var_ztmn(path_ctl,'ucomp');
@@ -164,22 +269,22 @@ precip_25km_noconv=ncread(path_noconv,'precip');
 %u_noconv_dmn           = squeeze(mean(u_noconv_ztmn,1));
 
 % ctl
-precip_25km_ctl_znm=mean(precip_25km_ctl,2);
+precip_25km_ctl_znm=mean(precip_25km_ctl_raw,2);
 p_25km_ctl_znm=scale.*(squeeze(precip_25km_ctl_znm));
 precip_daily_ctl=squeeze(mean(p_25km_ctl_znm,1));
 
 % lwoff 
-precip_znm=mean(precip_25km_lwoff,2);
+precip_znm=mean(precip_25km_lwoff_raw,2);
 p_znm=scale.*(squeeze(precip_znm));
 precip_daily_lwoff=squeeze(mean(p_znm,1));
 
 % noconv_lwoff 
-precip_znm=mean(precip_25km_noconv_lwoff,2);
+precip_znm=mean(precip_25km_noconv_lwoff_raw,2);
 p_znm=scale.*(squeeze(precip_znm));
 precip_daily_noconv_lwoff=squeeze(mean(p_znm,1));
 
 % noconv
-precip_znm=mean(precip_25km_noconv,2);
+precip_znm=mean(precip_25km_noconv_raw,2);
 p_znm=scale.*(squeeze(precip_znm));
 precip_daily_noconv=squeeze(mean(p_znm,1));
 
@@ -220,27 +325,43 @@ running_mean
 precip_25km_noconv_lwoff=output_ts;
 
 tendindex=1826;
-%incoming_ts=precip_mean_daily_25km;
 incoming_ts=precip_daily_ctl;
 running_mean;
 precip_ctl_rm1=output_ts;
-
 tendindex=1818;
 incoming_ts=output_ts;
 running_mean
 precip_ctl_rm2=output_ts;
 
 figure
-plot(precip_ctl_rm2,'k');
+plot(precip_ctl_rm2,'Color',colyel,'LineWidth',2);
 hold on
-plot(precip_25km_lwoff,'b','LineWidth',2)
+plot(precip_25km_lwoff,'Color',colyel,'LineWidth',1)
+plot(precip_25km_noconv,'--','Color',colyel,'LineWidth',1)
+plot(precip_25km_noconv_lwoff,'-.','Color',colyel,'LineWidth',1)
+%plot(precip_25km_lwoff,'b','LineWidth',1)
 set(gca,'YLim',[2.5,5])
 set(gca,'XLim',[0,1820])
+pctl=mean(precip_ctl_rm2(200:1810))
+plwoff=mean(precip_25km_lwoff(200:1810))
+pnoconv=mean(precip_25km_noconv(200:1810))
+pnoconvlwoff=mean(precip_25km_noconv_lwoff(200:1810))
+title('5 years of domain mean precip 25km')
+
+figure
+plot(precip_ctl_rm2,'Color',colyel,'LineWidth',2);
+hold on
+plot(precip_25km_lwoff,'Color',colyel,'LineWidth',1)
+plot(precip_25km_noconv,'--','Color',colyel,'LineWidth',1)
+plot(precip_25km_noconv_lwoff,'-.','Color',colyel,'LineWidth',1)
+%plot(precip_25km_lwoff,'b','LineWidth',1)
+set(gca,'YLim',[2.5,5])
+set(gca,'XLim',[0,180])
 mean(precip_ctl_rm2(200:1810))
 mean(precip_25km_lwoff(200:1810))
 mean(precip_25km_noconv(200:1810))
 mean(precip_25km_noconv_lwoff(200:1810))
-
+title('first 180 days of domain mean precip 25km')
 
 tendindex=1810;
 incoming_ts=precip_ctl_rm2;
@@ -252,7 +373,38 @@ incoming_ts=precip_25km_lwoff;
 running_mean
 precip_25km_lwoff_rm3=output_ts;
 
+%tendindex=1810;
+%incoming_ts=precip_25km_noconv;
+%running_mean
+%precip_25km_lwoff_rm3=output_ts;
 
+
+
+figure
+plot(scale*prec_2km_ctl_sm,'Color',colblu,'LineWidth',2)
+hold on
+plot(scale*prec_2km_lwoff_sm,'Color',colblu,'LineWidth',1)
+plot(scale*prec_1km_ctl_sm,'Color',colgrn,'LineWidth',2)
+plot(scale*prec_1km_lwoff_sm,'Color',colgrn,'LineWidth',1)
+plot(precip_ctl_rm2(1:164),'Color',colyel,'LineWidth',2)
+plot(precip_25km_noconv(1:164),'--','Color',colyel,'LineWidth',2)
+plot(precip_25km_lwoff(1:164),'Color',colyel,'LineWidth',1)
+%ytitle('mm/day')
+%xtitle('days')
+xlabel('days')
+xlim([0 160])
+ylabel('mm/day')
+title('Domain Mean Precipitation')
+mn_25km_ctl=mean(precip_ctl_rm2)
+mn_25km_ctl_6m=mean(precip_ctl_rm2(1:164))
+mn_25km_noconv=mean(precip_25km_noconv)
+mn_25km_noconv_6m=mean(precip_25km_noconv(1:164))
+mn_25km_lwoff=mean(precip_25km_lwoff)
+mn_25km_lwoff_6m=mean(precip_25km_lwoff(1:164))
+mn_2km_ctl=scale*mean(prec_2km_ctl_sm)
+mn_2km_lwoff_sm=scale*mean(prec_2km_lwoff_sm)
+mn_1km_ctl_sm=scale*mean(prec_1km_ctl_sm)
+mn_1km_lwoff_sm=scale*mean(prec_1km_lwoff_sm)
 
 
 
