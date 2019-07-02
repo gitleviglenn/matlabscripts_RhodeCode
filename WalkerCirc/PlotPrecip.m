@@ -108,13 +108,25 @@ plot(scale*prec_1km_lwoff_sm,'-.r')
 precip_mean_dy_25km=squeeze(mean(precip_25km_daily,1));
 precip_mean_daily_25km=squeeze(mean(precip_mean_dy_25km,1));
 
-p_cv_25km=ncread(source_gcm_daily,'prec_conv'); %kg(h2o)/m2/2
-p_ls_25km=ncread(source_gcm_daily,'prec_ls');
+%p_cv_25km=ncread(source_gcm_daily,'prec_conv'); %kg(h2o)/m2/2
+%p_ls_25km=ncread(source_gcm_daily,'prec_ls');
 
+% for daily output.  monthly is with 'source_gcm_month'
 p_cv_100km=ncread(source_100_gcm_daily_l,'prec_conv'); %kg(h2o)/m2/2
 p_ls_100km=ncread(source_100_gcm_daily_l,'prec_ls');
 p_cv_100km_s=ncread(source_100_gcm_daily_s,'prec_conv'); %kg(h2o)/m2/2
 p_ls_100km_s=ncread(source_100_gcm_daily_s,'prec_ls');
+
+
+% compute the fraction of precip that is large-scale and convective
+%[p_cv_gcm,p_ls_gcm,frac_gcm]=precip_largesc_vs_conv(source_gcm_month,1,4);
+
+[p_cv_25km_ztmn,p_ls_25km_ztmn,f_ls]=precip_largesc_vs_conv(source_gcm_month,1,4);
+[p_cv_100km_ztmn,p_ls_100km_ztmn,f_100_ls]=precip_largesc_vs_conv(source_100km_month,1,4);
+[p_cv_100km_l_ztmn,p_ls_100km_l_ztmn,f_100_l_ls]=precip_largesc_vs_conv(source_100_gcm_daily_l,365,1826);
+[p_cv_100km_s_ztmn,p_ls_100km_s_ztmn,f_100_s_ls]=precip_largesc_vs_conv(source_100_gcm_daily_s,365,1826);
+
+
 
 precip_mean_daily_25km_sm=apply_2_runmns(precip_mean_daily_25km);
 
@@ -158,49 +170,55 @@ plot(precip_2km_smts)
 % compute and plot the fraction of precip that is large-scale, as well as
 % the large-scale and convective precipitation
 
+% write a function which uses ls and cv precip time series, an_t1 and an_t2
+% and outputs the variables: f_ls, p_cv_ztmn, p_ls_ztmn
+
 % evaluate precip for 25km run 
-precip_25km_last10m=precip_25km(:,:,an_t1:an_t2);
-precip_25km_tmn=squeeze(mean(precip_25km_last10m,3));
-precip_25km_ztmn=squeeze(mean(precip_25km_tmn,2));
 
-p_cv_25km_last10m=p_cv_25km(:,:,an_t1:an_t2);
-p_cv_25km_tmn=squeeze(mean(p_cv_25km_last10m,3));
-p_cv_25km_ztmn=squeeze(mean(p_cv_25km_tmn,2));
-p_ls_25km_last10m=p_ls_25km(:,:,an_t1:an_t2);
-p_ls_25km_tmn=squeeze(mean(p_ls_25km_last10m,3));
-p_ls_25km_ztmn=squeeze(mean(p_ls_25km_tmn,2));
+%precip_25km_last10m=precip_25km(:,:,an_t1:an_t2);
+%precip_25km_tmn=squeeze(mean(precip_25km_last10m,3));
+%precip_25km_ztmn=squeeze(mean(precip_25km_tmn,2));
+%
+%p_cv_25km_last10m=p_cv_25km(:,:,an_t1:an_t2);
+%p_cv_25km_tmn=squeeze(mean(p_cv_25km_last10m,3));
+%p_cv_25km_ztmn=squeeze(mean(p_cv_25km_tmn,2));
+%p_ls_25km_last10m=p_ls_25km(:,:,an_t1:an_t2);
+%p_ls_25km_tmn=squeeze(mean(p_ls_25km_last10m,3));
+%p_ls_25km_ztmn=squeeze(mean(p_ls_25km_tmn,2));
+%
+%p_cv_25km_ztmn=scale1*p_cv_25km_ztmn;
+%p_ls_25km_ztmn=scale1*p_ls_25km_ztmn;
 
-p_cv_25km_ztmn=scale1*p_cv_25km_ztmn;
-p_ls_25km_ztmn=scale1*p_ls_25km_ztmn;
-
-% evaluate precip for 100km run on the large domain
-p_cv_100km_last10m=p_cv_100km(:,:,an_t1:an_t2);
-p_cv_100km_tmn=squeeze(mean(p_cv_100km_last10m,3));
-p_cv_100km_ztmn=squeeze(mean(p_cv_100km_tmn,2));
-p_ls_100km_last10m=p_ls_100km(:,:,an_t1:an_t2);
-p_ls_100km_tmn=squeeze(mean(p_ls_100km_last10m,3));
-p_ls_100km_ztmn=squeeze(mean(p_ls_100km_tmn,2));
-
-p_cv_100km_ztmn=scale1*p_cv_100km_ztmn;
-p_ls_100km_ztmn=scale1*p_ls_100km_ztmn;
-
-% evaluate precip for 100km run on the small domain
-p_cv_100km_s=p_cv_100km_s(:,:,an_t1:an_t2);
-p_cv_100km_s_tmn=squeeze(mean(p_cv_100km_s,3));
-p_cv_100km_s_ztmn=squeeze(mean(p_cv_100km_s_tmn,2));
-p_ls_100km_s=p_ls_100km_s(:,:,an_t1:an_t2);
-p_ls_100km_s_tmn=squeeze(mean(p_ls_100km_s,3));
-p_ls_100km_s_ztmn=squeeze(mean(p_ls_100km_s_tmn,2));
-
-p_cv_100km_s_ztmn=scale1*p_cv_100km_s_ztmn;
-p_ls_100km_s_ztmn=scale1*p_ls_100km_s_ztmn;
+%% evaluate precip for 100km run on the large domain
+%p_cv_100km_last10m=p_cv_100km(:,:,an_t1:an_t2);
+%p_cv_100km_tmn=squeeze(mean(p_cv_100km_last10m,3));
+%p_cv_100km_ztmn=squeeze(mean(p_cv_100km_tmn,2));
+%p_ls_100km_last10m=p_ls_100km(:,:,an_t1:an_t2);
+%p_ls_100km_tmn=squeeze(mean(p_ls_100km_last10m,3));
+%p_ls_100km_ztmn=squeeze(mean(p_ls_100km_tmn,2));
+%
+%p_cv_100km_ztmn=scale1*p_cv_100km_ztmn;
+%p_ls_100km_ztmn=scale1*p_ls_100km_ztmn;
+%
+%% evaluate precip for 100km run on the small domain
+%p_cv_100km_s=p_cv_100km_s(:,:,an_t1:an_t2);
+%p_cv_100km_s_tmn=squeeze(mean(p_cv_100km_s,3));
+%p_cv_100km_s_ztmn=squeeze(mean(p_cv_100km_s_tmn,2));
+%p_ls_100km_s=p_ls_100km_s(:,:,an_t1:an_t2);
+%p_ls_100km_s_tmn=squeeze(mean(p_ls_100km_s,3));
+%p_ls_100km_s_ztmn=squeeze(mean(p_ls_100km_s_tmn,2));
+%
+%p_cv_100km_s_ztmn=scale1*p_cv_100km_s_ztmn;
+%p_ls_100km_s_ztmn=scale1*p_ls_100km_s_ztmn;
 
 
-f_ls=p_ls_25km_ztmn./(p_ls_25km_ztmn+p_cv_25km_ztmn);
-f_test=p_ls_25km_ztmn./(precip_25km_ztmn);
+%f_ls=p_ls_25km_ztmn./(p_ls_25km_ztmn+p_cv_25km_ztmn);
+%f_test=p_ls_25km_ztmn./(precip_25km_ztmn);
 
-f_100_large_ls=p_ls_100km_ztmn./(p_ls_100km_ztmn+p_cv_100km_ztmn);
-f_100_small_ls=p_ls_100km_s_ztmn./(p_ls_100km_s_ztmn+p_cv_100km_s_ztmn);
+%f_100_large_ls=p_ls_100km_ztmn./(p_ls_100km_ztmn+p_cv_100km_ztmn);
+%f_100_small_ls=p_ls_100km_s_ztmn./(p_ls_100km_s_ztmn+p_cv_100km_s_ztmn);
+
+tit_st='What is your title string?';
 
 figure
 subplot(1,2,1)
@@ -219,9 +237,9 @@ subplot(1,2,1)
 plot(f_100_large_ls)
 title('fraction of precip which is LS: 100km')
 subplot(1,2,2)
-plot(p_cv_100km_ztmn,'k');
+plot(p_cv_100km_l_ztmn,'k');
 hold on
-plot(p_ls_100km_ztmn,'b');
+plot(p_ls_100km_l_ztmn,'b');
 title('conv (black) and ls (blue)')
 tit_pr=strcat('Precip LS: ',tit_st);
 suptitle(tit_pr)
@@ -237,6 +255,8 @@ plot(p_ls_100km_s_ztmn,'b');
 title('conv (black) and ls (blue)')
 tit_pr=strcat('Precip LS: ',tit_st);
 suptitle(tit_pr)
+
+
 
 % code to plot 5 years of daily mean precip
 path_tele='/Users/silvers/data/WalkerCell/testing_20181203';
