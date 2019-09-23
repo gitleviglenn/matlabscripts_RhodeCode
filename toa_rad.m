@@ -93,32 +93,32 @@ net_cre=toa_R-toa_R_clr; % swdn_toa-olr-swup_toar+olr_clr+swup_toa_clr;
 
 %blahface=glb_mon_mn_ts(lwdn_sfc,60);
 
-% compute time series of fluxes
-% check the values of the indices used to read in the data: sind, eind
-% these are defined in open_radflux_m2009.m
-length=eind-sind+1;
-switch comp_ts
-  case 'getts'
-  lwup_toa_ts=glb_mon_mn_ts(olr,length);
-  lwup_clr_toa_ts=glb_mon_mn_ts(olr_clr,length);
-  swdn_toa_ts=glb_mon_mn_ts(swdn_toa,length);
-  swup_toa_ts=glb_mon_mn_ts(swup_toa,length);
-  swup_clr_toa_ts=glb_mon_mn_ts(swup_toa_clr,length);
-  
-  lwdn_sfc_ts=glb_mon_mn_ts(lwdn_sfc,length);
-  swdn_sfc_ts=glb_mon_mn_ts(swdn_sfc,length);
-  lwup_sfc_ts=glb_mon_mn_ts(lwup_sfc,length);
-  swup_sfc_ts=glb_mon_mn_ts(swup_sfc,length);
-  shflx_sfc_ts=glb_mon_mn_ts(shflx,length);
-  evap_ts=glb_mon_mn_ts(evap,length);
-  lhflux_sfc_ts=lat_evap.*evap_ts;
-
-  precip_ts=glb_mon_mn_ts(precip,length);%  = domaintime_mn(precip); % kg/m2/s
-  precip_conv_ts=glb_mon_mn_ts(prec_conv,length);%  = domaintime_mn(prec_conv);
-
-% compute budget time series
-  toa_R_ts=swdn_toa_ts-swup_toa_ts-lwup_toa_ts;
-  sfc_R_ts=-lhflux_sfc_ts-shflx_sfc_ts+lwdn_sfc_ts-lwup_sfc_ts+swdn_sfc_ts-swup_sfc_ts;
-  atm_imb_ts=toa_R_ts-sfc_R_ts;
-end
+%% compute time series of fluxes
+%% check the values of the indices used to read in the data: sind, eind
+%% these are defined in open_radflux_m2009.m
+%length=eind-sind+1;
+%switch comp_ts
+%  case 'getts'
+%  lwup_toa_ts=glb_mon_mn_ts(olr,length);
+%  lwup_clr_toa_ts=glb_mon_mn_ts(olr_clr,length);
+%  swdn_toa_ts=glb_mon_mn_ts(swdn_toa,length);
+%  swup_toa_ts=glb_mon_mn_ts(swup_toa,length);
+%  swup_clr_toa_ts=glb_mon_mn_ts(swup_toa_clr,length);
+%  
+%  lwdn_sfc_ts=glb_mon_mn_ts(lwdn_sfc,length);
+%  swdn_sfc_ts=glb_mon_mn_ts(swdn_sfc,length);
+%  lwup_sfc_ts=glb_mon_mn_ts(lwup_sfc,length);
+%  swup_sfc_ts=glb_mon_mn_ts(swup_sfc,length);
+%  shflx_sfc_ts=glb_mon_mn_ts(shflx,length);
+%  evap_ts=glb_mon_mn_ts(evap,length);
+%  lhflux_sfc_ts=lat_evap.*evap_ts;
+%
+%  precip_ts=glb_mon_mn_ts(precip,length);%  = domaintime_mn(precip); % kg/m2/s
+%  precip_conv_ts=glb_mon_mn_ts(prec_conv,length);%  = domaintime_mn(prec_conv);
+%
+%% compute budget time series
+%  toa_R_ts=swdn_toa_ts-swup_toa_ts-lwup_toa_ts;
+%  sfc_R_ts=-lhflux_sfc_ts-shflx_sfc_ts+lwdn_sfc_ts-lwup_sfc_ts+swdn_sfc_ts-swup_sfc_ts;
+%  atm_imb_ts=toa_R_ts-sfc_R_ts;
+%end
 

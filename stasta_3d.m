@@ -1,24 +1,34 @@
-function var = stasta_3d(temp,nxg,psfc,press,zfull)
-% compute the static stability parameter, as shown in Mapes
-% 2001, figure 1b.  
+function [msts,sten,ststp] = stasta_3d(temp,hur,nxg,psfc,press,zfull)
+%--------------------------------------------------------------
+% compute the dry and moist static energy 
+%
+% also computes the moist static energy
+%
+% levi silvers                                    June 2019
+%--------------------------------------------------------------
 
 % dry static energy: sts=cp*T+gz
 phys_constants
 
 % nxg is the number of gridpoints in the x direction
 
-var=zeros(nxg,33);
+sten  =zeros(nxg,33); % dry static energy
+msts =zeros(nxg,33); % moist static energy
+ststp=zeros(nxg,33); % static stability par
 
 % compute the static stability
 for i=1:nxg
 for j=1:33
-    var(i,j)=cp*temp(i,j)+grav*zfull(j);
+    sten(i,j)=cp*temp(i,j)+grav*zfull(j);
+    msts(i,j)=cp*temp(i,j)+grav*zfull(j)+hur(i,j)*latheat;
     %sts(j)=cp%*temp(plot_lat,j)%+grav*zfull(j);
 end
 end
 %% compute the static stability parameter [K/Pa]
-%for j=2:33-1
-%    var(j)=(1/cp).*(sts(j+1)-sts(j-1))/(press(j+1)-press(j-1));
-%end
-%var(1)=var(2);
-%var(33)=(1/cp).*(sts(33)-sts(32))/(psfc(plot_lat)-press(32));
+for i=1:nxg
+  for j=2:33-1
+    ststp(i,j)=(1/cp).*(sten(i,j+1)-sten(i,j-1))/(press(j+1)-press(j-1));
+  end
+  ststp(i,1)=sten(i,2);
+  ststp(i,33)=(1/cp).*(sten(i,33)-sten(i,32))/(psfc(i)-press(32));
+end

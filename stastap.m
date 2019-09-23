@@ -1,4 +1,4 @@
-function var = stastap(temp,plot_lat,psfc,press,zfull)
+function var = stastap(temp,hur,plot_lat,psfc,press,zfull)
 % compute the static stability parameter, as shown in Mapes
 % 2001, figure 1b.  
 
@@ -8,10 +8,15 @@ phys_constants
 sts=zeros(1,33);
 
 % compute the static stability
+% compute the moist static stability
 for j=1:33
     sts(j)=cp*temp(plot_lat,j)+grav*zfull(j);
+    msts(j)=cp*temp(plot_lat,j)+grav*zfull(j)+hur(plot_lat,j)*latheat;
     %sts(j)=cp%*temp(plot_lat,j)%+grav*zfull(j);
 end
+
+%figure
+%plot(msts)
 % compute the static stability parameter [K/Pa]
 for j=2:33-1
     var(j)=(1/cp).*(sts(j+1)-sts(j-1))/(press(j+1)-press(j-1));

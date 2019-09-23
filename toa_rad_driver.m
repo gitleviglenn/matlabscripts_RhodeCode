@@ -50,7 +50,7 @@ net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
 figure
-plot(precip_ts-evap_ts);
+%plot(precip_ts-evap_ts);
 hold on
 
 switch wkstn_loc
@@ -63,7 +63,7 @@ switch wkstn_loc
         experimentn=strcat(experimentn_a,'/gfdl.ncrc3-intel-prod-openmp/2/history/');
     end
   case 'macbook'
-experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
+    experimentn=strcat('/c8x160L33_am4p0_',grid_spac,'_wlkr_ent',entval,'_p4K');
 end
 
 toa_rad
@@ -75,7 +75,7 @@ lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
 
-plot(precip_ts-evap_ts,'r');
+%plot(precip_ts-evap_ts,'r');
 
 del_R(1)=toa_R_ctl-toa_R_p4K;
 del_cre(1)=net_cre_ctl-net_cre_p4K;
@@ -109,7 +109,7 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
-plot(precip_ts-evap_ts);
+%plot(precip_ts-evap_ts);
 
 switch wkstn_loc
   case 'wkstn'
@@ -132,7 +132,7 @@ lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
 
-plot(precip_ts-evap_ts,'r');
+%plot(precip_ts-evap_ts,'r');
 
 del_R(2)=toa_R_ctl-toa_R_p4K;
 del_cre(2)=net_cre_ctl-net_cre_p4K;
@@ -168,12 +168,12 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
-plot(precip_ts-evap_ts);
+%plot(precip_ts-evap_ts);
 
-swup_toa_ts_ctl=swup_toa_ts;
-evap_ts_ctl=evap_ts;
-lhflux_sfc_ts_ctl=lhflux_sfc_ts;
-atm_imb_ts_ctl=atm_imb_ts;
+%swup_toa_ts_ctl=swup_toa_ts;
+%evap_ts_ctl=evap_ts;
+%lhflux_sfc_ts_ctl=lhflux_sfc_ts;
+%atm_imb_ts_ctl=atm_imb_ts;
 
 %lhflux_dmn
 %shflx_s_dmn
@@ -204,12 +204,12 @@ lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
 
-plot(precip_ts-evap_ts,'r');
+%plot(precip_ts-evap_ts,'r');
 
-swup_toa_ts_p4K=swup_toa_ts;
-evap_ts_p4K=evap_ts;
-lhflux_sfc_ts_p4K=lhflux_sfc_ts;
-atm_imb_ts_p4K=atm_imb_ts;
+%swup_toa_ts_p4K=swup_toa_ts;
+%evap_ts_p4K=evap_ts;
+%lhflux_sfc_ts_p4K=lhflux_sfc_ts;
+%atm_imb_ts_p4K=atm_imb_ts;
 %lhflux_dmn
 %shflx_s_dmn
 %lwdn_s_dmn
@@ -249,7 +249,7 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
-plot(precip_ts-evap_ts);
+%plot(precip_ts-evap_ts);
 
 switch wkstn_loc
   case 'wkstn'
@@ -272,7 +272,7 @@ lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
 
-plot(precip_ts-evap_ts,'r');
+%plot(precip_ts-evap_ts,'r');
 
 del_R(4)=toa_R_ctl-toa_R_p4K;
 del_cre(4)=net_cre_ctl-net_cre_p4K;
@@ -306,7 +306,7 @@ lw_cre_ctl    = lw_cre;
 net_cre_ctl   = net_cre;
 atm_enimb_ctl = atm_imb;
 
-plot(precip_ts-evap_ts);
+%plot(precip_ts-evap_ts);
 
 switch wkstn_loc
   case 'wkstn'
@@ -330,7 +330,7 @@ lw_cre_p4K    = lw_cre;
 net_cre_p4K   = net_cre;
 atm_enimb_p4K = atm_imb;
 
-plot(precip_ts-evap_ts,'r');
+%plot(precip_ts-evap_ts,'r');
 
 del_R(5)=toa_R_ctl-toa_R_p4K;
 del_cre(5)=net_cre_ctl-net_cre_p4K;

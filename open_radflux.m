@@ -3,7 +3,7 @@
 % intended to be used with Matlab versions from at least 2015...
 %
 
-%experimentn='/c8x160L33_am4p0_25km_wlkr_ent0p9'
+experimentn='/c8x160L33_am4p0_25km_wlkr_ent0p9'
 
 piece_a='/Users/silvers/data/WalkerCell/gauss_d';
 piece_b=experimentn;

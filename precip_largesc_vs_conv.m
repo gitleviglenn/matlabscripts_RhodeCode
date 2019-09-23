@@ -12,6 +12,10 @@ p_ls_eq=p_ls(:,:,t1:t2);
 p_ls_tmn=squeeze(mean(p_ls_eq,3));
 p_ls_ztmn=squeeze(mean(p_ls_tmn,2));
 
+scalefac=86400;
+p_cv_ztmn=scalefac*p_cv_ztmn;
+p_ls_ztmn=scalefac*p_ls_ztmn;
+
 % compute the fraction of precip that is due to the 
 % large-scale scheme
 frac_ls=p_ls_ztmn./(p_ls_ztmn+p_cv_ztmn);
