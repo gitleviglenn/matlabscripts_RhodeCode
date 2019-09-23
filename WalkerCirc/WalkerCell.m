@@ -20,6 +20,15 @@ experi=3 % experi=3 uses the ent0p9 experiment
 exptype=0 % 0 is the default experimental configuration (lwcre is on)
 % 2 corresponds to lwoff
 
+if exptype==2
+  ind=2;
+end
+
+%lwstring='4K_lwoff/';
+lwstring='4K/';
+
+lwcreonoff=' with LWCRE on';
+
 %estr2='ent0p5_p4K'plot(tdt_heat_prof_25(1,10:33),zzfull(10:33),'-o','Color',colyel) 
 
 initialrun=0;
@@ -62,22 +71,6 @@ if (experi < 2)
     elseif (exptype > 1)
         estr2='ent0p5_lwoff'
     end
-%    %estr2='ent0p5_p4K'plot(tdt_heat_prof_25(1,10:33),zzfull(10:33),'-o','Color',colyel) 
-%    ind=1
-%    % initialize several matrices to hold the ensemble of gcm experiments
-%    %psi_mat       = zeros(5,160,33);
-%    p_mat            = zeros(5,160,2920);
-%    prec_mn_mat      = zeros(6,1);
-%    radh_mn_mat      = zeros(6,1);
-%    rh_mat           = zeros(5,160,33);
-%    cl_mat           = zeros(5,160,33);
-%    liq_25km_tot_mat = zeros(5,160,33);
-%    tdtlw_mat        = zeros(5,160,33);
-%    tdtsw_mat        = zeros(5,160,33);
-%    tdtconv_mat      = zeros(5,160,33);
-%    tdt_totcl_mat    = zeros(5,160,33);
-%    rad_heat_mat     = zeros(5,33);
-%    lts_mat          = zeros(5,160);
 elseif (experi < 3)
   estr='ent0p7'
   estr2='ent0p7'
@@ -90,12 +83,12 @@ elseif (experi < 3)
 elseif (experi < 4)
   estr='ent0p9'
   estr2='ent0p9'
+  ind=3
   if (exptype > 2)
     estr2='ent0p9_p4K'
   elseif (exptype > 1)
     estr2='ent0p9_lwoff'
   end
-  ind=3
 elseif (experi < 5)
   estr='ent1p1'
   estr2='ent1p1'
@@ -130,7 +123,7 @@ an_t2_d=365;
 % timing variables for crm [days]
 %t_end=181; % was 59 original
 %t_mid=91; % was 30 originally
-t_mid=1;
+t_mid=3;
 t_end=6;
 
 yearstr='/1980th1983';
@@ -138,8 +131,13 @@ yearstr_79='/19790101';
 
 % path strings... 
 %path_25km=strcat(path,'c96L33_am4p0_8x160_nh_25km_wlkr_4K_',estr2,'/19790101');
-path_25km=strcat(path_n,'c8x160L33_am4p0_25km_wlkr_',estr2);
-path_100km=strcat(path_n,'c8x160L33_am4p0_100km_wlkr_',estr2);
+path_25km         =strcat(path_n,'c8x160L33_am4p0_25km_wlkr_',estr2);
+path_25km_lg      =strcat(path_n,'c8x640L33_am4p0_25km_wlkr_',estr2);
+
+path_100km            =strcat(path_n,'c8x160L33_am4p0_100km_wlkr_',estr2);
+path_100km_small      =strcat(path_n,'c8x40L33_am4p0_100km_wlkr_',estr2);
+path_100km_small_dly  =strcat(path_n,'c8x40L33_am4p0_100km_wlkr_ent0p9');
+path_100km_small_dly_lwoff  =strcat(path_n,'c8x40L33_am4p0_100km_wlkr_ent0p9_lwoff');
 
 %path_2km=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790401');
 %path_2km=strcat(path,'c50x2000L33_am4p0_2km_wlkr_4K/');
@@ -147,25 +145,38 @@ path_100km=strcat(path_n,'c8x160L33_am4p0_100km_wlkr_',estr2);
 %path_1km=strcat(path_n,'c10x4000L33_am4p0_1km_wlkr_4K/');
 % path_2km=strcat(path,'am4p0_50x2000_4K/','19790301');
 
+%-------------------------------------------------------------------------------------------------
 % source strings...
-%%source_25km_8xday=strcat(path_25km,yearstr_79,'.atmos_8xdaily.nc');
-%source_25km=strcat(path_25km,yearstr_79,'.atmos_daily.nc');
+%-------------------------------------------------------------------------------------------------
 
 %%% this should be the default definition of the path
-ConvParam=0;
-ConvExp=1;
+ConvParam=0;% convective parameterization is on when ConvParam=1
+ConvExp=1;  % explicit convection, meaning convective parameterization is off
+ConvExpLwoff=0;
+
+if exptype==2;
+  ind=2;
+end
 
 if ConvParam
   source_gcm_month=strcat(path_25km,yearstr,'.atmos_month_tmn.nc');
+  %source_gcm_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
   source_gcm_daily=strcat(path_25km,'/1979th1983_daily.nc');
   arr_ind=1;
-  ind=3;
+  ind=3; %??
 end
-if ConvExp
+if ConvExp % explicit convection
   source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/',yearstr,'.atmos_month_tmn.nc');
-  source_gcm_daily=strcat(path_25km,'/1979th1983_daily.nc');
+  source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv/','/1979th1983_daily.nc');
+  %source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/','/1979th1983_daily.nc');
   arr_ind=2;
   ind=1
+  %
+  if ConvExpLwoff
+    source_gcm_month=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/',yearstr,'.atmos_month_tmn.nc');
+    source_gcm_daily=strcat('/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km_wlkr_ent0p9_noconv_lwoff/','/1979th1983_daily.nc');
+    ind=4
+  end
 end
 
 % in some cases the indices indicate differing entrainment values, in other cases diff exps
@@ -186,10 +197,12 @@ end
 %%source_gcm_month=strcat(path_25km,'_noconv',yearstr,'.atmos_month_tmn.nc');
 %%source_gcm_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
 
-source_100km_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
+source_25km_lg_month   =strcat(path_25km_lg,yearstr,'.atmos_month_tmn.nc');
 
-%lwstring='4K_lwoff/';
-lwstring='4K/';
+source_100km_lg_month  =strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
+source_100km_sm_month  =strcat(path_100km_small,yearstr,'.atmos_month_tmn.nc');
+source_100km_sm_lwoff_daily  =strcat(path_100km_small_dly_lwoff,'/1979th1983_daily.nc');
+source_100km_sm_daily  =strcat(path_100km_small_dly,'/1979th1983_daily.nc');
 
 source_1km_month=strcat(path_n,'c10x4000L33_am4p0_1km_wlkr_',lwstring,'1979_6mn.atmos_month.nc');
 %source_1km_month=strcat(path_1km,'19790301.atmos_month_psivars.nc');
@@ -200,14 +213,20 @@ source_1km_month=strcat(path_n,'c10x4000L33_am4p0_1km_wlkr_',lwstring,'1979_6mn.
 %source_2km_month=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','1979_6mn.atmos_month.nc');
 %source_2km_month=strcat(path,'c50x2000L33_am4p0_2km_wlkr_4K_lwoff/','1979_6mn.atmos_month.nc');
 source_2km_month=strcat(path_n,'c50x2000L33_am4p0_2km_wlkr_',lwstring,'1979_6mn.atmos_month.nc');
-source_2km_dprecp=strcat(path_n,'c50x2000L33_am4p0_2km_wlkr_',lwstring,'1979.6mn.atmos_daily_selvars.nc');
+%source_2km_dprecp=strcat(path_n,'c50x2000L33_am4p0_2km_wlkr_',lwstring,'1979.6mn.atmos_daily_selvars.nc');
 %source_2km_month=strcat(path_2km,'.atmos_month.nc');
 %source_2km_8xday=strcat(path_2km,'.atmos_8xdaily.nc');
 
+%-------------------------------------------------------------------------------------------------
 
 % domain related parameters:
 xgcm=0:25:4000; % size of gcm domain in km
 xgcm_ngp=160; % gcm number of grid points in x
+xgcm_40=50:100:3950; % size of gcm domain in km
+xgcm_640=0:25:16000; % size of gcm domain in km
+xgcm_640=0:6.25:4000; % size of gcm domain in km
+xgcm_sm_ngp=40; % gcm number of grid points in x
+xgcm_lg_ngp=640; % gcm number of grid points in x
 xcrm=0:2:4000; % size of crm domain in km
 xcrm_ngp=2000; % crm number of grid points in x
 xcrm_1km=0:1:4000;
@@ -231,9 +250,13 @@ cltscale=100. % convert to percentage of cloud fraction
 % precipitation
 precip_25km_daily=ncread(source_gcm_daily,'precip');
 precip_25km=ncread(source_gcm_month,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
-precip_100km=ncread(source_100km_month,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
+precip_25km_lg=ncread(source_25km_lg_month,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
+precip_100km=ncread(source_100km_lg_month,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
+precip_100km_sm=ncread(source_100km_sm_month,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
 precip_2km=ncread(source_2km_month,'precip');
+precip_2km=precip_2km(:,:,t_mid:t_end);
 precip_1km=ncread(source_1km_month,'precip');
+precip_1km=precip_1km(:,:,t_mid:t_end);
 %precip_25km_8x=ncread(source_25km_8xday,'precip');
 %precip_2km_8x=ncread(source_2km_8xday,'precip');
 %p_cv_25km=ncread(source_25km,'prec_conv'); %kg(h2o)/m2/2
@@ -256,24 +279,27 @@ temp_crm1_ztmn=squeeze(mean(temp_crm1_zmn,3));
 w_2km=ncread(source_2km_month,'w');
 w_1km=ncread(source_1km_month,'w');
 
-precip_100km_znm=mean(precip_100km,2);
-precip_25km_znm=mean(precip_25km,2);
-precip_25km_daily_znm=mean(precip_25km_daily,2);
-precip_2km_znm=mean(precip_2km,2);
-precip_1km_znm=mean(precip_1km,2);
+precip_100km_znm      =mean(precip_100km,2);
+precip_100km_sm_znm   =mean(precip_100km_sm,2);
+precip_25km_znm       =mean(precip_25km,2);
+precip_25km_daily_znm =mean(precip_25km_daily,2);
+precip_2km_znm        =mean(precip_2km,2);
+precip_1km_znm        =mean(precip_1km,2);
 %precip_25km_8x_znm=mean(precip_25km_8x,2);
 
-p_2km_znm=scale.*(squeeze(precip_2km_znm));
-p_1km_znm=scale.*(squeeze(precip_1km_znm));
-p_100km_znm=scale.*(squeeze(precip_100km_znm));
-p_25km_znm=scale.*(squeeze(precip_25km_znm));
-p_25km_daily_znm=scale.*(squeeze(precip_25km_daily_znm));
+p_2km_znm             =scale.*(squeeze(precip_2km_znm));
+p_1km_znm             =scale.*(squeeze(precip_1km_znm));
+p_100km_znm           =scale.*(squeeze(precip_100km_znm));
+p_100km_sm_znm        =scale.*(squeeze(precip_100km_sm_znm));
+p_25km_znm            =scale.*(squeeze(precip_25km_znm));
+p_25km_daily_znm      =scale.*(squeeze(precip_25km_daily_znm));
 %p_25km_8x_znm=scale.*(squeeze(precip_25km_8x_znm));
 
 % time mean precip
 %p_25km_8x_znm_equil=p_25km_8x_znm(:,960:2920);
 %p_25km_tmean=mean(p_25km_8x_znm_equil,2);
 p_100km_tmean=mean(p_100km_znm,2);
+p_100km_sm_tmean=mean(p_100km_sm_znm,2);
 p_25km_tmean=mean(p_25km_znm,2);
 p_25km_dly_tmean=mean(p_25km_daily_znm,2);
 p_2km_tmean=mean(p_2km_znm,2);
@@ -318,8 +344,13 @@ u_1km_dmn      = squeeze(mean(u_1km_ztmn,1));
 
 % vertical velocity
 w_25km=ncread(source_gcm_month,'w');
-w_25km_ztmn    = read_1var_ztmn(source_gcm_month,'w');
+w_25km_ztmn       = read_1var_ztmn(source_gcm_month,'w');
+w_25km_lg_ztmn    = read_1var_ztmn(source_25km_lg_month,'w');
 
+w_100km_lg_ztmn   = read_1var_ztmn(source_100km_lg_month,'w');
+w_100km_sm_ztmn   = read_1var_ztmn(source_100km_sm_month,'w');
+
+omega_100km_ztmn  = read_1var_ztmn(source_100km_lg_month,'omega');
 omega_25km_ztmn  = read_1var_ztmn(source_gcm_month,'omega');
 omega_2km_ztmn   = read_1var_ztmn(source_2km_month,'omega');
 omega_1km_ztmn   = read_1var_ztmn(source_1km_month,'omega');
@@ -404,6 +435,14 @@ liq_1km_prof=squeeze(mean(liq_1km_ztmn,1));
 ice_1km_ztmn=read_1var_ztmn(source_1km_month,'tot_ice_amt');
 ice_1km_prof=squeeze(mean(ice_1km_ztmn,1));
 
+% compute the liquid condensate profiles in the subsidence region
+liq_1km_sub_a=liq_1km_ztmn(1:500,:);
+liq_1km_sub_prof_a=mean(liq_1km_sub_a,1);
+liq_1km_sub_b=liq_1km_ztmn(3500:4000,:);
+liq_1km_sub_prof_b=mean(liq_1km_sub_b,1);
+liq_1km_sub_prof=(liq_1km_sub_prof_a+liq_1km_sub_prof_b)/2;
+
+
 % total zonal time mean condensate
 liq_25km_tot_ztmn=liq_25km_ztmn+ice_25km_ztmn;
 
@@ -439,6 +478,12 @@ q_1km_ztmn=squeeze(q_1km_zmn(:,:,1));
 temp_25km_ztmn = read_1var_ztmn(source_gcm_month,'temp');
 tsurf1=squeeze(tsurf_fulltime(:,4,1)); % indices shouldn't matter here...
 
+clt_100km_ztmn = read_1var_ztmn(source_100km_sm_month,'cld_amt');
+clt_100km_sm_znm_tmn=cltscale.*clt_100km_ztmn;
+
+clt_100km_lg_ztmn = read_1var_ztmn(source_100km_lg_month,'cld_amt');
+clt_100km_lg_znm_tmn=cltscale.*clt_100km_lg_ztmn;
+
 clt_25km_znm=cltscale.*squeeze(mean(clt_25km,2));
 clt_25km_znm_2m=clt_25km_znm(:,:,an_t1:an_t2);
 clt_25km_znm_2mtmn=squeeze(mean(clt_25km_znm_2m,3));
@@ -457,6 +502,43 @@ clt_1km_znm=cltscale.*squeeze(mean(clt_1km,2));
 clt_1km_znm_eq=clt_1km_znm(:,:,t_mid:t_end);
 clt_1km_znm_eq_tmn=mean(clt_1km_znm_eq,3);
 
+% select profiles in the subsidence region...
+bc_a_1km=501;
+bc_b_1km=3500;
+bc_c_1km=4000;
+bc_a_2km=251;
+bc_b_2km=1750;
+bc_c_2km=2000;
+bc_a_25km=21;
+bc_b_25km=140;
+bc_c_25km=160;
+bc_a_100km=6;
+bc_b_100km=35;
+bc_c_100km=40;
+
+clt_1km_sub_a=clt_1km_znm_eq_tmn(1:bc_a_1km,:);
+clt_1km_sub_prof_a=mean(clt_1km_sub_a,1);
+clt_1km_sub_b=clt_1km_znm_eq_tmn(bc_b_1km:bc_c_1km,:);
+clt_1km_sub_prof_b=mean(clt_1km_sub_b,1);
+clt_1km_sub_prof=(clt_1km_sub_prof_a+clt_1km_sub_prof_b)/2;
+
+clt_2km_sub_a=clt_2km_znm_eq_tmn(1:bc_a_2km,:);
+clt_2km_sub_prof_a=mean(clt_2km_sub_a,1);
+clt_2km_sub_b=clt_2km_znm_eq_tmn(bc_b_2km:bc_c_2km,:);
+clt_2km_sub_prof_b=mean(clt_2km_sub_b,1);
+clt_2km_sub_prof=(clt_2km_sub_prof_a+clt_2km_sub_prof_b)/2;
+
+clt_25km_sub_a=clt_25km_znm_tmn(1:bc_a_25km,:);
+clt_25km_sub_prof_a=mean(clt_25km_sub_a,1);
+clt_25km_sub_b=clt_25km_znm_tmn(bc_b_25km:bc_c_25km,:);
+clt_25km_sub_prof_b=mean(clt_25km_sub_b,1);
+clt_25km_sub_prof=(clt_25km_sub_prof_a+clt_25km_sub_prof_b)/2;
+
+clt_100km_sub_a=clt_100km_sm_znm_tmn(1:bc_a_100km,:);
+clt_100km_sub_prof_a=mean(clt_100km_sub_a,1);
+clt_100km_sub_b=clt_100km_sm_znm_tmn(bc_b_100km:bc_c_100km,:);
+clt_100km_sub_prof_b=mean(clt_100km_sub_b,1);
+clt_100km_sub_prof=(clt_100km_sub_prof_a+clt_100km_sub_prof_b)/2;
 
 % grab w at or near 500 mb
 w_25km_532=squeeze(w_25km(:,:,18,:)); % grab 532 level
@@ -493,7 +575,7 @@ clear rho_1km;
 
 rho_25km=rho_2d_gen(temp_25km_ztmn,q_25km_ztmn,pfull_25km,160);
 rho_2km=rho_2d_gen(temp_crm_ztmn,q_2km_ztmn,pfull_2km,2000);
-rho_1km=rho_2d_gen(temp_crm1_ztmn,q_1km_ztmn,pfull_1km,2000);
+rho_1km=rho_2d_gen(temp_crm1_ztmn,q_1km_ztmn,pfull_1km,4000);
 
 
 % below for 25km
@@ -547,6 +629,7 @@ temprad=tdtlw_dmn+tdtsw_dmn;
 rad_heat_mat(ind,:)=temprad;
 
 MeanPrecip_100km=mean(p_100km_tmean,1)
+MeanPrecip_100km_sm=mean(p_100km_sm_tmean,1)
 MeanPrecip_25km=mean(p_25km_tmean,1)
 MeanPrecip_25km_dly=mean(p_25km_dly_tmean,1)
 MeanPrecip_2km=mean(p_2km_tmean,1)
@@ -606,14 +689,18 @@ hold on
 plot(xcrm_1km(1:xcrm_1km_ngp),w_1km_smooth_ts,'Color',colgrn,'LineWidth',1.5);
 %plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'c','LineWidth',2); % used for the lwoff
 plot(xgcm(1:xgcm_ngp),w_25km_ztmn(:,wlev),'Color',colyel,'LineWidth',2);
+%plot(xgcm_640(1:xgcm_lg_ngp),w_25km_lg_ztmn(:,wlev),'--','Color',colyel,'LineWidth',2);
+%plot(xgcm(1:xgcm_ngp),w_100km_lg_ztmn(:,wlev),'--r','LineWidth',2);
+plot(xgcm_40(1:xgcm_sm_ngp),w_100km_sm_ztmn(:,wlev),'r','LineWidth',2);
 %plot(xgcm(1:xgcm_ngp),w500_25km_ztmn(:),'r','LineWidth',2);
-ylabel('w (m/s)','FontSize',20)
+ylabel('(m/s)','FontSize',20)
+%xlabel('unitless','FontSize',20)
 xlabel('km','FontSize',20)
 yt=get(gca,'YTick');
 set(gca,'FontWeight','bold')
 set(gca,'FontSize',16)
-set(gca,'YLim',[-0.01 0.04]);
-tit_e=strcat('Vertical Velocity: with LWCRE');
+set(gca,'YLim',[-0.01 0.05]);
+tit_e=strcat('Vertical Velocity without LWCRE');
 title(tit_e)
 
 figure
@@ -640,41 +727,65 @@ set(gca,'YScale','log')
 
 figure
 %clt_contours=[1.,3.,5.,10.,15.,20.,25.,30.,35.,40.,45.,50.,55.,60.,65.,70.,75.,80.,85.,90.,95.];
-clt_contours=[1,3,5,10,15,20,25,30,35,40,45,50,55,60];
-subplot(1,2,1)
+%clt_contours=[1,3,5,10,15,20,25,30,35,40,45,50,55,60];
+clt_contours=[5,10,15,20,25,30,35,40];
+subplot(2,2,2)
 %caxis=([1 25]);
-[C,h]=contourf(1:xcrm_ngp,pfull_2km,clt_2km_znm_end_tmn',clt_contours,'EdgeColor','None');
+[C,h]=contourf(1:xcrm_ngp,pfull_2km,clt_2km_znm_eq_tmn',clt_contours,'EdgeColor','None');
 v=[5,10,20,30,40,50,60];
 clabel(C,h,v);
 tit_a=strcat('cloud fraction 2km')
 title(tit_a)
+set(gca,'YLim',[10000 100000]);
+set(gca,'YScale','log')
 set(gca,'Ydir','reverse')
-colorbar
-subplot(1,2,2)
-%caxis=([1 25]);
+subplot(2,2,1)
+[C,h]=contourf(1:xcrm_1km_ngp,pfull_2km,clt_1km_znm_eq_tmn',clt_contours,'EdgeColor','None');
+v=[5,10,20,30,40,50,60];
+clabel(C,h,v);
+tit_a=strcat('cloud fraction 1km')
+title(tit_a)
+set(gca,'YLim',[10000 100000]);
+set(gca,'YScale','log')
+set(gca,'Ydir','reverse')
+subplot(2,2,3)
 [C,h]=contourf(1:xgcm_ngp,pfull_2km,clt_25km_znm_tmn',clt_contours,'EdgeColor','None');
+v=[5,10,20,30,40,50,60];
 clabel(C,h,v);
 tit_b=strcat('cloud fraction 25km')
 title(tit_b)
 set(gca,'YLim',[10000 100000]);
 set(gca,'YScale','log')
 set(gca,'Ydir','reverse')
-colorbar
+subplot(2,2,4)
+[C,h]=contourf(1:xgcm_sm_ngp,pfull_2km,clt_100km_sm_znm_tmn',clt_contours,'EdgeColor','None');
+%[C,h]=contourf(1:xgcm_ngp,pfull_2km,clt_100km_lg_znm_tmn',clt_contours,'EdgeColor','None');
+v=[5,10,20,30,40,50,60];
+clabel(C,h,v);
+tit_b=strcat('cloud fraction 100km')
+title(tit_b)
+set(gca,'YLim',[10000 100000]);
+set(gca,'YScale','log')
+set(gca,'Ydir','reverse')
 suptitle(tit_st)
 
 % plot time mean precip
 figure
 plot(xcrm(1:xcrm_ngp),p_2km_tmean(:),'Color',colblu,'LineWidth',2);
 hold on
+plot(xcrm_1km(1:xcrm_1km_ngp),p_1km_tmean(:),'Color',colgrn,'LineWidth',2);
 plot(xgcm(1:xgcm_ngp),p_25km_tmean(:),'Color',colyel,'LineWidth',2);
-plot(xgcm(1:xgcm_ngp),p_100km_tmean(:),'r','LineWidth',2);
-ylabel('Precip (mm/d)','FontSize',20)
+%plot(xgcm(1:xgcm_ngp),p_100km_tmean(:),'r','LineWidth',2);
+plot(xgcm_40(1:xgcm_sm_ngp),p_100km_sm_tmean(:),'r','LineWidth',2);
+ylabel('mm/d','FontSize',20)
 xlabel('km','FontSize',20)
 yt=get(gca,'YTick');
+set(gca,'FontWeight','bold')
 set(gca,'FontSize',16)
-tit_e=strcat('Precip 100km,25km GCM:',num2str(MeanPrecip_100km),'; ',num2str(MeanPrecip_25km),' CRM:',num2str(MeanPrecip_2km));
+%tit_e=strcat('Precip 100km,25km,2km,1km:',num2str(MeanPrecip_100km_sm),';',num2str(MeanPrecip_25km),';',num2str(MeanPrecip_2km),';',num2str(MeanPrecip_1km));
+tit_e=('Precipitation without LWCRE')
 title(tit_e);
-suptitle(tit_st)
+%suptitle(tit_st)
 
 stop 
 

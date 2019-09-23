@@ -38,6 +38,12 @@
 %----------------------------------------------------------------------
 %path_base='/Users/silvers/data/WalkerCell/'
 
+%% define colors
+colyel=[0.9290,0.6940,0.1250];  % 25km 
+colblu=[0.3010,0.7450,0.9330];  % 2km
+colgrn=[0.4660,0.6740,0.1880];  % 1km
+
+
 % constant added to the streamfunction
 %con_stream=2000.;
 
@@ -262,23 +268,24 @@ vvel_cons=scale_cons.*vvel_convals;
 clabel(C,h,v);               
 colorbar
 
-% take the average of the center half of the domain
-w_25km_center=w_25km_ztmn(40:120,:); % 80
-w_25km_center_mn=mean(w_25km_center,1);
-w_2km_center=w_2km_ztmn(500:1500,:); % 1000
-w_2km_center_mn=mean(w_2km_center,1);
-w_1km_center=w_1km_ztmn(1000:3000,:); % 2000
-w_1km_center_mn=mean(w_1km_center,1);
+%%% take the average of the center half of the domain
+%w_25km_center=w_25km_ztmn(40:120,:); % 80
+%w_25km_center_mn=mean(w_25km_center,1);
+%w_2km_center=w_2km_ztmn(500:1500,:); % 1000
+%w_2km_center_mn=mean(w_2km_center,1);
+%w_1km_center=w_1km_ztmn(1000:3000,:); % 2000
+%w_1km_center_mn=mean(w_1km_center,1);
 
-% take the average of the center fourth of the domain
-w_25km_center=w_25km_ztmn(80:120,:); % dependent on experiment!!
-w_25km_center_mn=mean(w_25km_center,1);
-w_2km_center=w_2km_ztmn(750:1250,:);
-w_2km_center_mn=mean(w_2km_center,1);
-w_1km_center=w_1km_ztmn(1500:2500,:); % 1000
-w_1km_center_mn=mean(w_1km_center,1);
+%% take the average of the center fourth of the domain
+%%w_25km_center=w_25km_ztmn(80:120,:); % dependent on experiment!!
+%w_25km_center=w_25km_ztmn(60:100,:); % dependent on experiment!!
+%w_25km_center_mn=mean(w_25km_center,1);
+%w_2km_center=w_2km_ztmn(750:1250,:);
+%w_2km_center_mn=mean(w_2km_center,1);
+%w_1km_center=w_1km_ztmn(1500:2500,:); % 1000
+%w_1km_center_mn=mean(w_1km_center,1);
 
-% take the average of the center fourth of the domain
+%% take the average of the center tenth of the domain
 w_25km_center=w_25km_ztmn(80:120,:); % dependent on experiment!!
 w_25km_center_mn=mean(w_25km_center,1);
 w_2km_center=w_2km_ztmn(900:1100,:);
@@ -295,15 +302,15 @@ w_1km_sub=w_1km_ztmn(1:1000,:);
 w_1km_sub_mn=mean(w_1km_sub,1);
 
 figure
-plot(w_25km_center_mn,pfull_gen,'b')
+plot(w_25km_center_mn,pfull_gen,'Color',colyel)
 set(gca,'Ydir','reverse')
 hold on
-plot(w_25km_sub_mn,pfull_gen,'--b')
-plot(w_2km_center_mn,pfull_gen,'r')
-plot(w_2km_sub_mn,pfull_gen,'--r')
-plot(w_1km_center_mn,pfull_gen,'k')
-plot(w_1km_sub_mn,pfull_gen,'--k')
-title('vertical velocity')
+plot(w_25km_sub_mn,pfull_gen,'--','Color',colyel)
+plot(w_2km_center_mn,pfull_gen,'Color',colblu)
+plot(w_2km_sub_mn,pfull_gen,'--','Color',colblu)
+plot(w_1km_center_mn,pfull_gen,'Color',colgrn)
+plot(w_1km_sub_mn,pfull_gen,'--','Color',colgrn)
+title('vertical velocity: mn and sub region(--)')
 
 
 

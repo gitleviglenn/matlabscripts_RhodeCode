@@ -12,7 +12,7 @@
 
 conv=60*60*24; % convert to Kelvin per day
 
-source_100km_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
+%source_100km_month=strcat(path_100km,yearstr,'.atmos_month_tmn.nc');
 
 % kg/m2 s
 %evap_25km_ztmn=read_1var_ztmn(source_gcm_month,'evap');
@@ -59,12 +59,12 @@ evap_1km_en_ztmn=latheat.*evap_1km_ztmn;
 tdtconv_25km_ztmn=conv.*read_1var_ztmn(source_gcm_month,'tdt_conv');
 tdtconv_25km_prof=squeeze(mean(tdtconv_25km_ztmn,1));
 
-tdtconv_100km_ztmn=conv.*read_1var_ztmn(source_100km_month,'tdt_conv');
+tdtconv_100km_ztmn=conv.*read_1var_ztmn(source_100km_sm_month,'tdt_conv');
 tdtconv_100km_prof=squeeze(mean(tdtconv_100km_ztmn,1));
 
 
 % deg K/s
-tdtls_100km=ncread(source_100km_month,'tdt_ls');
+tdtls_100km=ncread(source_100km_sm_month,'tdt_ls');
 %tdtls_25km=ncread(source_gcm_month,'tdt_ls');
 tdtls_2km=ncread(source_2km_month,'tdt_ls');
 tdtls_1km=ncread(source_1km_month,'tdt_ls');
@@ -99,7 +99,7 @@ tdtvdif_2km=conv.*tdtvdif_2km;
 
 % det K/s; using 'conv' converts to K/day
 tdtlw_25_ztmn=conv.*read_1var_ztmn(source_gcm_month,'tdt_lw');
-tdtlw_100_ztmn=conv.*read_1var_ztmn(source_gcm_month,'tdt_lw');
+tdtlw_100_ztmn=conv.*read_1var_ztmn(source_100km_sm_month,'tdt_lw');
 
 tdtlw_2km=ncread(source_2km_month,'tdt_lw');
 tdtlw_2km=conv.*tdtlw_2km(:,:,:,t_mid:t_end);
@@ -112,7 +112,7 @@ tdtlw_1_tmn=squeeze(mean(tdtlw_1km,4));
 tdtlw_1_ztmn=squeeze(mean(tdtlw_1_tmn,2));
 
 % det K/s
-tdtsw_100_ztmn=conv.*read_1var_ztmn(source_100km_month,'tdt_sw');
+tdtsw_100_ztmn=conv.*read_1var_ztmn(source_100km_sm_month,'tdt_sw');
 tdtsw_25_ztmn=conv.*read_1var_ztmn(source_gcm_month,'tdt_sw');
 
 tdtsw_2km=ncread(source_2km_month,'tdt_sw');
@@ -177,7 +177,7 @@ rad_net_sfc_gcm  =swdn_gcm_sfc-swup_gcm_sfc+lwdn_gcm_sfc-lwup_gcm_sfc-shflx_gcm-
 atm_imb_rad=rad_net_toa_gcm-rad_net_sfc_gcm;
 % end of test
 
-precip_100km=ncread(source_100km_month,'precip');
+precip_100km=ncread(source_100km_sm_month,'precip');
 precip_25km=ncread(source_gcm_month,'precip');
 precip_2km=ncread(source_2km_month,'precip');
 precip_1km=ncread(source_1km_month,'precip');
@@ -214,7 +214,7 @@ s_enth_1km=evap_1km_en_ztmn+sh_1km_ztmn;
 
 %
 
-heatrad_100km=ncread(source_100km_month,'heat2d_rad');
+heatrad_100km=ncread(source_100km_sm_month,'heat2d_rad');
 heatrad_25km=ncread(source_gcm_month,'heat2d_rad');
 heatrad_2km=ncread(source_2km_month,'heat2d_rad');
 heatrad_1km=ncread(source_1km_month,'heat2d_rad');
@@ -270,9 +270,9 @@ for i=1:160
 end 
 
 %% define colors
-colyel=[0.9290,0.6940,0.1250];
-colblu=[0.3010,0.7450,0.9330];
-colgrn=[0.4660,0.6740,0.1880];
+colyel=[0.9290,0.6940,0.1250];  % 25km 
+colblu=[0.3010,0.7450,0.9330];  % 2km
+colgrn=[0.4660,0.6740,0.1880];  % 1km
 
 
 %stst_conv=stst*conv;
@@ -290,6 +290,56 @@ rad_heat_prof_1=mean(rad_heating_1,1);
 
 rad_heating_2=tdtlw_2_ztmn+tdtsw_2_ztmn;
 rad_heat_prof_2=mean(rad_heating_2,1);
+
+% compute radiative heating in the subsidence region
+tdtlw_1km_sub_a=tdtlw_1_ztmn(1:bc_a_1km,:);
+tdtlw_1km_sub_prof_a=mean(tdtlw_1km_sub_a,1);
+tdtlw_1km_sub_b=tdtlw_1_ztmn(bc_b_1km:bc_c_1km,:);
+tdtlw_1km_sub_prof_b=mean(tdtlw_1km_sub_b,1);
+tdtlw_1km_sub_prof=(tdtlw_1km_sub_prof_a+tdtlw_1km_sub_prof_b)/2;
+
+tdtlw_2km_sub_a=tdtlw_2_ztmn(1:bc_a_2km,:);
+tdtlw_2km_sub_prof_a=mean(tdtlw_2km_sub_a,1);
+tdtlw_2km_sub_b=tdtlw_2_ztmn(bc_b_2km:bc_c_2km,:);
+tdtlw_2km_sub_prof_b=mean(tdtlw_2km_sub_b,1);
+tdtlw_2km_sub_prof=(tdtlw_2km_sub_prof_a+tdtlw_2km_sub_prof_b)/2;
+
+tdtlw_25km_sub_a=tdtlw_25_ztmn(1:bc_a_25km,:);
+tdtlw_25km_sub_prof_a=mean(tdtlw_25km_sub_a,1);
+tdtlw_25km_sub_b=tdtlw_25_ztmn(bc_b_25km:bc_c_25km,:);
+tdtlw_25km_sub_prof_b=mean(tdtlw_25km_sub_b,1);
+tdtlw_25km_sub_prof=(tdtlw_25km_sub_prof_a+tdtlw_25km_sub_prof_b)/2;
+
+tdtlw_100km_sub_a=tdtlw_100_ztmn(1:bc_a_100km,:);
+tdtlw_100km_sub_prof_a=mean(tdtlw_100km_sub_a,1);
+tdtlw_100km_sub_b=tdtlw_100_ztmn(bc_b_100km:bc_c_100km,:);
+tdtlw_100km_sub_prof_b=mean(tdtlw_100km_sub_b,1);
+tdtlw_100km_sub_prof=(tdtlw_100km_sub_prof_a+tdtlw_100km_sub_prof_b)/2;
+
+figure
+plot(tdtlw_1km_sub_prof,pfull_2km,'Color',colgrn,'LineWidth',1.5)
+set(gca,'Ydir','reverse')
+hold on
+plot(tdtlw_2km_sub_prof,pfull_2km,'Color',colblu,'LineWidth',1.5)
+plot(tdtlw_25km_sub_prof,pfull_2km,'Color',colyel,'LineWidth',1.5)
+plot(tdtlw_100km_sub_prof,pfull_2km,'r','LineWidth',1.5)
+%xlim([0 15])
+%title('tdtlw in Subsiding region with LWCRE')
+tit_tdtlw=strcat('tdtlw in Subsiding region ',lwcreonoff);
+%title('Cloud Fraction in Subsiding region with LWCRE')
+title(tit_tdtlw)
+
+figure
+plot(clt_1km_sub_prof,pfull_2km,'Color',colgrn,'LineWidth',1.5)
+set(gca,'Ydir','reverse')
+hold on
+plot(clt_2km_sub_prof,pfull_2km,'Color',colblu,'LineWidth',1.5)
+plot(clt_25km_sub_prof,pfull_2km,'Color',colyel,'LineWidth',1.5)
+plot(clt_100km_sub_prof,pfull_2km,'r','LineWidth',1.5)
+xlim([0 15])
+tit_clt=strcat('Cloud Fraction in Subsiding region ',lwcreonoff);
+%title('Cloud Fraction in Subsiding region with LWCRE')
+title(tit_clt)
 
 % compute the diabatic vertical velocity
 % following some of the ideas in Mapes 2001 in which the diabatic divergence is equal to the
@@ -362,6 +412,24 @@ plot(blast_1_1d,pfull_2km,'Color',colgrn)
 plot(blast_ideal_25,pfull_2km,'k')
 plot(blast_ideal_2,pfull_2km,'--k')
 plot(blast_ideal_1,pfull_2km,'-.k')
+title('diabatic divergence')
+
+figure
+plot(blast_25,pfull_2km,'Color',colyel)
+set(gca,'Ydir','reverse')
+set(gca,'YScale','log')
+ylim([10000,100000])
+xlim([-0.5,0.5])
+hold on
+%plot(blast_ideal_25,pfull_2km,'--','Color',colyel)
+%plot(blast_25_1d,pfull_2km,'-.','Color',colyel)
+plot(blast_2,pfull_2km,'Color',colblu)
+%plot(blast_ideal_2,pfull_2km,'--','Color',colblu)
+%plot(blast_2_1d,pfull_2km,'-.','Color',colblu)
+plot(blast_1,pfull_2km,'Color',colgrn)
+%plot(blast_ideal_1,pfull_2km,'--','Color',colgrn)
+%plot(blast_1_1d,pfull_2km,'-.','Color',colgrn)
+title('diabatic divergence')
 
 figure
 plot(blast_ideal_25,pfull_2km,'k')

@@ -4,6 +4,12 @@ con_stream_arr=[0,0,0,0,0,0,0];
 %con_stream_arr=[2000.,-3000.,-14000.,-16000.,20000.,0.,5000.];
 %con_stream_arr=[0.,0.,-14000.,-16000.,20000.,0.,5000.];
 
+%% define colors
+colyel=[0.9290,0.6940,0.1250];  % 25km 
+colblu=[0.3010,0.7450,0.9330];  % 2km
+colgrn=[0.4660,0.6740,0.1880];  % 1km
+
+
 exp_n=''  % control
 %exp_n='_p4K'
 %exp_n='_lwoff'
@@ -68,7 +74,8 @@ source_psi='/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km
 %source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent0p5',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 0p5';
+%tit_id=' 25 km 0p5';
+tit_id=' E25 ';
 tit_id_0p5=tit_id;
 StreamFunNew
 psi_gen_0p5=psi_gen;
@@ -93,7 +100,8 @@ source_psi='/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km
 %source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent0p7',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 0p7';
+%tit_id=' 25 km 0p7';
+tit_id=' P25 LWCRE off';
 tit_id_0p7=tit_id;
 StreamFunNew
 psi_gen_0p7=psi_gen;
@@ -109,7 +117,8 @@ source_psi='/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km
 %source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent0p9',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 0p9';
+%tit_id=' 25 km 0p9';
+tit_id=' P25 ';
 tit_id_0p9=tit_id;
 StreamFunNew
 psi_gen_0p9=psi_gen;
@@ -125,7 +134,7 @@ source_psi='/Users/silvers/data/WalkerCell/testing_20181203/c8x160L33_am4p0_25km
 %source_psi=strcat('/Users/silvers/data/WalkerCell/gauss_d/c8x160L33_am4p0',res,'wlkr_ent1p1',exp_n,filen);
 dx_gen=25000.; % grid cell size in meters
 x_ngp_gen=160; % width of domain in grid points
-tit_id=' 25 km 1p1';
+tit_id=' E25 LWCRE off';
 tit_id_1p1=tit_id;
 StreamFunNew
 psi_gen_1p1=psi_gen;
