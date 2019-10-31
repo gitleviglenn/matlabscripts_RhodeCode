@@ -47,6 +47,7 @@ compTheta % script that computes theta and Tv for gcm_month, 2km_month, and 1km_
 %-----------------------------@#$%@#%$&#@$%@#$%^------------------------------------
 evap_25km_full=ncread(source_gcm_month,'evap');
 sh_25km_en_ztmn=read_1var_ztmn(source_gcm_month,'shflx');
+lwdn_25km_ztmn=read_1var_ztmn(source_gcm_month,'lwdn_sfc');
 u_25km_ztmn        = read_1var_ztmn(source_gcm_month,'ucomp');
 
 evap_25km_tmn=squeeze(mean(evap_25km_full,3));

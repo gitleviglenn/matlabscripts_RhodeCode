@@ -17,15 +17,15 @@ phys_constants
 
 % default values for the first time WalkerCell is run:
 experi=3 % experi=3 uses the ent0p9 experiment
-exptype=0 % 0 is the default experimental configuration (lwcre is on)
+exptype=2 % 0 is the default experimental configuration (lwcre is on)
 % 2 corresponds to lwoff
 
 if exptype==2
   ind=2;
 end
 
-%lwstring='4K_lwoff/';
-lwstring='4K/';
+lwstring='4K_lwoff/';
+%lwstring='4K/';
 
 lwcreonoff=' with LWCRE on';
 
@@ -150,8 +150,8 @@ path_100km_small_dly_lwoff  =strcat(path_n,'c8x40L33_am4p0_100km_wlkr_ent0p9_lwo
 %-------------------------------------------------------------------------------------------------
 
 %%% this should be the default definition of the path
-ConvParam=0;% convective parameterization is on when ConvParam=1
-ConvExp=1;  % explicit convection, meaning convective parameterization is off
+ConvParam=1;% convective parameterization is on when ConvParam=1
+ConvExp=0;  % explicit convection, meaning convective parameterization is off
 ConvExpLwoff=0;
 
 if exptype==2;
@@ -281,7 +281,8 @@ w_1km=ncread(source_1km_month,'w');
 
 precip_100km_znm      =mean(precip_100km,2);
 precip_100km_sm_znm   =mean(precip_100km_sm,2);
-precip_25km_znm       =mean(precip_25km,2);
+precip_25km_lg_znm    =mean(precip_25km_lg,2);
+precip_25km_znm       =mean(precip_25km,2); 
 precip_25km_daily_znm =mean(precip_25km_daily,2);
 precip_2km_znm        =mean(precip_2km,2);
 precip_1km_znm        =mean(precip_1km,2);
@@ -291,6 +292,7 @@ p_2km_znm             =scale.*(squeeze(precip_2km_znm));
 p_1km_znm             =scale.*(squeeze(precip_1km_znm));
 p_100km_znm           =scale.*(squeeze(precip_100km_znm));
 p_100km_sm_znm        =scale.*(squeeze(precip_100km_sm_znm));
+p_25km_lg_znm         =scale.*(squeeze(precip_25km_lg_znm));
 p_25km_znm            =scale.*(squeeze(precip_25km_znm));
 p_25km_daily_znm      =scale.*(squeeze(precip_25km_daily_znm));
 %p_25km_8x_znm=scale.*(squeeze(precip_25km_8x_znm));
@@ -300,12 +302,19 @@ p_25km_daily_znm      =scale.*(squeeze(precip_25km_daily_znm));
 %p_25km_tmean=mean(p_25km_8x_znm_equil,2);
 p_100km_tmean=mean(p_100km_znm,2);
 p_100km_sm_tmean=mean(p_100km_sm_znm,2);
+p_25km_lg_tmean=mean(p_25km_lg_znm,2);
 p_25km_tmean=mean(p_25km_znm,2);
 p_25km_dly_tmean=mean(p_25km_daily_znm,2);
 p_2km_tmean=mean(p_2km_znm,2);
 p_1km_tmean=mean(p_1km_znm,2);
 
 gcm_wvp=ncread(source_gcm_month,'WVP');
+wvp_mn_a=squeeze(mean(gcm_wvp,1));
+wvp_mn_b=squeeze(mean(wvp_mn_a,1));
+wvp_mn_b=squeeze(wvp_mn_b);
+wvp_mn_c=squeeze(mean(wvp_mn_b,2));
+
+%Is the column integrated wvp/density of water equal to the precipitable water? 
 
 % surface temperature
 tsurf_fulltime=ncread(source_gcm_month,'t_surf');
@@ -343,7 +352,7 @@ u_2km_dmn      = squeeze(mean(u_2km_ztmn,1));
 u_1km_dmn      = squeeze(mean(u_1km_ztmn,1));
 
 % vertical velocity
-w_25km=ncread(source_gcm_month,'w');
+w_25km            = ncread(source_gcm_month,'w');
 w_25km_ztmn       = read_1var_ztmn(source_gcm_month,'w');
 w_25km_lg_ztmn    = read_1var_ztmn(source_25km_lg_month,'w');
 
@@ -564,8 +573,50 @@ w_2km_ztmn=mean(w_2km_zmn(:,:,t_mid:t_end),3);
 w_1km_zmn=squeeze(mean(w_1km,2));
 w_1km_ztmn=mean(w_1km_zmn(:,:,t_mid:t_end),3); 
 
+%-----------------------------
+% compute subsidence fraction:
+w_25km_sm     =ncread(source_gcm_month,'w');
+w_25km_lg     =ncread(source_25km_lg_month,'w');
+w_100km_sm    =ncread(source_100km_sm_month,'w');
+w_100km_lg    =ncread(source_100km_lg_month,'w');
+
+w_100km_532_sm_sub =squeeze(w_100km_sm(:,:,18,:));
+w_100km_532_lg_sub =squeeze(w_100km_lg(:,:,18,:));
+w_25km_532_sm_sub  =squeeze(w_25km_sm(:,:,18,:));
+w_25km_532_lg_sub  =squeeze(w_25km_lg(:,:,18,:));
+w_2km_532_sub      =squeeze(w_2km(:,:,18,t_mid:t_end));
+w_1km_532_sub      =squeeze(w_1km(:,:,18,t_mid:t_end));
+
+w_100km_532_sm_sub_tmn =squeeze(mean(w_100km_532_sm_sub,3));
+w_100km_532_lg_sub_tmn =squeeze(mean(w_100km_532_lg_sub,3));
+w_25km_532_sm_sub_tmn  =squeeze(mean(w_25km_532_sm_sub,3));
+w_25km_532_lg_sub_tmn  =squeeze(mean(w_25km_532_lg_sub,3));
+w_2km_532_sub_tmn      =squeeze(mean(w_2km_532_sub,3));
+w_1km_532_sub_tmn      =squeeze(mean(w_1km_532_sub,3));
+
+w_1km_sub_532 = w_1km_532_sub_tmn < 0.0;
+w_1km_subfrac_532 = mean(mean(w_1km_sub_532));
+w_2km_sub_532 = w_2km_532_sub_tmn < 0.0;
+w_2km_subfrac_532 = mean(mean(w_2km_sub_532));
+w_25km_sub_lg_532 = w_25km_532_lg_sub_tmn < 0.0;
+w_25km_subfrac_lg_532 = mean(mean(w_25km_sub_lg_532));
+w_25km_sub_sm_532 = w_25km_532_sm_sub_tmn < 0.0;
+w_25km_subfrac_sm_532 = mean(mean(w_25km_sub_sm_532));
+w_100km_sub_lg_532 = w_100km_532_lg_sub_tmn < 0.0;
+w_100km_subfrac_lg_532 = mean(mean(w_100km_sub_lg_532));
+w_100km_sub_sm_532 = w_100km_532_sm_sub_tmn < 0.0;
+w_100km_subfrac_sm_532 = mean(mean(w_100km_sub_sm_532));
+%-----------------------------
+
 q25=q_25km_ztmn';
 q2=q_2km_ztmn';
+
+%% compute precipitable water, which I think is just the vertical integral of sphum (q)
+%%(1/g*rho_water)*integral(sphum)dp
+%
+%for j=2:33-1
+%  pw_lev(j)=(1/10000.).*sphum(j)*(press(j+1)-press(j-1));
+%end
 
 % call script compTheta
 % prelims to calling compTheta: 
@@ -630,7 +681,8 @@ rad_heat_mat(ind,:)=temprad;
 
 MeanPrecip_100km=mean(p_100km_tmean,1)
 MeanPrecip_100km_sm=mean(p_100km_sm_tmean,1)
-MeanPrecip_25km=mean(p_25km_tmean,1)
+MeanPrecip_25km_lg=mean(p_25km_lg_tmean,1)
+MeanPrecip_25km_sm=mean(p_25km_tmean,1)
 MeanPrecip_25km_dly=mean(p_25km_dly_tmean,1)
 MeanPrecip_2km=mean(p_2km_tmean,1)
 MeanPrecip_1km=mean(p_1km_tmean,1)

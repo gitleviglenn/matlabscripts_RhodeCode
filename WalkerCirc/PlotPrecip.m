@@ -10,64 +10,64 @@ colgrn=[0.4660,0.6740,0.1880];  % 1 km runs
 
 path_new='/Users/silvers/data/WalkerCell/testing_20181203';
 
-%path_2km_1=strcat(path,'am4p0_50x2000_4K/','19790101');
-path_2km_1=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790101');
-path_2km_2=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790201');
-path_2km_3=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790301');
-path_2km_4=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790401');
-path_2km_5=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790501');
-path_2km_6=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790601');
-source_2km_1=strcat(path_2km_1,'.atmos_daily.nc');
-source_2km_2=strcat(path_2km_2,'.atmos_daily.nc');
-source_2km_3=strcat(path_2km_3,'.atmos_daily.nc');
-source_2km_4=strcat(path_2km_4,'.atmos_daily.nc');
-source_2km_5=strcat(path_2km_5,'.atmos_daily.nc');
-source_2km_6=strcat(path_2km_6,'.atmos_daily.nc');
-
-precip_2km=ncread(source_2km_1,'precip');
-precip_2km_b=ncread(source_2km_2,'precip');
-precip_2km_c=ncread(source_2km_3,'precip');
-precip_2km_d=ncread(source_2km_4,'precip');
-precip_2km_e=ncread(source_2km_5,'precip');
-precip_2km_f=ncread(source_2km_6,'precip');
-
-precip_2km_a_znm=mean(precip_2km,2);
-precip_2km_b_znm=mean(precip_2km_b,2);
-precip_2km_c_znm=mean(precip_2km_c,2);
-precip_2km_d_znm=mean(precip_2km_d,2);
-precip_2km_e_znm=mean(precip_2km_e,2);
-precip_2km_f_znm=mean(precip_2km_f,2);
-
-p_2km_a_znm=scale.*(squeeze(precip_2km_a_znm));
-p_2km_b_znm=scale.*(squeeze(precip_2km_b_znm));
-p_2km_c_znm=scale.*(squeeze(precip_2km_c_znm));
-p_2km_d_znm=scale.*(squeeze(precip_2km_d_znm));
-p_2km_e_znm=scale.*(squeeze(precip_2km_e_znm));
-p_2km_f_znm=scale.*(squeeze(precip_2km_f_znm));
-
-precip_mn_dly_2km_m1=squeeze(mean(p_2km_a_znm,1));
-precip_mn_dly_2km_m2=squeeze(mean(p_2km_b_znm,1));
-precip_mn_dly_2km_m3=squeeze(mean(p_2km_c_znm,1));
-precip_mn_dly_2km_m4=squeeze(mean(p_2km_d_znm,1));
-precip_mn_dly_2km_m5=squeeze(mean(p_2km_e_znm,1));
-precip_mn_dly_2km_m6=squeeze(mean(p_2km_f_znm,1));
-
-boohiss=cat(2,precip_mn_dly_2km_m1,precip_mn_dly_2km_m2,precip_mn_dly_2km_m3,...
-            precip_mn_dly_2km_m4,precip_mn_dly_2km_m5,precip_mn_dly_2km_m6);
-tendindex=180;
-incoming_ts=boohiss;
-running_mean;
-boohiss_sm=output_ts;
-
-tendindex=172;
-incoming_ts=boohiss_sm;
-running_mean;
-precip_2km_smts_b=output_ts;
-
-tendindex=164;
-incoming_ts=precip_2km_smts_b;
-running_mean;
-precip_2km_smts=output_ts;
+%%path_2km_1=strcat(path,'am4p0_50x2000_4K/','19790101');
+%path_2km_1=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790101');
+%path_2km_2=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790201');
+%path_2km_3=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790301');
+%path_2km_4=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790401');
+%path_2km_5=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790501');
+%path_2km_6=strcat(path,'c96L33_am4p0_50x2000_nh_2km_wlkr_4K/','19790601');
+%source_2km_1=strcat(path_2km_1,'.atmos_daily.nc');
+%source_2km_2=strcat(path_2km_2,'.atmos_daily.nc');
+%source_2km_3=strcat(path_2km_3,'.atmos_daily.nc');
+%source_2km_4=strcat(path_2km_4,'.atmos_daily.nc');
+%source_2km_5=strcat(path_2km_5,'.atmos_daily.nc');
+%source_2km_6=strcat(path_2km_6,'.atmos_daily.nc');
+%
+%precip_2km=ncread(source_2km_1,'precip');
+%precip_2km_b=ncread(source_2km_2,'precip');
+%precip_2km_c=ncread(source_2km_3,'precip');
+%precip_2km_d=ncread(source_2km_4,'precip');
+%precip_2km_e=ncread(source_2km_5,'precip');
+%precip_2km_f=ncread(source_2km_6,'precip');
+%
+%precip_2km_a_znm=mean(precip_2km,2);
+%precip_2km_b_znm=mean(precip_2km_b,2);
+%precip_2km_c_znm=mean(precip_2km_c,2);
+%precip_2km_d_znm=mean(precip_2km_d,2);
+%precip_2km_e_znm=mean(precip_2km_e,2);
+%precip_2km_f_znm=mean(precip_2km_f,2);
+%
+%p_2km_a_znm=scale.*(squeeze(precip_2km_a_znm));
+%p_2km_b_znm=scale.*(squeeze(precip_2km_b_znm));
+%p_2km_c_znm=scale.*(squeeze(precip_2km_c_znm));
+%p_2km_d_znm=scale.*(squeeze(precip_2km_d_znm));
+%p_2km_e_znm=scale.*(squeeze(precip_2km_e_znm));
+%p_2km_f_znm=scale.*(squeeze(precip_2km_f_znm));
+%
+%precip_mn_dly_2km_m1=squeeze(mean(p_2km_a_znm,1));
+%precip_mn_dly_2km_m2=squeeze(mean(p_2km_b_znm,1));
+%precip_mn_dly_2km_m3=squeeze(mean(p_2km_c_znm,1));
+%precip_mn_dly_2km_m4=squeeze(mean(p_2km_d_znm,1));
+%precip_mn_dly_2km_m5=squeeze(mean(p_2km_e_znm,1));
+%precip_mn_dly_2km_m6=squeeze(mean(p_2km_f_znm,1));
+%
+%boohiss=cat(2,precip_mn_dly_2km_m1,precip_mn_dly_2km_m2,precip_mn_dly_2km_m3,...
+%            precip_mn_dly_2km_m4,precip_mn_dly_2km_m5,precip_mn_dly_2km_m6);
+%tendindex=180;
+%incoming_ts=boohiss;
+%running_mean;
+%boohiss_sm=output_ts;
+%
+%tendindex=172;
+%incoming_ts=boohiss_sm;
+%running_mean;
+%precip_2km_smts_b=output_ts;
+%
+%tendindex=164;
+%incoming_ts=precip_2km_smts_b;
+%running_mean;
+%precip_2km_smts=output_ts;
 
 % read in newer data from the 1km and 2km simululations
 %path_new='/Users/silvers/data/WalkerCell/testing_20181203'
@@ -309,7 +309,7 @@ subplot(1,3,1)
 plot(output_ts)
 title('first application of running mean')
 hold on
-plot(boohiss_sm);
+%plot(boohiss_sm);
 
 incoming_ts=output_ts;
 tendindex=357;
@@ -320,7 +320,7 @@ subplot(1,3,2)
 plot(precip_dmn_smooth)
 title('second application of running mean')
 hold on
-plot(precip_2km_smts_b)
+%plot(precip_2km_smts_b)
 
 
 incoming_ts=precip_dmn_smooth;
@@ -332,7 +332,7 @@ subplot(1,3,3)
 plot(precip_dmn_smooth_3)
 title('third application of running mean')
 hold on
-plot(precip_2km_smts)
+%plot(precip_2km_smts)
 
 
 % compute and plot the fraction of precip that is large-scale, as well as
