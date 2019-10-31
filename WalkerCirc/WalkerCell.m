@@ -17,15 +17,15 @@ phys_constants
 
 % default values for the first time WalkerCell is run:
 experi=3 % experi=3 uses the ent0p9 experiment
-exptype=2 % 0 is the default experimental configuration (lwcre is on)
+exptype=0 % 0 is the default experimental configuration (lwcre is on)
 % 2 corresponds to lwoff
 
 if exptype==2
   ind=2;
 end
 
-lwstring='4K_lwoff/';
-%lwstring='4K/';
+%lwstring='4K_lwoff/';
+lwstring='4K/';
 
 lwcreonoff=' with LWCRE on';
 
@@ -150,9 +150,9 @@ path_100km_small_dly_lwoff  =strcat(path_n,'c8x40L33_am4p0_100km_wlkr_ent0p9_lwo
 %-------------------------------------------------------------------------------------------------
 
 %%% this should be the default definition of the path
-ConvParam=1;% convective parameterization is on when ConvParam=1
-ConvExp=0;  % explicit convection, meaning convective parameterization is off
-ConvExpLwoff=0;
+ConvParam=0;% convective parameterization is on when ConvParam=1
+ConvExp=1;  % explicit convection, meaning convective parameterization is off
+ConvExpLwoff=1;
 
 if exptype==2;
   ind=2;
@@ -392,6 +392,11 @@ ice_2km=ncread(source_2km_month,'tot_ice_amt');
 hur_1km=ncread(source_1km_month,'rh');
 hur_2km=ncread(source_2km_month,'rh');
 
+pfull_100km=ncread(source_100km_sm_month,'pfull');
+pfull_100km=100.*pfull_100km; % convert to Pa
+pfull_100km_lg=ncread(source_100km_lg_month,'pfull');
+pfull_100km_lg=100.*pfull_100km_lg; % convert to Pa
+
 pfull_25km=ncread(source_gcm_month,'pfull');
 pfull_25km=100.*pfull_25km; % convert to Pa
 
@@ -473,7 +478,10 @@ hur_1km_zmn=squeeze(mean(hur_1km_zmn,3));
 hur_1km_ztmn=hur_1km_zmn;
 
 % specific humidity
-q_25km_ztmn    = read_1var_ztmn(source_gcm_month,'sphum');
+q_25km_ztmn     = read_1var_ztmn(source_gcm_month,'sphum');
+q_25km_lg_ztmn  = read_1var_ztmn(source_25km_lg_month,'sphum');
+q_100km_ztmn    = read_1var_ztmn(source_100km_sm_month,'sphum');
+q_100km_lg_ztmn = read_1var_ztmn(source_100km_lg_month,'sphum');
 
 q_2km=ncread(source_2km_month,'sphum');
 q_2km_zmn=squeeze(mean(q_2km,2));
@@ -483,9 +491,13 @@ q_1km=ncread(source_1km_month,'sphum');
 q_1km_zmn=squeeze(mean(q_1km,2));
 q_1km_ztmn=squeeze(q_1km_zmn(:,:,1));
 
-
-temp_25km_ztmn = read_1var_ztmn(source_gcm_month,'temp');
 tsurf1=squeeze(tsurf_fulltime(:,4,1)); % indices shouldn't matter here...
+
+temp_100km_ztmn    = read_1var_ztmn(source_100km_sm_month,'temp');
+temp_100km_lg_ztmn = read_1var_ztmn(source_100km_lg_month,'temp');
+
+temp_25km_ztmn    = read_1var_ztmn(source_gcm_month,'temp');
+temp_25km_lg_ztmn = read_1var_ztmn(source_25km_lg_month,'temp');
 
 clt_100km_ztmn = read_1var_ztmn(source_100km_sm_month,'cld_amt');
 clt_100km_sm_znm_tmn=cltscale.*clt_100km_ztmn;
@@ -624,9 +636,12 @@ clear rho_25km;
 clear rho_2km;
 clear rho_1km;
 
-rho_25km=rho_2d_gen(temp_25km_ztmn,q_25km_ztmn,pfull_25km,160);
-rho_2km=rho_2d_gen(temp_crm_ztmn,q_2km_ztmn,pfull_2km,2000);
-rho_1km=rho_2d_gen(temp_crm1_ztmn,q_1km_ztmn,pfull_1km,4000);
+rho_100km    =rho_2d_gen(temp_100km_ztmn,q_100km_ztmn,pfull_100km,40);
+rho_lg_100km =rho_2d_gen(temp_100km_lg_ztmn,q_100km_lg_ztmn,pfull_100km_lg,40);
+rho_25km     =rho_2d_gen(temp_25km_ztmn,q_25km_ztmn,pfull_25km,160);
+rho_lg_25km  =rho_2d_gen(temp_25km_lg_ztmn,q_25km_lg_ztmn,pfull_25km,160);
+rho_2km      =rho_2d_gen(temp_crm_ztmn,q_2km_ztmn,pfull_2km,2000);
+rho_1km      =rho_2d_gen(temp_crm1_ztmn,q_1km_ztmn,pfull_1km,4000);
 
 
 % below for 25km

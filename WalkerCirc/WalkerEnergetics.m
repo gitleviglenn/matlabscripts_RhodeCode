@@ -387,6 +387,38 @@ tit_clt=strcat('Cloud Fraction in Subsiding region ',lwcreonoff);
 %title('Cloud Fraction in Subsiding region with LWCRE')
 title(tit_clt)
 
+%-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+% compute the precipitable water
+
+pw_layer=prec_wat(160,rho_lg_100km,100000,q_100km_lg_ztmn,pfull_gen);
+prec_wat_100_lg_x=sum(pw_layer,2);
+pw_layer=prec_wat(40,rho_100km,100000,q_100km_ztmn,pfull_gen);
+prec_wat_100_x=sum(pw_layer,2);
+pw_layer=prec_wat(640,rho_lg_25km,100000,q_25km_lg_ztmn,pfull_gen);
+prec_wat_25_lg_x=sum(pw_layer,2);
+pw_layer=prec_wat(160,rho_25km,100000,q_25km_ztmn,pfull_gen);
+prec_wat_25_x=sum(pw_layer,2);
+pw_layer=prec_wat(2000,rho_2km,100000,q_2km_ztmn,pfull_gen);
+prec_wat_2_x=sum(pw_layer,2);
+pw_layer=prec_wat(4000,rho_1km,100000,q_1km_ztmn,pfull_gen);
+prec_wat_1_x=sum(pw_layer,2);
+
+% domain mean
+bar_pw_100l=mean(prec_wat_100_lg_x,1);
+bar_pw_100 =mean(prec_wat_100_x,1);
+bar_pw_25l =mean(prec_wat_25_lg_x,1);
+bar_pw_25  =mean(prec_wat_25_x,1);
+bar_pw_2   =mean(prec_wat_2_x,1);
+bar_pw_1   =mean(prec_wat_1_x,1);
+
+bar_pw=zeros(1,6);
+bar_pw(1)=bar_pw_100l;
+bar_pw(2)=bar_pw_100;
+bar_pw(3)=bar_pw_25l;
+bar_pw(4)=bar_pw_25;
+bar_pw(5)=bar_pw_2;
+bar_pw(6)=bar_pw_1;
+%-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 % compute the diabatic vertical velocity
 % following some of the ideas in Mapes 2001 in which the diabatic divergence is equal to the
 % pressure derivative of teh diabatic omega.  it can also be computed as the pressure derivative
@@ -511,6 +543,7 @@ plot(div_idealsig_1,pfull_2km,'-.r')
 %plot(rad_heat_prof_2,pfull_2km,'Color',colblu,'LineWidth',1.5);
 %plot(rad_heat_prof_1,pfull_2km,'Color',colgrn,'LineWidth',1.5);
 
+%-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 % static stability parameter across entire domain
 staticst_par_25km_w=mean(staticst_par_25km(80:120,:),1);
