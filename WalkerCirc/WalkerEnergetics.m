@@ -1,14 +1,34 @@
 %WalkerEnergetics.m
 %
+% this script opens files and reads energy related variables from them 
+% so that various computations can be made and figure plotted.
+% 
 % calls the functions 
 %    rho_2d_gen()
 %    read_1var_ztmn()
+%    prec_wat()
+%    press_deriv()
 %
-% computes: 
+% Parameters which are computed include: 
+% -- static stability 
+% -- static stability parameter
+% -- integrated water vapor path is computed (precipitable water)
+% -- diabatic vertical velocity: vvel_d_25km 
+% -- press derivative of the diabatic vertical velocity (blast_25)
+%
+%  vvel_d_25km =rad_heating_25./staticst_par_25km; (omega_d=Q/sigma)
+%  the diabatic vertical velocity is also computed using idealized Q and sigma
 %  rad_heating_25=tdtlw_25_ztmn+tdtsw_25_ztmn; heating rate
 %
+% plots several figures
+% 
 % run this within WalkerCell.m
 %-----------------------------------------------------------------
+
+%% define colors for figures
+colyel=[0.9290,0.6940,0.1250];  % 25km 
+colblu=[0.3010,0.7450,0.9330];  % 2km
+colgrn=[0.4660,0.6740,0.1880];  % 1km
 
 conv=60*60*24; % convert to Kelvin per day
 
@@ -134,8 +154,7 @@ shflx_25km=ncread(source_gcm_month,'shflx');
 shflx_2km=ncread(source_2km_month,'shflx');
 
 %% W/m2
-%olr_25km=ncread(source_gcm_month,'olr');
-%olr_2km=ncread(source_2km_month,'olr');
+
 %olr_zmn=squeeze(mean(olr_25km,2));
 %olr_zxmn=squeeze(mean(olr_zmn,1));
 %
@@ -157,6 +176,13 @@ shflx_2km=ncread(source_2km_month,'shflx');
 lvlv=2500000.;  % this gives a smaller imbalance than that in the phys_constants
 
 olr_gcm_toa      =read_1var_xymn(source_gcm_month,'olr');
+olr_l_25km       =read_1var_xymn(source_25km_lg_month,'olr');
+olr_s_100km      =read_1var_xymn(source_100km_sm_month,'olr');
+%olr_s_100km_lwoff=read_1var_xymn(source_100km_sm_lwoff_daily,'olr');
+olr_l_100km      =read_1var_xymn(source_100km_lg_month,'olr');
+olr_2km          =ncread(source_2km_month,'olr');
+olr_1km          =ncread(source_1km_month,'olr');
+
 swdn_gcm_toa     =read_1var_xymn(source_gcm_month,'swdn_toa');
 swup_gcm_toa     =read_1var_xymn(source_gcm_month,'swup_toa');
 
@@ -173,10 +199,35 @@ evap_gcm         =read_1var_xymn(source_gcm_month,'evap');
 %evap_gcm_en      =latheat.*evap_gcm;
 evap_gcm_en      =lvlv.*evap_gcm;
 
+%% W/m2
+
+olr_a=squeeze(mean(olr_1km,3));
+olr_b=squeeze(mean(olr_a,2));
+olr_2km=squeeze(mean(olr_b,1))
+
+olr_a=squeeze(mean(olr_2km,3));
+olr_b=squeeze(mean(olr_a,2));
+olr_2km=squeeze(mean(olr_b,1))
+%olr_zmn=squeeze(mean(olr_25km,2));
+
 rad_net_sfc_gcm  =swdn_gcm_sfc-swup_gcm_sfc+lwdn_gcm_sfc-lwup_gcm_sfc-shflx_gcm-evap_gcm_en;
 atm_imb_rad=rad_net_toa_gcm-rad_net_sfc_gcm;
-% end of test
 
+% compute domain mean olr: 
+olr_s_100km_dmn=squeeze(mean(olr_s_100km,2));
+olr_l_100km_dmn=squeeze(mean(olr_l_100km,2));
+olr_s_25km_dmn =squeeze(mean(olr_gcm_toa,2));
+olr_l_25km_dmn =squeeze(mean(olr_l_25km,2));
+
+olr_a=squeeze(mean(olr_1km,3));
+olr_b=squeeze(mean(olr_a,2));
+olr_1km_dmn    =squeeze(mean(olr_b,1))
+
+olr_a=squeeze(mean(olr_2km,3));
+olr_b=squeeze(mean(olr_a,2));
+olr_2km_dmn    =squeeze(mean(olr_b,1))
+
+% compute domain mean precipitation
 precip_100km=ncread(source_100km_sm_month,'precip');
 precip_25km=ncread(source_gcm_month,'precip');
 precip_2km=ncread(source_2km_month,'precip');
@@ -269,11 +320,6 @@ for i=1:160
     stst(i,33)=(.102/rho_25km(i,33)).*(temp_25km_ztmn(i,33)/theta_gcm(i,33).*((theta_gcm(i,33)-theta_gcm(i,32))/(zfull_25km_ztmn(i,33)-zfull_25km_ztmn(i,32))));
 end 
 
-%% define colors
-colyel=[0.9290,0.6940,0.1250];  % 25km 
-colblu=[0.3010,0.7450,0.9330];  % 2km
-colgrn=[0.4660,0.6740,0.1880];  % 1km
-
 
 %stst_conv=stst*conv;
 %app_R=w_25km_ztmn./stst;
@@ -364,6 +410,7 @@ vvel_d_25km_1d_sig        = zeros(1,nlev);
 vvel_d_2km_1d_sig         = zeros(1,nlev);
 vvel_d_1km_1d_sig         = zeros(1,nlev);
 
+% diabatic vertical velocity (omega_d = Q/sigma, see Mapes, 2001)
 vvel_d_25km        =rad_heating_25./staticst_par_25km;
 vvel_d_2km         =rad_heating_2./staticst_par_2km;
 vvel_d_1km         =rad_heating_1./staticst_par_1km;
