@@ -82,6 +82,21 @@ precip_25km_l=ncread(source_gcm_month_l,'precip'); % [xdim ydim tdim], last four
 precip_100km_s=ncread(source_100km_month_s,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
 precip_100km_l=ncread(source_100km_month_l,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
 
+w_25km_s=ncread(source_gcm_month_s,'w'); % [xdim ydim tdim], last four yrs of 5 yr run
+w_25km_l=ncread(source_gcm_month_l,'w'); % [xdim ydim tdim], last four yrs of 5 yr run
+w_100km_s=ncread(source_100km_month_s,'w'); % [xdim ydim tdim], last four yrs of 5 yr run
+w_100km_l=ncread(source_100km_month_l,'w'); % [xdim ydim tdim], last four yrs of 5 yr run
+
+w_100km_s_tmn=squeeze(mean(w_100km_s,4));
+w_100km_s_ztmn=squeeze(mean(w_100km_s_tmn,2));
+w_100km_l_tmn=squeeze(mean(w_100km_l,4));
+w_100km_l_ztmn=squeeze(mean(w_100km_l_tmn,2));
+
+w_25km_s_tmn=squeeze(mean(w_25km_s,4));
+w_25km_s_ztmn=squeeze(mean(w_25km_s_tmn,2));
+w_25km_l_tmn=squeeze(mean(w_25km_l,4));
+w_25km_l_ztmn=squeeze(mean(w_25km_l_tmn,2));
+
 % this is bad coding...
 estr2='ent0p9_lwoff';
 %estr2='ent0p9';
@@ -118,7 +133,6 @@ precip_100km_dly_l=ncread(source_100_gcm_daily_l,'precip'); % [xdim ydim tdim], 
 
 precip_2km_dly=ncread(source_2km_daily,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
 precip_1km_dly=ncread(source_1km_daily,'precip'); % [xdim ydim tdim], last four yrs of 5 yr run
-
 
 % histogram hogwash
 p_25dly_l=squeeze(mean(precip_25km_dly_l,2));
@@ -310,6 +324,13 @@ xgcm_100=xgcm_100_s;
 precip_100km_znm=mean(precip_100km_l,2);
 precip_25km_znm=mean(precip_25km_s,2);
 
+% define the level at which the vertical velocity will be plotted:
+wlev=29;
+w_100km_s_lev_znm =w_100km_s_ztmn(:,wlev);
+w_100km_l_lev_znm =w_100km_l_ztmn(:,wlev);
+w_25km_s_lev_znm  =w_25km_s_ztmn(:,wlev);
+w_25km_l_lev_znm  =w_25km_l_ztmn(:,wlev);
+
 p_100km_znm=scale.*(squeeze(precip_100km_znm));
 p_25km_znm=scale.*(squeeze(precip_25km_znm));
 
@@ -335,6 +356,34 @@ MeanPrecip_25km_l=mean(p_25km_l_tmean,1)
 figure
 %plot(xcrm(1:xcrm_ngp),p_2km_tmean(:),'Color',colblu,'LineWidth',2);
 subplot(1,2,1)
+plot(xgcm_25_l(1:xgcm_ngp_640),w_25km_l_lev_znm(:),'Color',colyel,'LineWidth',2);
+hold on
+plot(xgcm_100_l(1:xgcm_ngp_160),w_100km_l_lev_znm(:),'r','LineWidth',2);
+ylabel('w (m/s)','FontSize',20)
+xlabel('km','FontSize',20)
+yt=get(gca,'YTick');
+set(gca,'FontSize',16)
+xlim([0,16000])
+tit_e=strcat('Vert Vel 100km,25km GCM:');
+%title(tit_e);
+%suptitle(tit_st)
+subplot(1,2,2)
+plot(xgcm_25_s(1:xgcm_ngp_160),w_25km_s_lev_znm(:),'Color',colyel,'LineWidth',2);
+hold on
+plot(xgcm_100_s(1:xgcm_ngp_40),w_100km_s_lev_znm(:),'r','LineWidth',2);
+ylabel('w (m/s)','FontSize',20)
+xlabel('km','FontSize',20)
+yt=get(gca,'YTick');
+set(gca,'FontSize',16)
+xlim([0,4000])
+tit_e=strcat('Vert Vel 100km,25km GCM:');
+%title(tit_e);
+%suptitle(tit_st)
+
+
+figure
+%plot(xcrm(1:xcrm_ngp),p_2km_tmean(:),'Color',colblu,'LineWidth',2);
+subplot(1,2,1)
 plot(xgcm_25_l(1:xgcm_ngp_640),p_25km_l_tmean(:),'Color',colyel,'LineWidth',2);
 hold on
 plot(xgcm_100_l(1:xgcm_ngp_160),p_100km_l_tmean(:),'r','LineWidth',2);
@@ -356,9 +405,4 @@ yt=get(gca,'YTick');
 set(gca,'FontSize',16)
 xlim([0,4000])
 tit_e=strcat('Precip 100km,25km GCM:',num2str(MeanPrecip_100km_s),'; ',num2str(MeanPrecip_25km_s));
-%title(tit_e);
-%suptitle(tit_st)
-
-
-
 
