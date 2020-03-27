@@ -208,12 +208,13 @@ figure
 %scale2mass=a_earth*grav;
 scale_cons=1; % this worked well with 25km grid spacing
 normscale=1e11; % this worked well with 25km grid spacing
+%normscale=1e12 % this worked well with 25km grid spacing
 scale2mass=a_earth/grav;
 normfac=1/normscale;
 psi_gen=normfac.*scale2mass.*psi_gen;
-stream_convals=[-.5,-.45,-.4,-.35,-.3,-.25,-.2,-.15,-.1,-.05,0.0,.05,.1,.15,.20,.25,.3,.35,.4,.45,.5];
-%stream_convals=[-.05,-.045,-.04,-.035,-.03,-.025,-.02,-.015,-.01,-.005,0.0,.005,.01,.015,.020,.025,.03,.035,.04,.045,.05];
-%stream_convals=[-5,-4.5,-4,-3.5,-3,-2.5,-2.,-1.5,-1,-.5,0.0,.5,1,1.5,2.,2.5,3,3.5,4,4.5,5];
+%stream_convals=[-.5,-.45,-.4,-.35,-.3,-.25,-.2,-.15,-.1,-.05,0.0,.05,.1,.15,.20,.25,.3,.35,.4,.45,.5]; % this is the default that works pretty well for the 4000km domains
+stream_convals=[-.5,-.35,-.2,-.05,.1,.25,.4,.55,.7,.85,1.,1.2,1.35,1.5,1.65,1.8,1.95,2.1,2.25,2.4]; % this works pretty well for the 25km large domain
+%stream_convals=[-1.5,-1.35,-1.2,-1.05,-.9,-.75,-.5,-.35,-.2,-.05,.1,.25,.4,.55,.7,.85,1.,1.2,1.35,1.5]; % this works pretty well for the 100km large domain
 stream_cons=scale_cons.*stream_convals;
 [C,h]=contourf(1:x_ngp_gen,pfull_gen,psi_gen',stream_cons);
 %v=[-3000,-2000,-1000,0,1000,2000,3000]; % if labels are desired on contours
